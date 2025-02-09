@@ -2,4 +2,4 @@ npm i -- installs all nodejs dependencies
 npm i -- firebase dependencies
 npm i -g firebase-tools -- access to all firebase tools 
 
-//Sample Commit
+//Sample Commitz
