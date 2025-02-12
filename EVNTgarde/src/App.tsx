@@ -1,7 +1,8 @@
-import './App.css'
+import React from "react";
+import AccountPassword from "./Major Pages/AccountPassword";
 
-function App() {
-  return null;
-}
+const App: React.FC = () => {
+  return <AccountPassword />;
+};
 
-export default App
+export default App;
