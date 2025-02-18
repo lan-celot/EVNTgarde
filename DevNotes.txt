@@ -1,7 +1,11 @@
 //Base Dependencies
-npm i -- installs all nodejs dependencies
-npm i firebase -- firebase dependencies
-npm i -g firebase-tools -- access to all firebase tools 
+npm i  //installs all nodejs dependencies
+npm i firebase  //firebase dependencies
+npm i -g firebase-tools //access to all firebase tools 
 
 //CSS Dependencies
-npm i tailwindcss postcss-cli autoprefixer -- add tailwindcss
+npm i tailwindcss postcss-cli autoprefixer //add tailwindcss
+
+//Misc 
+npm i --save-dev @testing-library/jest-dom
+npm i web-vitals
