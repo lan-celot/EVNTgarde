@@ -1,6 +1,6 @@
 //Base Dependencies
 npm i -- installs all nodejs dependencies
-npm i -- firebase dependencies
+npm i firebase -- firebase dependencies
 npm i -g firebase-tools -- access to all firebase tools 
 
 //CSS Dependencies
