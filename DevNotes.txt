@@ -9,3 +9,5 @@ npm i tailwindcss postcss-cli autoprefixer //add tailwindcss
 //Misc 
 npm i --save-dev @testing-library/jest-dom
 npm i web-vitals
+npm i lucide-react
+npm i --save react-select
