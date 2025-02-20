@@ -75,7 +75,7 @@ export default function HomePage() {
 					<div className="absolute inset-0 flex flex-col md:flex-row items-center container mx-auto px-4">
 						<div className="w-full md:w-1/2 flex justify-center mb-8 md:mb-0">
 							<img
-								src="../../src/assets/logo.png"
+								src="../../src/assets/OrganizerLogo.png"
 								alt="Event Logo"
 								className="w-64 max-h-250"
 							/>
