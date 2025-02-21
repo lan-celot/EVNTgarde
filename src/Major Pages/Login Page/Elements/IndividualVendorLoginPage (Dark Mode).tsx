@@ -2,11 +2,21 @@ import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import Logo from "../assets/OrganizerLogo.png";
 import "../RegistrationLogin.css";
+import { useNavigate } from "react-router-dom";
 
 //For both Individual and Vendor
+interface LoginPageProps {
+	login: () => void;
+}
 
-const LoginPage: React.FC = () => {
+const LoginPageDark: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false);
+	const navigate = useNavigate();
+	const handleLogin = () => {
+		login(); // Calls the function to update auth state
+		navigate("/dashboard"); // Redirects to logged-in homepage
+	};
+
 	return (
 		<div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
 			<div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden">
@@ -16,10 +26,10 @@ const LoginPage: React.FC = () => {
 					<p>Log in now to unlock your personalized experience!</p>
 				</div>
 
-				<div className="w-3/5 bg-white p-10 flex flex-col justify-center rounded-l-[50px] shadow-md">
+				<div className="w-3/5 bg-gray-800 p-10 flex flex-col justify-center rounded-l-[50px] shadow-md">
 					<h2 className="text-2xl font-bold text-blue-600 mb-4">Log In</h2>
 					<form className="flex flex-col space-y-4">
-						<label className="text-sm">Enter your email*</label>
+						<label className="text-sm text-white">Enter your email*</label>
 						<input
 							type="email"
 							placeholder="Email"
@@ -27,7 +37,7 @@ const LoginPage: React.FC = () => {
 							required
 						/>
 
-						<label className="text-sm">Enter your password*</label>
+						<label className="text-sm text-white">Enter your password*</label>
 						<div className="relative">
 							<input
 								type={showPassword ? "text" : "password"}
@@ -64,7 +74,7 @@ const LoginPage: React.FC = () => {
 							Log in{" "}
 						</button>
 
-						<div className="text-center text-sm">
+						<div className="text-center text-sm text-white">
 							Don't have an account?{" "}
 							<a href="#" className="text-blue-600">
 								Sign up
@@ -77,4 +87,7 @@ const LoginPage: React.FC = () => {
 	);
 };
 
-export default LoginPage;
+export default LoginPageDark;
+function login() {
+	throw new Error("Function not implemented.");
+}

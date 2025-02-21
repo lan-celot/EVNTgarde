@@ -1,26 +1,44 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import BrowserRouter as Router
-import Navigator from "./temp/navigator";
-import ChapterOne from "./temp/chapter1";
-import ChapterTwo from "./temp/chapter2";
-import ChapterThree from "./temp/chapter3";
-import ChapterFour from "./temp/chapter4";
-import AccountPassword from "./Major Pages/Accounts Page/AccountPassword";
-import HomePage from "./Major Pages/Accounts Page/homepage";
-import RegistrationLogin from "./RegistrationLogin";
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route,
+	Navigate,
+} from "react-router-dom";
+import { useState } from "react";
+import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
+import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)"; // Login page
+import Dashboard from "./Major Pages/Dashboards/Registered/Main Page/page"; // Registered user homepage
 
-const App: React.FC = () => {
+const App = () => {
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+	const login = () => {
+		setIsAuthenticated(true);
+	};
+
 	return (
 		<Router>
 			<Routes>
-				<Route path="/" element={<Navigator />} />
-				<Route path="/chapterOne/*" element={<ChapterOne />} />
-				<Route path="/chapterTwo/*" element={<ChapterTwo />} />{" "}
-				<Route path="/chapterThree/*" element={<ChapterThree />} />
-				<Route path="/chapterFour/*" element={<ChapterFour />} />
-				<Route path="/chapterOne/accpass" element={<AccountPassword />} />
-				<Route path="/chapterOne/reglog/*" element={<RegistrationLogin />} />
-				<Route path="/chapterOne/homepage" element={<HomePage />} />
+				<Route
+					path="/"
+					element={
+						isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />
+					}
+				/>
+				<Route
+					path="/login"
+					element={
+						isAuthenticated ? (
+							<Navigate to="/dashboard" />
+						) : (
+							<LoginPage login={login} />
+						)
+					}
+				/>
+				<Route
+					path="/dashboard"
+					element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
+				/>
 			</Routes>
 		</Router>
 	);

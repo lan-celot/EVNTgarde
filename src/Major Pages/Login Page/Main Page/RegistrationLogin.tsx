@@ -5,18 +5,18 @@ import {
 	BrowserRouter as Router,
 	Routes,
 } from "react-router-dom";
-import SoloRegistrationDark from "./components/IndividualRegistration (Dark Mode)";
-import SoloRegistration from "./components/IndividualRegistration (Light Mode)";
-import LoginDark from "./components/IndividualVendorLoginPage (Dark Mode)";
-import LoginPage from "./components/IndividualVendorLoginPage (Light Mode)";
-import OrganizerDark from "./components/OrganizerLogin (Dark Mode)";
-import OrganizerLogin from "./components/OrganizerLogin (Light Mode)";
-import OrganizerRegistrationDark from "./components/OrganizerRegistration (Dark Mode)";
-import OrganizerRegistration from "./components/OrganizerRegistration (Light Mode)";
-import RoleSelectionDark from "./components/RoleSelection (Dark Mode)";
-import RoleSelection from "./components/RoleSelection (Light Mode)";
-import VendorRegistrationDark from "./components/VendorRegistration (Dark Mode)";
-import VendorRegistration from "./components/VendorRegistration (Light Mode)";
+import SoloRegistrationDark from "../Elements/IndividualRegistration (Dark Mode)";
+import SoloRegistration from "../Elements/IndividualRegistration (Light Mode)";
+import LoginDark from "../Elements/IndividualVendorLoginPage (Dark Mode)";
+import LoginPage from "../Elements/IndividualVendorLoginPage (Light Mode)";
+import OrganizerDark from "../Elements/OrganizerLogin (Dark Mode)";
+import OrganizerLogin from "../Elements/OrganizerLogin (Light Mode)";
+import OrganizerRegistrationDark from "../Elements/OrganizerRegistration (Dark Mode)";
+import OrganizerRegistration from "../Elements/OrganizerRegistration (Light Mode)";
+import RoleSelectionDark from "../Elements/RoleSelection (Dark Mode)";
+import RoleSelection from "../Elements/RoleSelection (Light Mode)";
+import VendorRegistrationDark from "../Elements/VendorRegistration (Dark Mode)";
+import VendorRegistration from "../Elements/VendorRegistration (Light Mode)";
 
 const RegistrationLogin: React.FC = () => {
 	const userType = localStorage.getItem("userType"); // "user" or "organizer"
@@ -34,7 +34,16 @@ const RegistrationLogin: React.FC = () => {
 						)
 					}
 				/>
-				<Route path="/individualvendor-login" element={<LoginPage />} />
+				<Route
+					path="/individualvendor-login"
+					element={
+						<LoginPage
+							login={function (): void {
+								throw new Error("Function not implemented.");
+							}}
+						/>
+					}
+				/>
 				<Route path="/organizer-login" element={<OrganizerLogin />} />
 				<Route path="/roleselection" element={<RoleSelection />} />
 				<Route path="/roleselection-dark" element={<RoleSelectionDark />} />

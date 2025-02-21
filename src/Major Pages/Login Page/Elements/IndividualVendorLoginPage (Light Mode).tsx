@@ -2,10 +2,19 @@ import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import Logo from "../assets/OrganizerLogo.png";
 import "../RegistrationLogin.css";
-
+import { useNavigate } from "react-router-dom";
 //For both Individual and Vendor
 
-const LoginPageDark: React.FC = () => {
+interface LoginPageProps {
+	login: () => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ login }) => {
+	const navigate = useNavigate();
+	const handleLogin = () => {
+		login(); // Calls the function to update auth state
+		navigate("/dashboard"); // Redirects to logged-in homepage
+	};
 	const [showPassword, setShowPassword] = useState(false);
 	return (
 		<div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
@@ -16,10 +25,10 @@ const LoginPageDark: React.FC = () => {
 					<p>Log in now to unlock your personalized experience!</p>
 				</div>
 
-				<div className="w-3/5 bg-gray-800 p-10 flex flex-col justify-center rounded-l-[50px] shadow-md">
+				<div className="w-3/5 bg-white p-10 flex flex-col justify-center rounded-l-[50px] shadow-md">
 					<h2 className="text-2xl font-bold text-blue-600 mb-4">Log In</h2>
 					<form className="flex flex-col space-y-4">
-						<label className="text-sm text-white">Enter your email*</label>
+						<label className="text-sm">Enter your email*</label>
 						<input
 							type="email"
 							placeholder="Email"
@@ -27,7 +36,7 @@ const LoginPageDark: React.FC = () => {
 							required
 						/>
 
-						<label className="text-sm text-white">Enter your password*</label>
+						<label className="text-sm">Enter your password*</label>
 						<div className="relative">
 							<input
 								type={showPassword ? "text" : "password"}
@@ -59,12 +68,13 @@ const LoginPageDark: React.FC = () => {
 						<button
 							type="submit"
 							className="bg-blue-600 text-white p-3 rounded-full font-bold hover:bg-blue-700"
+							onClick={handleLogin}
 						>
 							{" "}
 							Log in{" "}
 						</button>
 
-						<div className="text-center text-sm text-white">
+						<div className="text-center text-sm">
 							Don't have an account?{" "}
 							<a href="#" className="text-blue-600">
 								Sign up
@@ -77,4 +87,4 @@ const LoginPageDark: React.FC = () => {
 	);
 };
 
-export default LoginPageDark;
+export default LoginPage;
