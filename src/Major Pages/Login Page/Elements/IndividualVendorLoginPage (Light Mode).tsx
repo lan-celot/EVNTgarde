@@ -1,7 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
-import Logo from "../assets/OrganizerLogo.png";
-import "../RegistrationLogin.css";
+import Logo from "../../../assets/OrganizerLogo.png";
+import "../Main Page/RegistrationLogin.css";
 import { useNavigate } from "react-router-dom";
 //For both Individual and Vendor
 

@@ -2,21 +2,11 @@ import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import Logo from "../assets/OrganizerLogo.png";
 import "../RegistrationLogin.css";
-import { useNavigate } from "react-router-dom";
 
 //For both Individual and Vendor
-interface LoginPageProps {
-	login: () => void;
-}
 
 const LoginPageDark: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false);
-	const navigate = useNavigate();
-	const handleLogin = () => {
-		login(); // Calls the function to update auth state
-		navigate("/dashboard"); // Redirects to logged-in homepage
-	};
-
 	return (
 		<div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
 			<div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden">
@@ -88,6 +78,3 @@ const LoginPageDark: React.FC = () => {
 };
 
 export default LoginPageDark;
-function login() {
-	throw new Error("Function not implemented.");
-}
