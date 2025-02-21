@@ -4,7 +4,7 @@ import { useState } from "react";
 import { WelcomeBanner } from "../../Elements/welcome-banner";
 import { Button } from "../../Elements/ui/button";
 import { Input } from "../../Elements/ui/input";
-import Header from "../../Elements//header";
+import Header from "../../Elements/header";
 import { Sidebar } from "../../Elements/sidebar";
 import Footer from "../../Elements/footer";
 import { VendorCard } from "../../Elements/vendor-card";

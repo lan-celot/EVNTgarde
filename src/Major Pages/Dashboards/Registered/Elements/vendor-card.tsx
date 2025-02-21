@@ -6,7 +6,7 @@ import { cn } from "../Miscs/utils";
 interface VendorCardProps {
 	name: string;
 	location: string;
-	price: number;
+	price: number | string;
 	ratings: number;
 	image: string;
 	timeSlot: string;
