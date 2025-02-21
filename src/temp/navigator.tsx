@@ -6,8 +6,8 @@ const Navigator = () => {
 	const cards = [
 		{
 			title: "Chapter One Works",
-			icon: "", // Add your icon paths here when available
-			path: "/chapterOne", // All lowercase, consistent with routes
+			icon: "",
+			path: "/chapterOne",
 		},
 		{
 			title: "Chapter Two Works",
