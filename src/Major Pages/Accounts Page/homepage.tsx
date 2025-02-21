@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 "use client"
-=======
 import { useState, useEffect } from "react";
 import "../../Layout/globals.css";
 import { Sun, Moon, Search, Filter } from "lucide-react";
@@ -308,8 +306,6 @@ export default function HomePage() {
 				</div>
 				</footer>
 				</main> 
-				=======
 					</>
 				);
 				}
-				>>>>>>> chapter#1---Raina
