@@ -1,4 +1,6 @@
 import React from "react";
+import AccountPassword from "./Major Pages/Accounts Page/AccountPassword";
+import RegistrationLogin from "./RegistrationLogin";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from './Major Pages/Organize/VendorsPOV/Dashboard';
 import Bookings from './Major Pages/Organize/VendorsPOV/Bookings';
@@ -8,6 +10,7 @@ import Settings from './Major Pages/Organize/VendorsPOV/Settings';
 import Help from './Major Pages/Organize/VendorsPOV/Help';
 
 const App: React.FC = () => {
+	return <RegistrationLogin />;
 	return (
 		<BrowserRouter>
 			<Routes>
