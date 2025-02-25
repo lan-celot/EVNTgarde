@@ -18,3 +18,4 @@ npm i next-themes
 npm install next@latest react@latest react-dom@latest
 npm install @radix-ui/themes
 npm install cmdk
+npm install react-calendar
