@@ -50,9 +50,7 @@ export default function HomePage() {
 						<a href="/login" className="text-white hover:text-yellow-400">
 							Log in
 						</a>
-						<a href="/register" className="text-white hover:text-yellow-400">
-							Register
-						</a>
+						<a href ="/role-selection" className="text-white hover:text-yellow-400">Register</a>
 					</div>
 				</div>
 			</header>

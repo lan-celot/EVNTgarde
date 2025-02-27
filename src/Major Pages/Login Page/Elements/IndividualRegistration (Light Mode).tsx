@@ -1,8 +1,8 @@
 import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import Select from "react-select";
-import Logo from "../assets/OrganizerLogo.png";
-import "../RegistrationLogin.css";
+import Logo from "/src/assets/OrganizerLogo.png"; // Absolute path
+import "../Main Page/RegistrationLogin.css"; 
 
 //For Individual
 

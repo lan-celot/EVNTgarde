@@ -2,7 +2,7 @@ import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import Select from "react-select";
 import Logo from "../assets/OrganizerLogo.png";
-import "../RegistrationLogin.css";
+import "../Main Page/RegistrationLogin.css"; 
 
 // For Organizer
 const countryCodes = [

@@ -9,6 +9,12 @@ import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-re
 import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)"; // Login page
 import Dashboard from "./Major Pages/Dashboards/Registered/Main Page/page"; // Registered user homepage
 
+import RoleSelection from "./Major Pages/Login Page/Elements/RoleSelection (Light Mode)";
+import IndividualRegistration from "./Major Pages/Login Page/Elements/IndividualRegistration (Light Mode)";
+import OrganizerRegistration from "./Major Pages/Login Page/Elements/OrganizerRegistration (Light Mode)";
+import VendorRegistration from "./Major Pages/Login Page/Elements/VendorRegistration (Light Mode)";
+
+
 import DashboardPOV from "./Layout/Sidebar/Dashboard/index"
 import Bookings from "./Layout/Sidebar/Bookings/index";
 import Favorites from "./Layout/Sidebar/Favorites/index";
@@ -34,12 +40,19 @@ const App: React.FC = () => {
 		<Router>
 			<Routes>
 				{/* Public routes */}
+				<Route path="/role-selection" element={<RoleSelection />} />
+				<Route path="/register/individual" element={<IndividualRegistration />} />
+				<Route path="/register/organizer" element={<OrganizerRegistration />} />
+				<Route path="/register/vendor" element={<VendorRegistration />} />
+				
 				<Route
 					path="/"
 					element={
 						isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />
 					}
 				/>
+
+			
 				<Route
 					path="/login"
 					element={
@@ -50,6 +63,8 @@ const App: React.FC = () => {
 						)
 					}
 				/>
+
+		
 
 				{/* Protected routes for authenticated users */}
 				<Route
