@@ -6,6 +6,7 @@ import {
 	Navigate,
 } from "react-router-dom";
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
+import HomePageDark from "./Major Pages/Dashboards/Unregistered/HomePageDark"; //non-registered dark
 import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)"; // Login page
 import Dashboard from "./Major Pages/Dashboards/Registered/Main Page/page"; // Registered user homepage
 
@@ -45,6 +46,9 @@ const App: React.FC = () => {
 				<Route path="/register/organizer" element={<OrganizerRegistration />} />
 				<Route path="/register/vendor" element={<VendorRegistration />} />
 				
+				<Route path="/home-dark" element={<HomePageDark />} />
+
+
 				<Route
 					path="/"
 					element={
