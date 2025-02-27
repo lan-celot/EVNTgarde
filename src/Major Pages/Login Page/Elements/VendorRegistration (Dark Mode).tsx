@@ -1,8 +1,8 @@
 import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import Select from "react-select";
-import Logo from "../assets/OrganizerLogo.png";
-import "../RegistrationLogin.css";
+import Logo from "/src/assets/OrganizerLogo.png"; // Absolute path
+import "../Main Page/RegistrationLogin.css";
 import { useNavigate } from "react-router-dom";
 
 // For Vendor
@@ -241,7 +241,7 @@ const VendorRegistrationDark: React.FC = () => {
                 className="text-blue-600 hover:underline"
                 onClick={(e) => {
                   e.preventDefault(); // Prevents default anchor behavior
-                  navigate("/login"); // Redirects to LoginPage
+                  navigate("/individual-vendor-login-dark"); // Redirects to LoginPage dark
                 }}
               >
                 Log in
