@@ -8,11 +8,20 @@ import {
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
 import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)"; // Login page
 import Dashboard from "./Major Pages/Dashboards/Registered/Main Page/page"; // Registered user homepage
-import Bookings from "./Major Pages/Organize/VendorsPOV/Bookings";
-import Favorites from "./Major Pages/Organize/VendorsPOV/Favorites";
-import Packages from "./Major Pages/Organize/VendorsPOV/Packages";
-import Settings from "./Major Pages/Organize/VendorsPOV/Settings";
-import Help from "./Major Pages/Organize/VendorsPOV/Help";
+
+import DashboardPOV from "./Layout/Sidebar/Dashboard/index"
+import Bookings from "./Layout/Sidebar/Bookings/index";
+import Favorites from "./Layout/Sidebar/Favorites/index";
+import Packages from "./Layout/Sidebar/Packages/index";
+import Settings from "./Layout/Sidebar/Settings/index";
+import Help from "./Layout/Sidebar/Help/index";
+
+import About from "./Layout/Header/About/index";
+import Contact from "./Layout/Header/Contact/index";
+
+import CustomerPage from "./Major Pages/Dashboards/Registered/Main Page/customer/page";
+import OrganizerPage from "./Major Pages/Dashboards/Registered/Main Page/organizer/page";
+import VendorPage from "./Major Pages/Dashboards/Registered/Main Page/vendor/page";
 
 const App: React.FC = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -67,6 +76,20 @@ const App: React.FC = () => {
 					path="/help"
 					element={isAuthenticated ? <Help /> : <Navigate to="/" />}
 				/>
+				
+				{/* For debugging purpose only, need to update and add auth */}
+                <Route path="/customer" element={<CustomerPage />} />
+                <Route path="/organizer" element={<OrganizerPage />} />
+                <Route path="/vendor" element={<VendorPage />} />
+				<Route path="/dashboard-pov" element={<DashboardPOV />} />
+				<Route path="/bookings" element={<Bookings />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/packages" element={<Packages />} />
+				<Route path="/settings" element={<Settings />} />
+				<Route path="/help" element={<Help />} />
+				<Route path="/about" element={<About />} />
+				<Route path="/contact" element={<Contact />} />
+
 			</Routes>
 		</Router>
 	);

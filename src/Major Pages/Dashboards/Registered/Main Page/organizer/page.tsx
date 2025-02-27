@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { WelcomeBanner } from "../../Elements/welcome-banner";
 import { Button } from "../../Elements/ui/button";
@@ -12,6 +10,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 
 export default function Home() {
 	// State for showing more vendors and events
+	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 	const [visibleVendors, setVisibleVendors] = useState(3);
 	const [visibleEvents, setVisibleEvents] = useState(3);
 
@@ -26,15 +25,16 @@ export default function Home() {
 	};
 
 	return (
-		<div className="flex min-h-screen flex-col">
-			{/* Sidebar */}
-			<div className="flex flex-1">
-				<Sidebar />
-
-				{/* Main Content */}
-				<div className="flex flex-col flex-1">
-					<Header />
-					<WelcomeBanner />
+		<div className="flex min-h-screen">
+      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      
+      {/* Dynamic margin based on sidebar state */}
+      <div
+        className="flex flex-1 flex-col transition-all duration-300"
+        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+      >
+        <Header />
+        <WelcomeBanner />
 
 					<div className="container px-4 py-8 sm:px-6 lg:px-8">
 						{/* Find Vendors Section */}
@@ -112,7 +112,6 @@ export default function Home() {
 					<Footer />
 				</div>
 			</div>
-		</div>
 	);
 }
 

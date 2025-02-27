@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
 	Card,
@@ -95,4 +93,4 @@ export default function DashboardPage() {
 		</div>
 	);
 }
-1;
+;
