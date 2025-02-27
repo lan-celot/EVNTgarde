@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { WelcomeBanner } from "../../Elements/welcome-banner";
 import { Button } from "../../Elements/ui/button";
@@ -11,6 +9,7 @@ import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
 
 export default function VendorDashboard() {
+	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 	const [visibleOrganizers, setVisibleOrganizers] = useState(3);
 	const [visibleSupplierRequests, setVisibleSupplierRequests] = useState(3);
 	const [visiblePastEvents, setVisiblePastEvents] = useState(3);
@@ -23,13 +22,16 @@ export default function VendorDashboard() {
 	};
 
 	return (
-		<div className="flex min-h-screen flex-col">
-			<div className="flex flex-1">
-				<Sidebar />
-
-				<div className="flex flex-col flex-1">
-					<Header />
-					<WelcomeBanner />
+		<div className="flex min-h-screen">
+      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      
+      {/* Dynamic margin based on sidebar state */}
+      <div
+        className="flex flex-1 flex-col transition-all duration-300"
+        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+      >
+        <Header />
+        <WelcomeBanner />
 
 					<div className="container px-4 py-8 sm:px-6 lg:px-8">
 						{/* Organizers Looking for Vendors */}
@@ -136,7 +138,6 @@ export default function VendorDashboard() {
 					<Footer />
 				</div>
 			</div>
-		</div>
 	);
 }
 

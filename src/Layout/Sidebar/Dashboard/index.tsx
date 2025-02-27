@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import evntLogo from '../../../../assets/OrganizerLogo.png'; // You'll need to add this logo
+import evntLogo from '@/assets/OrganizerLogo.png'; // You'll need to add this logo
 import { Link } from 'react-router-dom';
 
 export const Sidebar = () => {

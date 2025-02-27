@@ -9,19 +9,19 @@ import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-re
 import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)"; // Login page
 import Dashboard from "./Major Pages/Dashboards/Registered/Main Page/page"; // Registered user homepage
 
-import DashboardPOV from "./Major Pages/Organize/Sidebar/Dashboard/index"
-import Bookings from "./Major Pages/Organize/Sidebar/Bookings/index";
-import Favorites from "./Major Pages/Organize/Sidebar/Favorites/index";
-import Packages from "./Major Pages/Organize/Sidebar/Packages/index";
-import Settings from "./Major Pages/Organize/Sidebar/Settings/index";
-import Help from "./Major Pages/Organize/Sidebar/Help/index";
+import DashboardPOV from "./Layout/Sidebar/Dashboard/index"
+import Bookings from "./Layout/Sidebar/Bookings/index";
+import Favorites from "./Layout/Sidebar/Favorites/index";
+import Packages from "./Layout/Sidebar/Packages/index";
+import Settings from "./Layout/Sidebar/Settings/index";
+import Help from "./Layout/Sidebar/Help/index";
 
-import About from "./Major Pages/Organize/Header/About/index";
-import Contact from "./Major Pages/Organize/Header/Contact/index";
+import About from "./Layout/Header/About/index";
+import Contact from "./Layout/Header/Contact/index";
 
-import CustomerPage from "./Major Pages/Organize/CustomerPOV/page";
-import OrganizerPage from "./Major Pages/Organize/OrganizerPOV/page";
-import VendorPage from "./Major Pages/Organize/VendorsPOV/page";
+import CustomerPage from "./Major Pages/Dashboards/Registered/Main Page/customer/page";
+import OrganizerPage from "./Major Pages/Dashboards/Registered/Main Page/organizer/page";
+import VendorPage from "./Major Pages/Dashboards/Registered/Main Page/vendor/page";
 
 const App: React.FC = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -77,7 +77,7 @@ const App: React.FC = () => {
 					element={isAuthenticated ? <Help /> : <Navigate to="/" />}
 				/>
 				
-
+				{/* For debugging purpose only, need to update and add auth */}
                 <Route path="/customer" element={<CustomerPage />} />
                 <Route path="/organizer" element={<OrganizerPage />} />
                 <Route path="/vendor" element={<VendorPage />} />

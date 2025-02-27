@@ -1,5 +1,4 @@
 import { Card, Flex, Text, Heading, Badge } from "@radix-ui/themes";
-import Image from "next/image";
 
 interface BookingCardProps {
   id: number;
@@ -26,11 +25,10 @@ export function BookingCard({
       <Flex direction="column" gap="3">
         {/* Event Image */}
         <div className="relative h-40 w-full">
-          <Image
+          <img
             src={image}
             alt={eventName}
-            fill
-            className="rounded-lg object-cover"
+            className="rounded-lg object-cover w-full h-full"
           />
         </div>
 

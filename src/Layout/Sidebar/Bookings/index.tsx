@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import evntLogo from '../../../../assets/OrganizerLogo.png';
 import { Sidebar } from '../Dashboard';
 import RequestDetails from './RequestDetails';
 

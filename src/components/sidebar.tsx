@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const sidebarItems = [
-  { title: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+  { title: "Dashboard", icon: LayoutDashboard, href: "/dashboard-pov" },
   { title: "Bookings", icon: CalendarDays, href: "/bookings" },
   { title: "Reviews", icon: Star, href: "/reviews" },
   { title: "Packages", icon: Package, href: "/packages" },

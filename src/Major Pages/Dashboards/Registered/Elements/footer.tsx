@@ -1,5 +1,3 @@
-import Link from "next/link"
-
 export default function Footer() {
   return (
     <footer className="bg-[#2B579A] text-white">
@@ -14,14 +12,14 @@ export default function Footer() {
           <h3 className="mb-4 text-lg font-semibold">Company Info</h3>
           <ul className="space-y-2">
             <li>
-              <Link href="/about" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="/about" className="text-sm text-gray-200 hover:text-yellow-400">
                 About Us
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="/contact" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="/contact" className="text-sm text-gray-200 hover:text-yellow-400">
                 Contact Us
-              </Link>
+              </a>
             </li>
           </ul>
         </div>
@@ -29,19 +27,19 @@ export default function Footer() {
           <h3 className="mb-4 text-lg font-semibold">Categories</h3>
           <ul className="space-y-2">
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Catering & F&B
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Venues & Meeting
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Audio & Design
-              </Link>
+              </a>
             </li>
           </ul>
         </div>
@@ -49,24 +47,24 @@ export default function Footer() {
           <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
           <ul className="space-y-2">
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Facebook
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Instagram
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Twitter
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 YouTube
-              </Link>
+              </a>
             </li>
           </ul>
         </div>
@@ -74,19 +72,19 @@ export default function Footer() {
           <h3 className="mb-4 text-lg font-semibold">Help</h3>
           <ul className="space-y-2">
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Account Support
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Using EventHub
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+              <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
                 Event Planning
-              </Link>
+              </a>
             </li>
           </ul>
         </div>
@@ -95,16 +93,15 @@ export default function Footer() {
         <div className="container flex items-center justify-between px-4 py-6">
           <p className="text-sm text-gray-200">© 2024 EventHub. All rights reserved.</p>
           <div className="flex gap-4">
-            <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+            <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
               Privacy Policy
-            </Link>
-            <Link href="#" className="text-sm text-gray-200 hover:text-yellow-400">
+            </a>
+            <a href="#" className="text-sm text-gray-200 hover:text-yellow-400">
               Terms of Service
-            </Link>
+            </a>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }
-

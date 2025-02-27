@@ -1,5 +1,4 @@
 import { Card, Flex, Text, Heading, Badge } from "@radix-ui/themes";
-import Image from "next/image";
 
 interface OrganizerCardProps {
   id: number;
@@ -24,11 +23,10 @@ export function OrganizerCard({
       <Flex direction="column" gap="3">
         {/* Organizer Image */}
         <div className="relative h-40 w-full">
-          <Image
+          <img
             src={image}
             alt={name}
-            fill
-            className="rounded-lg object-cover"
+            className="h-full w-full rounded-lg object-cover"
           />
         </div>
 
