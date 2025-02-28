@@ -32,32 +32,55 @@ import VendorPage from "./Major Pages/Dashboards/Registered/Main Page/vendor/pag
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [userType, setUserType] = useState<string | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
 
   useEffect(() => {
     const authStatus = localStorage.getItem("isAuthenticated") === "true";
+    const storedUserType = localStorage.getItem("userType");
+
     setIsAuthenticated(authStatus);
+    setUserType(storedUserType);
   }, []);
 
   const login = () => {
     setIsAuthenticated(true);
-    localStorage.setItem("isAuthenticated", "true");
+    const storedUserType = localStorage.getItem("userType");
+    setUserType(storedUserType);
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem("isAuthenticated"); // Clear authentication state
+    setUserType(null);
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("userType");
+  };
+
+  // Function to determine the correct route based on userType
+  const getDashboardRoute = () => {
+    switch (userType) {
+      case "individual":
+        return "/customer";
+      case "organizer":
+        return "/organizer";
+      case "vendor":
+        return "/vendor";
+      default:
+        return "/";
+    }
   };
 
   return (
     <Router>
-        {isAuthenticated && (
-          <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} logout={logout} />
-        )}
+    <Sidebar logout={logout} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 
         {/* Main Content Wrapper */}
         <Routes>
             {/* Public routes */}
+            <Route path="/" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <HomePage />} />
+            <Route path="/login" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <LoginPage login={login} />} />
+
             <Route path="/role-selection" element={<RoleSelection />} />
             <Route path="/register/individual" element={<IndividualRegistration />} />
             <Route path="/register/individual/dark" element={<IndividualRegistrationDark />} />
@@ -72,17 +95,49 @@ const App: React.FC = () => {
               element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />}
             />
             <Route
-              path="/login"
-              element={isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage login={login} />}
+            path="/login"
+            element={isAuthenticated ? <Navigate to={`/${userType}`} /> : <LoginPage login={login} />}
             />
+
 
             <Route path="/individual-vendor-login-dark" element={<LoginPageDark />} />
             <Route path="/role-selection-dark" element={<RoleSelectionDark />} />
 
             {/* Protected routes */}
             <Route
+              path="/customer"
+              element={
+                isAuthenticated && userType === "individual" ? (
+                  <CustomerPage logout={logout} />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route 
+              path="/organizer" 
+              element={
+                isAuthenticated && userType === "organizer" ?( 
+                  <OrganizerPage logout={logout}/> 
+                ): ( 
+                <Navigate to="/" />
+                )
+              } 
+              />
+            <Route
+              path="/vendor"
+              element={
+                isAuthenticated && userType === "vendor" ? (
+                  <VendorPage logout={logout} />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+
+            <Route
               path="/dashboard"
-              element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
+              element={<Dashboard /> }
             />
             <Route
               path="/bookings"
@@ -107,7 +162,7 @@ const App: React.FC = () => {
 
             {/* Debugging and additional pages */}
             <Route path="/customer" element={<CustomerPage logout={logout} />} />
-            <Route path="/organizer" element={<OrganizerPage />} />
+            <Route path="/organizer" element={<OrganizerPage logout={logout}/>} />
             <Route path="/vendor" element={<VendorPage />} />
             <Route path="/dashboard-pov" element={<DashboardPOV />} />
             <Route path="/bookings" element={<Bookings />} />

@@ -20,26 +20,26 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
+  
     try {
-      // Sign in user with Firebase Auth
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const userId = userCredential.user.uid;
-
+  
       // Retrieve user data from Firestore
       const userDoc = await getDoc(doc(db, "users", userId));
       if (!userDoc.exists()) {
         throw new Error("User data not found.");
       }
-
+  
       const userType = userDoc.data().userType;
-
-      // Store authentication status
+  
+      // Store authentication status and userType
       localStorage.setItem("isAuthenticated", "true");
-
+      localStorage.setItem("userType", userType);  // Store userType in localStorage
+  
       // Update App.tsx authentication state
       login();
-
+  
       // Redirect user based on userType
       switch (userType) {
         case "individual":
@@ -60,7 +60,7 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
       <div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden">
