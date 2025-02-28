@@ -73,8 +73,10 @@ const App: React.FC = () => {
 
   return (
     <Router>
-    <Sidebar logout={logout} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-
+      {/* Render Sidebar only for authenticated users */}
+      {isAuthenticated && (
+        <Sidebar logout={logout} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      )}
         {/* Main Content Wrapper */}
         <Routes>
             {/* Public routes */}
