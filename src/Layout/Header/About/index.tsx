@@ -1,20 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/header";
 import {Sidebar} from "@/components/sidebar";
 import Footer from "@/components/footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+
 const About = () => {
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const authStatus = localStorage.getItem("isAuthenticated") === "true";
+    setIsAuthenticated(authStatus);
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col">
-      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
-      
+      {/* Show sidebar only if authenticated */}
+      {isAuthenticated && (
+        <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      )}
+
+      {/*  to remove extra space */}
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
-      >
+        style={{ marginLeft: isAuthenticated ? (isSidebarCollapsed ? "4rem" : "16rem") : "0",
+          width: isAuthenticated ? "auto" : "100%", // Ensure full width when sidebar is hidden
+        }}
+        >
         <Header />
 
         <div className="container px-4 py-8 sm:px-6 lg:px-8">

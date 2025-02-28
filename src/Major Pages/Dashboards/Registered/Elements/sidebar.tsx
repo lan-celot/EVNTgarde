@@ -17,9 +17,11 @@ const sidebarItems = [
 interface SidebarProps {
   isCollapsed: boolean;
   setIsCollapsed: (collapsed: boolean) => void;
+  logout: () => void; 
 }
 
-export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
+
+export function Sidebar({ isCollapsed, setIsCollapsed, logout }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -73,9 +75,10 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
               <button
                 className="flex w-full h-10 items-center gap-3 rounded-lg px-3 text-white transition-colors duration-300 hover:bg-red-600"
                 onClick={() => {
-                  alert("Logging out..."); // Replace with actual logout logic
-                  navigate("/"); // Redirect to homepage or login page
+                  logout(); // Call the logout function
+                  navigate("/"); // Redirect to home page
                 }}
+                
               >
                 <LogOut className="h-5 w-5 shrink-0" />
                 {!isCollapsed && <span>Logout</span>}

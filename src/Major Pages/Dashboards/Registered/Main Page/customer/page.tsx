@@ -8,7 +8,7 @@ import Footer from "../../Elements/footer";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
 
-export default function CustomerDashboard() {
+export default function CustomerDashboard({ logout }: { logout: () => void }) {
 	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 	const [visibleOrganizers, setVisibleOrganizers] = useState(3);
 	const [visibleBookings, setVisibleBookings] = useState(3);
@@ -22,7 +22,7 @@ export default function CustomerDashboard() {
 
 	return (
 		<div className="flex min-h-screen">
-      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+		<Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} logout={logout} />
       
       {/* Dynamic margin based on sidebar state */}
       <div
