@@ -236,9 +236,6 @@ const VendorRegistration: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                {passwordError && (
-                  <p className="text-red-500 text-xs mt-1">{passwordError}</p>
-                )}
 
                 <button
                   type="button"
