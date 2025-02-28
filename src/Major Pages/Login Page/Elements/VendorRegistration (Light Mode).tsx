@@ -1,35 +1,40 @@
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff } from 'lucide-react'
 import type React from "react"
 import { useState, useEffect } from "react"
 import Select from "react-select"
 import Logo from "/src/assets/OrganizerLogo.png"
 import "../Main Page/RegistrationLogin.css"
 import { useNavigate } from "react-router-dom"
+import { registerUser } from "../../../functions/authFunctions"
+import { createUserAccount } from "../../../functions/userAccount"
 
 const countryCodes = [{ code: "+63", flag: "https://flagcdn.com/w40/ph.png", name: "Philippines" }]
 
-const options = [
-  { value: "", label: "Services Offered" },
-  { value: "option1", label: "Option 1" },
-  { value: "option2", label: "Option 2" },
-  { value: "option3", label: "Option 3" },
-]
-
 const VendorRegistration: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState(countryCodes[0])
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const navigate = useNavigate()
+
   const [companyName, setCompanyName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [vendorType, setVendorType] = useState("")
   const [servicesOffered, setServicesOffered] = useState("")
   const [systemPreference, setSystemPreference] = useState("")
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const [passwordError, setPasswordError] = useState("")
   const [confirmPasswordError, setConfirmPasswordError] = useState("")
-  const navigate = useNavigate()
+
+  const options = [
+    { value: "", label: "Please select one" },
+    { value: "Catering", label: "Catering" },
+    { value: "Photography", label: "Photography" },
+    { value: "Event Planning", label: "Event Planning" },
+  ]
 
   const validatePassword = (pass: string): string => {
     if (pass.length < 12) return "Password must be at least 12 characters long."
@@ -51,38 +56,46 @@ const VendorRegistration: React.FC = () => {
     }
   }, [password, confirmPassword])
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setPasswordError(validatePassword(password));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
 
-  if (passwordError || confirmPasswordError) {
-    return;
+    if (!companyName || !phoneNumber || !email || !password || !confirmPassword || !vendorType || !systemPreference) {
+      setError("All fields are required")
+      return
+    }
+
+    if (passwordError) {
+      setError(passwordError)
+      return
+    }
+
+    if (confirmPasswordError) {
+      setError(confirmPasswordError)
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const userData = createUserAccount("vendor", email, {
+        companyName,
+        phoneNumber: `${selectedCountry.code}${phoneNumber}`,
+        vendorType,
+        servicesOffered,
+        systemPreference,
+      })
+
+      await registerUser(email, password, "vendor", userData)
+
+      navigate("/login")
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setIsLoading(false)
+    }
   }
-
-  try {
-    // Create user account in Firebase Authentication
-    const userCredential = await registerUser(email, password);
-    const userId = userCredential.user.uid;
-
-    // Store user data in Firestore
-    await createUserAccount(userId, {
-      companyName,
-      phoneNumber: `${selectedCountry.code}${phoneNumber}`,
-      vendorType,
-      servicesOffered,
-      systemPreference,
-      email,
-      userType: "vendor",
-    });
-
-    alert("Registration successful! Redirecting to login...");
-    navigate("/login");
-  } catch (error: any) {
-    console.error("Registration failed:", error.message);
-    alert("Registration failed: " + error.message);
-  }
-};
-
+}
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
@@ -100,14 +113,7 @@ const VendorRegistration: React.FC = () => {
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700">Company Name</label>
-              <input
-                type="text"
-                placeholder="Enter your company name"
-                className="w-full px-3 py-1.5 border rounded-md text-sm focus:outline-blue-500"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-              />
+              <input type="text" className="w-full border p-2 rounded-md" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
             </div>
 
             <div>
@@ -163,42 +169,22 @@ const VendorRegistration: React.FC = () => {
                     }),
                   }}
                 />
-                <input
-                  type="text"
-                  placeholder="Enter company phone number"
-                  className="w-full px-3 py-1.5 border rounded-md text-sm focus:outline-blue-500"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  required
-                />
+                <input type="text" className="w-full border p-2 rounded-md" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required />
+
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Company E-mail Address</label>
-              <input
-                type="email"
-                placeholder="Enter your company email"
-                className="w-full px-3 py-1.5 border rounded-md text-sm focus:outline-blue-500"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <input type="email" className="w-full border p-2 rounded-md" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Enter Password</label>
               <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter password"
-                  className={`w-full px-3 py-1.5 border rounded-md text-sm focus:outline-blue-500 ${
-                    passwordError ? "border-red-500" : ""
-                  }`}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+              <input type={showPassword ? "text" : "password"} className="w-full border p-2 rounded-md" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              {passwordError && <p className="text-red-500 text-xs mt-1">{passwordError}</p>}
+                 
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"

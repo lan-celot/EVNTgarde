@@ -7,13 +7,14 @@ import { auth, signInWithEmailAndPassword } from "../../../functions/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../functions/firebase";
 
-const LoginPage: React.FC = () => {
+const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,9 +34,15 @@ const LoginPage: React.FC = () => {
 
       const userType = userDoc.data().userType;
 
+      // Store authentication status
+      localStorage.setItem("isAuthenticated", "true");
+
+      // Update App.tsx authentication state
+      login();
+
       // Redirect user based on userType
       switch (userType) {
-        case "customer":
+        case "individual":
           navigate("/customer");
           break;
         case "organizer":

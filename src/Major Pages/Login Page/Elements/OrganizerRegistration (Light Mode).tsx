@@ -97,6 +97,7 @@ const OrganizerRegistration: React.FC = () => {
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
       <div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden">
+      {/* Left Panel */}
         <div className="w-2/5 bg-blue-600 text-white flex flex-col items-center justify-center text-center p-8">
           <img src={Logo || "/placeholder.svg"} className="w-52 mb-6" alt="Logo" />
           <p>Discover tailored events services.</p>
@@ -203,7 +204,7 @@ const OrganizerRegistration: React.FC = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter password"
-                  className={`w-full px-3 py-1.5 border rounded-md text-sm focus:outline-blue-500 ${
+                  className={`w-full px-3 py-1.5 border rounded-md text-sm focus:outline-blue-500"${
                     passwordError ? 'border-red-500' : ''
                   }`}
                   value={password}
@@ -222,7 +223,9 @@ const OrganizerRegistration: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Confirm Password
+              </label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
@@ -239,7 +242,11 @@ const OrganizerRegistration: React.FC = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showConfirmPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                  )}
                 </button>
               </div>
               {confirmPasswordError && <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>}

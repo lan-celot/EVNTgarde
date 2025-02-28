@@ -1,12 +1,8 @@
-import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Sidebar } from "./Major Pages/Dashboards/Registered/Elements/sidebar";
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
-import HomePageDark from "./Major Pages/Dashboards/Unregistered/HomePageDark"; //non-registered dark
+import HomePageDark from "./Major Pages/Dashboards/Unregistered/HomePageDark"; // Non-registered dark
 import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)"; // Login page
 import LoginPageDark from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Dark Mode)"; // Login page
 import Dashboard from "./Major Pages/Dashboards/Registered/Main Page/page"; // Registered user homepage
@@ -36,101 +32,92 @@ import VendorPage from "./Major Pages/Dashboards/Registered/Main Page/vendor/pag
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  useEffect(() => {
+    const authStatus = localStorage.getItem("isAuthenticated") === "true";
+    setIsAuthenticated(authStatus);
+  }, []);
 
   const login = () => {
     setIsAuthenticated(true);
+    localStorage.setItem("isAuthenticated", "true");
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("isAuthenticated"); // Clear authentication state
   };
 
   return (
     <Router>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/role-selection" element={<RoleSelection />} />
-        <Route
-          path="/register/individual"
-          element={<IndividualRegistration />}
-        />
-        <Route
-          path="/register/individual/dark"
-          element={<IndividualRegistrationDark />}
-        />
-        <Route path="/register/organizer" element={<OrganizerRegistration />} />
-        <Route
-          path="/register/organizer/dark"
-          element={<OrganizerRegistrationDark />}
-        />
-        <Route path="/register/vendor" element={<VendorRegistration />} />
-        <Route
-          path="/register/vendor/dark"
-          element={<VendorRegistrationDark />}
-        />
-        <Route path="/home-dark" element={<HomePageDark />} />
+        {isAuthenticated && (
+          <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} logout={logout} />
+        )}
 
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />
-          }
-        />
+        {/* Main Content Wrapper */}
+        <Routes>
+            {/* Public routes */}
+            <Route path="/role-selection" element={<RoleSelection />} />
+            <Route path="/register/individual" element={<IndividualRegistration />} />
+            <Route path="/register/individual/dark" element={<IndividualRegistrationDark />} />
+            <Route path="/register/organizer" element={<OrganizerRegistration />} />
+            <Route path="/register/organizer/dark" element={<OrganizerRegistrationDark />} />
+            <Route path="/register/vendor" element={<VendorRegistration />} />
+            <Route path="/register/vendor/dark" element={<VendorRegistrationDark />} />
+            <Route path="/home-dark" element={<HomePageDark />} />
 
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/dashboard" />
-            ) : (
-              <LoginPage login={login} />
-            )
-          }
-        />
+            <Route
+              path="/"
+              element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />}
+            />
+            <Route
+              path="/login"
+              element={isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage login={login} />}
+            />
 
-        <Route path="/" element={<HomePageDark />} />
-        <Route
-          path="/individual-vendor-login-dark"
-          element={<LoginPageDark />}
-        />
+            <Route path="/individual-vendor-login-dark" element={<LoginPageDark />} />
+            <Route path="/role-selection-dark" element={<RoleSelectionDark />} />
 
-        <Route path="/role-selection-dark" element={<RoleSelectionDark />} />
+            {/* Protected routes */}
+            <Route
+              path="/dashboard"
+              element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/bookings"
+              element={isAuthenticated ? <Bookings /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/favorites"
+              element={isAuthenticated ? <Favorites /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/packages"
+              element={isAuthenticated ? <Packages /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/settings"
+              element={isAuthenticated ? <Settings /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/help"
+              element={isAuthenticated ? <Help /> : <Navigate to="/" />}
+            />
 
-        {/* Protected routes for authenticated users */}
-        <Route
-          path="/dashboard"
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/bookings"
-          element={isAuthenticated ? <Bookings /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/favorites"
-          element={isAuthenticated ? <Favorites /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/packages"
-          element={isAuthenticated ? <Packages /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/settings"
-          element={isAuthenticated ? <Settings /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/help"
-          element={isAuthenticated ? <Help /> : <Navigate to="/" />}
-        />
-
-        {/* For debugging purpose only, need to update and add auth */}
-        <Route path="/customer" element={<CustomerPage />} />
-        <Route path="/organizer" element={<OrganizerPage />} />
-        <Route path="/vendor" element={<VendorPage />} />
-        <Route path="/dashboard-pov" element={<DashboardPOV />} />
-        <Route path="/bookings" element={<Bookings />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/packages" element={<Packages />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/help" element={<Help />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
+            {/* Debugging and additional pages */}
+            <Route path="/customer" element={<CustomerPage logout={logout} />} />
+            <Route path="/organizer" element={<OrganizerPage />} />
+            <Route path="/vendor" element={<VendorPage />} />
+            <Route path="/dashboard-pov" element={<DashboardPOV />} />
+            <Route path="/bookings" element={<Bookings />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/packages" element={<Packages />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
     </Router>
   );
 };

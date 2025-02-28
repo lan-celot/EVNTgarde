@@ -8,12 +8,12 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../functions/firebase";
 
 const LoginPageDark: React.FC = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ const LoginPageDark: React.FC = () => {
     setLoading(true);
 
     try {
-      // Sign in with Firebase Auth
+      // Sign in user with Firebase Auth
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const userId = userCredential.user.uid;
 
@@ -35,7 +35,7 @@ const LoginPageDark: React.FC = () => {
 
       // Redirect user based on userType
       switch (userType) {
-        case "customer":
+        case "individual":
           navigate("/customer");
           break;
         case "organizer":
