@@ -349,12 +349,15 @@ const VendorRegistration: React.FC = () => {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 text-base w-full max-w-md"
+                className={`bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 text-base w-full max-w-md ${
+                  isLoading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={isLoading}
               >
-                Create Account
+                {isLoading ? "Creating Account..." : "Create Account"}
               </button>
             </div>
-
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             <p className="text-center text-sm text-gray-600 mt-2">
               Already have an account?{" "}
               <a
