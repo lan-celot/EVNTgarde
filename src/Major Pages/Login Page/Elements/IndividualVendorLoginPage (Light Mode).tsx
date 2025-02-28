@@ -3,19 +3,57 @@ import React, { useState } from "react";
 import Logo from "../../../assets/OrganizerLogo.png";
 import "../Main Page/RegistrationLogin.css";
 import { useNavigate } from "react-router-dom";
-//For both Individual and Vendor
+import { auth, signInWithEmailAndPassword } from "../../../functions/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../functions/firebase";
 
-interface LoginPageProps {
-  login: () => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ login }) => {
+const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const handleLogin = () => {
-    login(); // Calls the function to update auth state
-    navigate("/dashboard"); // Redirects to logged-in homepage
-  };
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      // Sign in user with Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userId = userCredential.user.uid;
+
+      // Retrieve user data from Firestore
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (!userDoc.exists()) {
+        throw new Error("User data not found.");
+      }
+
+      const userType = userDoc.data().userType;
+
+      // Redirect user based on userType
+      switch (userType) {
+        case "customer":
+          navigate("/customer");
+          break;
+        case "organizer":
+          navigate("/organizer");
+          break;
+        case "vendor":
+          navigate("/vendor");
+          break;
+        default:
+          throw new Error("Invalid user type.");
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
       <div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden">
@@ -27,12 +65,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ login }) => {
 
         <div className="w-3/5 bg-white p-10 flex flex-col justify-center rounded-l-[50px] shadow-md">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Log In</h2>
-          <form className="flex flex-col space-y-4">
+          {error && <p className="text-red-500">{error}</p>}
+          <form className="flex flex-col space-y-4" onSubmit={handleLogin}>
             <label className="text-sm">Enter your email*</label>
             <input
               type="email"
               placeholder="Email"
               className="border p-3 rounded-md"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
 
@@ -42,9 +83,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ login }) => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className="border p-3 w-full rounded-md"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
-
               <button
                 type="button"
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
@@ -60,18 +102,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ login }) => {
               </a>
             </div>
 
-            <label className="flex items-center space-x-2 text-gray-500">
-              <input type="checkbox" />
-              <span>Keep me logged in</span>
-            </label>
-
             <button
               type="submit"
               className="bg-blue-600 text-white p-3 rounded-full font-bold hover:bg-blue-700"
-              onClick={handleLogin}
+              disabled={loading}
             >
-              {" "}
-              Log in{" "}
+              {loading ? "Logging in..." : "Log in"}
             </button>
 
             <div className="text-center text-sm">
@@ -80,8 +116,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ login }) => {
                 href="#"
                 className="text-blue-600"
                 onClick={(e) => {
-                  e.preventDefault(); // Prevent default anchor behavior
-                  navigate("/role-selection"); // Navigate to RoleSelection page
+                  e.preventDefault();
+                  navigate("/role-selection");
                 }}
               >
                 Sign up

@@ -5,8 +5,6 @@ import Select from "react-select"
 import Logo from "/src/assets/OrganizerLogo.png"
 import "../Main Page/RegistrationLogin.css"
 import { useNavigate } from "react-router-dom"
-import { registerUser } from "../../../functions/authFunctions"
-import { createUserAccount } from "../../../functions/userAccount"
 
 const countryCodes = [{ code: "+63", flag: "https://flagcdn.com/w40/ph.png", name: "Philippines" }]
 
@@ -53,14 +51,38 @@ const VendorRegistration: React.FC = () => {
     }
   }, [password, confirmPassword])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Add your form submission logic here
-    if (!passwordError && !confirmPasswordError) {
-      console.log("Form submitted successfully")
-      // Navigate to the next page or show success message
-    }
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setPasswordError(validatePassword(password));
+
+  if (passwordError || confirmPasswordError) {
+    return;
   }
+
+  try {
+    // Create user account in Firebase Authentication
+    const userCredential = await registerUser(email, password);
+    const userId = userCredential.user.uid;
+
+    // Store user data in Firestore
+    await createUserAccount(userId, {
+      companyName,
+      phoneNumber: `${selectedCountry.code}${phoneNumber}`,
+      vendorType,
+      servicesOffered,
+      systemPreference,
+      email,
+      userType: "vendor",
+    });
+
+    alert("Registration successful! Redirecting to login...");
+    navigate("/login");
+  } catch (error: any) {
+    console.error("Registration failed:", error.message);
+    alert("Registration failed: " + error.message);
+  }
+};
+
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">

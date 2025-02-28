@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
   createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,  
   signInWithPopup, 
   GoogleAuthProvider, 
   OAuthProvider, 
@@ -33,8 +34,8 @@ export {
   googleProvider,
   yahooProvider,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signInWithPopup,
   type UserCredential,
   signOut
 };
-
