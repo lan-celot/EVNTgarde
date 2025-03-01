@@ -1,4 +1,3 @@
-"use client"
 import { useState, useEffect } from "react";
 import "../../Layout/globals.css";
 import { Bell, Sun, Moon, Search, Filter } from "lucide-react";
@@ -14,11 +13,16 @@ export default function HomePage() {
 		<>
 		  {/* Header */}
 		  <header className="sticky top-0 z-50 w-full bg-[#2B579A] text-white dark:bg-[#1E3A6D]">
-				<div className="w-full px-8 flex h-14 items-center justify-between gap-6">
+				<div className="w-full px-8 flex h-14 items-center justify-between">
+					{/* Left section - Logo */}
+					<div className="flex-1">
 					<a href="/" className="flex items-center gap-2">
-					<img src="../../src/assets/OrganizerLogo.png" alt="Logo" className="h-8 w-auto object-contain" />
+						<img src="../../src/assets/OrganizerLogo.png" alt="Logo" className="h-8 w-auto object-contain" />
 					</a>
-					<nav className="hidden md:block">
+					</div>
+
+					{/* Center section - Navigation */}
+					<nav className="hidden md:flex flex-1 justify-center">
 					<ul className="flex items-center space-x-8">
 						{["Home", "About", "Book"].map((item, index) => (
 						<li key={index}>
@@ -32,7 +36,9 @@ export default function HomePage() {
 						))}
 					</ul>
 					</nav>
-					<div className="flex items-center gap-4">
+
+					{/* Right section - User actions */}
+					<div className="flex-1 flex items-center justify-end gap-4">
 					<button className="p-2 text-white hover:text-gray-200 relative">
 						<Bell className="h-5 w-5" />
 						<span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
@@ -190,135 +196,62 @@ export default function HomePage() {
         </section>
 
 		{/* Footer */}
-			<footer className=" bg-[#2B579A] text-white dark:bg-[rgb(30,58,109)] py-4 flex flex-col items-center px-6">
-			<div className="w-full flex flex-wrap justify-evenly text-left gap-50">
-				<div className="flex flex-col items-start ml-4 mb-4">
-					<img 
-					src="../../src/assets/Organizerlogo.png" 
-					alt="Logo" 
-					className="h-20 w-auto"
-					/>
-					<span className="text-sm font-bold mt-4 tracking-wide text-gray-200">
-					Your next successful event starts here
-					</span>
-				</div>
-					<div className="flex-1 flex justify-start space-x-8 flex-wrap">
-					
-					{/* Company Info */}
-					<div className="min-w-[150px]">
-					<div className="md:col-span-1">
-						<h4 className="font-semibold mb-2 text-sm">Company Info</h4>
-						<ul className="space-y-1">
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							About Us
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Contact Us
-							</a>
-						</li>
-						</ul>
-					</div>
-					</div>
-
-					{/* Categories */}
-					<div className="min-w-[150px]">
-					<div className="md:col-span-1">
-						<h4 className="font-semibold mb-2 text-sm">Categories</h4>
-						<ul className="space-y-1">
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Concerts & Gigs
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Festivals & Lifestyle
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Business & Networking
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Food & Drinks
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Performing Arts
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Workshops, Conferences & Classes
-							</a>
-						</li>
-						</ul>
-					</div>
-					</div>
-
-					{/* Follow Us */}
-					<div className="md:col-span-1">
-						<h4 className="font-semibold mb-2 text-sm">Follow Us</h4>
-						<ul className="space-y-1">
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Facebook
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Instagram
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Twitter
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							YouTube
-							</a>
-						</li>
-						</ul>
-					</div>
-
-					{/* Help */}
-					<div className="md:col-span-1">
-						<h4 className="font-semibold mb-2 text-sm">Help</h4>
-						<ul className="space-y-1">
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Account Support
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Listing Events
-							</a>
-						</li>
-						<li>
-							<a href="#" className="hover:underline text-xs">
-							Event Ticketing
-							</a>
-						</li>
-						</ul>
-					</div>
-					</div>
+		<footer className="bg-[#2B579A] text-white dark:bg-[rgb(30,58,109)] py-8">
+		<div className="container mx-auto pl-4 pr-8"> {/* Reduced left padding, kept right padding */}
+			<div className="flex flex-wrap">
+			<div className="w-full md:w-1/3 mb-8 md:mb-0 pr-8"> {/* Added right padding */}
+				<img 
+				src="../../src/assets/Organizerlogo.png" 
+				alt="Logo" 
+				className="h-28 w-auto mb-4"
+				/>
+				<span className="text-sm font-bold tracking-wide text-gray-200 block">
+				Your next successful event starts here
+				</span>
+			</div>
+			
+			<div className="w-full md:w-2/3 flex flex-wrap">
+				{/* Company Info */}
+				<div className="w-1/2 sm:w-1/3 mb-6 pr-4">
+				<h4 className="font-semibold mb-4 text-base">Company Info</h4>
+				<ul className="space-y-2">
+					<li><a href="#" className="hover:underline text-sm">About Us</a></li>
+					<li><a href="#" className="hover:underline text-sm">Book now</a></li>
+				</ul>
 				</div>
 
-				{/* Footer Copyright Section */}
-				<div className="mt-8 border-t border-blue-500 pt-4 text-center text-sm w-full">
-					© {new Date().getFullYear()} Platform. All rights reserved.
+				{/* Categories */}
+				<div className="w-1/2 sm:w-1/3 mb-6 pr-4">
+				<h4 className="font-semibold mb-4 text-base">Categories</h4>
+				<ul className="space-y-2">
+					<li><a href="#" className="hover:underline text-sm">Concerts & Gigs</a></li>
+					<li><a href="#" className="hover:underline text-sm">Festivals & Lifestyle</a></li>
+					<li><a href="#" className="hover:underline text-sm">Business & Networking</a></li>
+					<li><a href="#" className="hover:underline text-sm">Food & Drinks</a></li>
+					<li><a href="#" className="hover:underline text-sm">Performing Arts</a></li>
+					<li><a href="#" className="hover:underline text-sm">Workshops & Classes</a></li>
+				</ul>
 				</div>
-				</footer>
-				</main> 
-					</>
-				);
-				}
+
+				{/* Follow Us */}
+				<div className="w-1/2 sm:w-1/3 mb-6">
+				<h4 className="font-semibold mb-4 text-base">Follow Us</h4>
+				<ul className="space-y-2">
+					<li><a href="#" className="hover:underline text-sm">Facebook</a></li>
+					<li><a href="#" className="hover:underline text-sm">Instagram</a></li>
+					<li><a href="#" className="hover:underline text-sm">Twitter</a></li>
+				</ul>
+				</div>
+			</div>
+			</div>
+
+			{/* Footer Copyright Section */}
+			<div className="mt-8 border-t border-blue-500 pt-6 text-center text-sm">
+			© {new Date().getFullYear()} Platform. All rights reserved.
+			</div>
+		</div>
+		</footer>
+		</main> 
+		</>
+		);
+	}
