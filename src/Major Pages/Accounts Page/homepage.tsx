@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react";
 import "../../Layout/globals.css";
-import { Sun, Moon, Search, Filter } from "lucide-react";
+import { Bell, Sun, Moon, Search, Filter } from "lucide-react";
 
 export default function HomePage() {
 	const [darkMode, setDarkMode] = useState(false);
@@ -13,34 +13,47 @@ export default function HomePage() {
 	return (
 		<>
 		  {/* Header */}
-				<header className="sticky top-0 z-50 w-full bg-[#2B579A] text-white dark:bg-[#1E3A6D]">
+		  <header className="sticky top-0 z-50 w-full bg-[#2B579A] text-white dark:bg-[#1E3A6D]">
 				<div className="w-full px-8 flex h-14 items-center justify-between gap-6">
 					<a href="/" className="flex items-center gap-2">
-						<img src="../../src/assets/OrganizerLogo.png" alt="Logo" className=" h-8 w-auto object-contain" />
+					<img src="../../src/assets/OrganizerLogo.png" alt="Logo" className="h-8 w-auto object-contain" />
 					</a>
 					<nav className="hidden md:block">
-						<ul className="flex space-x-8">
-						{["Home", "About", "Contact"].map((item, index) => (
-							<li key={index}>
-							<a href={`/${item.toLowerCase()}`} className="text-white hover:text-yellow-400">
-								{item}
+					<ul className="flex items-center space-x-8">
+						{["Home", "About", "Book"].map((item, index) => (
+						<li key={index}>
+							<a 
+							href={`/${item.toLowerCase()}`} 
+							className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
+							>
+							{item}
 							</a>
-							</li>
+						</li>
 						))}
-						</ul>
+					</ul>
 					</nav>
 					<div className="flex items-center gap-4">
-						<button className="p-2 text-white hover:text-gray-200" onClick={() => setDarkMode(!darkMode)}>
+					<button className="p-2 text-white hover:text-gray-200 relative">
+						<Bell className="h-5 w-5" />
+						<span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+					</button>
+					<button className="p-2 text-white hover:text-gray-200" onClick={() => setDarkMode(!darkMode)}>
 						{darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-						</button>
-						<a href="/login" className="text-white hover:text-yellow-400">
+					</button>
+					<a 
+						href="/login" 
+						className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
+					>
 						Log in
-						</a>
-						<a href="/register" className="text-white hover:text-yellow-400">
+					</a>
+					<a 
+						href="/register" 
+						className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
+					>
 						Register
-						</a>
+					</a>
 					</div>
-					</div>
+				</div>
 				</header>
 	
 			<main className="w-full">
