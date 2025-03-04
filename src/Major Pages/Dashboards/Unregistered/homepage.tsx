@@ -1,15 +1,30 @@
-"use client";
 import { useState, useEffect } from "react";
-import "../../Layout/globals.css";
+import { useNavigate } from "react-router-dom";
+import "../../../Layout/globals.css";
 import { Bell, Sun, Moon, Search, Filter } from "lucide-react";
 
 export default function HomePage() {
 	const [darkMode, setDarkMode] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		document.documentElement.classList.toggle("dark", darkMode);
 	}, [darkMode]);
 
+	useEffect(() => {
+		const handleClick = (event: MouseEvent) => {
+		  const target = event.target as HTMLElement;
+		  
+		  if (target.closest("a") && !["About", "Register"].includes(target.textContent?.trim() || "")) {
+			event.preventDefault();
+			navigate("/login");
+		  }
+		};
+	  
+		document.addEventListener("click", handleClick);
+		return () => document.removeEventListener("click", handleClick);
+	  }, [navigate]);
+	  
 	return (
 		<>
 		  {/* Header */}
@@ -38,7 +53,7 @@ export default function HomePage() {
 					</ul>
 					</nav>
 
-					{/* Right section*/}
+					{/* Right section - User actions */}
 					<div className="flex-1 flex items-center justify-end gap-4">
 					<button className="p-2 text-white hover:text-gray-200 relative">
 						<Bell className="h-5 w-5" />
