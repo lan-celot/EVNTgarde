@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { Sidebar } from "./Major Pages/Dashboards/Registered/Elements/sidebar";
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
-import HomePageDark from "./Major Pages/Dashboards/Unregistered/HomePageDark"; // Non-registered dark
+import HomePageDark from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered dark
 import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)"; // Login page
 import LoginPageDark from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Dark Mode)"; // Login page
-import Dashboard from "./Major Pages/Dashboards/Registered/Main Page/page"; // Registered user homepage
 
 import RoleSelection from "./Major Pages/Login Page/Elements/RoleSelection (Light Mode)";
 import RoleSelectionDark from "./Major Pages/Login Page/Elements/RoleSelection (Dark Mode)";
@@ -16,25 +14,40 @@ import OrganizerRegistrationDark from "./Major Pages/Login Page/Elements/Organiz
 import VendorRegistration from "./Major Pages/Login Page/Elements/VendorRegistration (Light Mode)";
 import VendorRegistrationDark from "./Major Pages/Login Page/Elements/VendorRegistration (Dark Mode)";
 
-import DashboardPOV from "./Layout/Sidebar/Dashboard/index";
-import Bookings from "./Layout/Sidebar/Bookings/index";
-import Favorites from "./Layout/Sidebar/Favorites/index";
-import Packages from "./Layout/Sidebar/Packages/index";
-import Settings from "./Layout/Sidebar/Settings/index";
-import Help from "./Layout/Sidebar/Help/index";
+/* CUSTOMER ROUTES */
+import About_customer from "./Major Pages/Dashboards/Registered/Main Page/customer/Header/About/index";
+import Book_customer from "./Major Pages/Dashboards/Registered/Main Page/customer/Header/Book/index";
+import Bookings_customer from "./Major Pages/Dashboards/Registered/Main Page/customer/Sidebar/Bookings/index";
+import RSVP_customer from "./Major Pages/Dashboards/Registered/Main Page/customer/Sidebar/RSVP/index";
+import Reviews_customer from "./Major Pages/Dashboards/Registered/Main Page/customer/Sidebar/Reviews/index";
+import Settings_customer from "./Major Pages/Dashboards/Registered/Main Page/customer/Sidebar/Settings/index";
 
-import About from "./Layout/Header/About/index";
-import Contact from "./Layout/Header/Contact/index";
+/* ORGANIZER ROUTES */
+import About_organizer from "./Major Pages/Dashboards/Registered/Main Page/organizer/Header/About/index";
+import Book_organizer from "./Major Pages/Dashboards/Registered/Main Page/organizer/Header/Book/index";
+import Bookings_organizer from "./Major Pages/Dashboards/Registered/Main Page/organizer/Sidebar/Bookings/index";
+import Dashboard_organizer from "./Major Pages/Dashboards/Registered/Main Page/organizer/Sidebar/Dashboard/index";
+import RSVP_organizer from "./Major Pages/Dashboards/Registered/Main Page/organizer/Sidebar/RSVP/index";
+import Reviews_organizer from "./Major Pages/Dashboards/Registered/Main Page/organizer/Sidebar/Reviews/index";
+
+/* VENDOR ROUTES */
+import About_vendor from "./Major Pages/Dashboards/Registered/Main Page/vendor/Header/About/index";
+import Book_vendor from "./Major Pages/Dashboards/Registered/Main Page/vendor/Header/Book/index";
+import Bookings_vendor from "./Major Pages/Dashboards/Registered/Main Page/vendor/Sidebar/Bookings/index";
+import Dashboard_vendor from "./Major Pages/Dashboards/Registered/Main Page/vendor/Sidebar/Dashboard/index";
+import Reviews_vendor from "./Major Pages/Dashboards/Registered/Main Page/vendor/Sidebar/Reviews/index";
+import Settings_vendor from "./Major Pages/Dashboards/Registered/Main Page/vendor/Sidebar/Settings/index";
+import Track_vendor from "./Major Pages/Dashboards/Registered/Main Page/vendor/Sidebar/Track/index";
+import Usermanagement_vendor from "./Major Pages/Dashboards/Registered/Main Page/vendor/Sidebar/Usermanagement/index";
 
 import CustomerPage from "./Major Pages/Dashboards/Registered/Main Page/customer/page";
+import OrganizerDetails from "./Major Pages/Dashboards/Registered/Main Page/customer/OrganizerDetails";
 import OrganizerPage from "./Major Pages/Dashboards/Registered/Main Page/organizer/page";
 import VendorPage from "./Major Pages/Dashboards/Registered/Main Page/vendor/page";
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
 
   useEffect(() => {
     const authStatus = localStorage.getItem("isAuthenticated") === "true";
@@ -73,108 +86,81 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      {/* Render Sidebar only for authenticated users */}
-      {isAuthenticated && (
-        <Sidebar logout={logout} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-      )}
-        {/* Main Content Wrapper */}
-        <Routes>
-            {/* Public routes */}
-            <Route path="/" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <HomePage />} />
-            <Route path="/login" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <LoginPage login={login} />} />
+      {/* Main Content Wrapper */}
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <HomePage />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <LoginPage login={login} />} />
+        <Route path="/home-dark" element={<HomePageDark />} />
+        <Route path="/individual-vendor-login-dark" element={<LoginPageDark />} />
+        <Route path="/role-selection" element={<RoleSelection />} />
+        <Route path="/role-selection-dark" element={<RoleSelectionDark />} />
+        <Route path="/register/individual" element={<IndividualRegistration />} />
+        <Route path="/register/individual/dark" element={<IndividualRegistrationDark />} />
+        <Route path="/register/organizer" element={<OrganizerRegistration />} />
+        <Route path="/register/organizer/dark" element={<OrganizerRegistrationDark />} />
+        <Route path="/register/vendor" element={<VendorRegistration />} />
+        <Route path="/register/vendor/dark" element={<VendorRegistrationDark />} />
 
-            <Route path="/role-selection" element={<RoleSelection />} />
-            <Route path="/register/individual" element={<IndividualRegistration />} />
-            <Route path="/register/individual/dark" element={<IndividualRegistrationDark />} />
-            <Route path="/register/organizer" element={<OrganizerRegistration />} />
-            <Route path="/register/organizer/dark" element={<OrganizerRegistrationDark />} />
-            <Route path="/register/vendor" element={<VendorRegistration />} />
-            <Route path="/register/vendor/dark" element={<VendorRegistrationDark />} />
-            <Route path="/home-dark" element={<HomePageDark />} />
+        {/* Protected routes for authenticated users */}
+        <Route
+          path="/customer"
+          element={
+            isAuthenticated && userType === "individual" ? (
+              <CustomerPage logout={logout} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/organizer"
+          element={
+            isAuthenticated && userType === "organizer" ? (
+              <OrganizerPage logout={logout} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/vendor"
+          element={
+            isAuthenticated && userType === "vendor" ? (
+              <VendorPage logout={logout} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route path="/organizers/:id" element={<OrganizerDetails />} />
 
-            <Route
-              path="/"
-              element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />}
-            />
-            <Route
-            path="/login"
-            element={isAuthenticated ? <Navigate to={`/${userType}`} /> : <LoginPage login={login} />}
-            />
+        {/* CUSTOMER ROUTES */}
+        <Route path="/customer/about" element={<About_customer />} />
+        <Route path="/customer/book" element={<Book_customer />} />
+        <Route path="/customer/bookings" element={<Bookings_customer />} />
+        <Route path="/customer/RSVP" element={<RSVP_customer />} />
+        <Route path="/customer/reviews" element={<Reviews_customer />} />
+        <Route path="/customer/settings" element={<Settings_customer />} />
 
+        {/* ORGANIZER ROUTES */}
+        <Route path="/organizer/about" element={<About_organizer />} />
+        <Route path="/organizer/book" element={<Book_organizer />} />
+        <Route path="/organizer/bookings" element={<Bookings_organizer />} />
+        <Route path="/organizer/dashboard" element={<Dashboard_organizer />} />
+        <Route path="/organizer/RSVP" element={<RSVP_organizer />} />
+        <Route path="/organizer/reviews" element={<Reviews_organizer />} />
 
-            <Route path="/individual-vendor-login-dark" element={<LoginPageDark />} />
-            <Route path="/role-selection-dark" element={<RoleSelectionDark />} />
-
-            {/* Protected routes */}
-            <Route
-              path="/customer"
-              element={
-                isAuthenticated && userType === "individual" ? (
-                  <CustomerPage logout={logout} />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
-            <Route 
-              path="/organizer" 
-              element={
-                isAuthenticated && userType === "organizer" ?( 
-                  <OrganizerPage logout={logout}/> 
-                ): ( 
-                <Navigate to="/" />
-                )
-              } 
-              />
-            <Route
-              path="/vendor"
-              element={
-                isAuthenticated && userType === "vendor" ? (
-                  <VendorPage logout={logout} />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
-
-            <Route
-              path="/dashboard"
-              element={<Dashboard /> }
-            />
-            <Route
-              path="/bookings"
-              element={isAuthenticated ? <Bookings /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/favorites"
-              element={isAuthenticated ? <Favorites /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/packages"
-              element={isAuthenticated ? <Packages /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/settings"
-              element={isAuthenticated ? <Settings /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/help"
-              element={isAuthenticated ? <Help /> : <Navigate to="/" />}
-            />
-
-            {/* Debugging and additional pages */}
-            <Route path="/customer" element={<CustomerPage logout={logout} />} />
-            <Route path="/organizer" element={<OrganizerPage logout={logout}/>} />
-            <Route path="/vendor" element={<VendorPage />} />
-            <Route path="/dashboard-pov" element={<DashboardPOV />} />
-            <Route path="/bookings" element={<Bookings />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/packages" element={<Packages />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
+        {/* VENDOR ROUTES */}
+        <Route path="/vendor/about" element={<About_vendor />} />
+        <Route path="/vendor/book" element={<Book_vendor />} />
+        <Route path="/vendor/bookings" element={<Bookings_vendor />} />
+        <Route path="/vendor/reviews" element={<Reviews_vendor />} />
+        <Route path="/vendor/dashboard" element={<Dashboard_vendor />} />
+        <Route path="/vendor/settings" element={<Settings_vendor />} />
+        <Route path="/vendor/track" element={<Track_vendor />} />
+        <Route path="/vendor/usermanagement" element={<Usermanagement_vendor />} />
+      </Routes>
     </Router>
   );
 };

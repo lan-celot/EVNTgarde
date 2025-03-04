@@ -1,14 +1,11 @@
 import { useState } from "react";
-import { WelcomeBanner } from "../../Elements/welcome-banner";
-import { Button } from "../../Elements/ui/button";
-import { Input } from "../../Elements/ui/input";
-import Header from "../../Elements//header";
-import { Sidebar } from "../../Elements/sidebar";
-import Footer from "../../Elements/footer";
+import { Button, Input } from "../../Elements/ui/combined-ui";
+import { Sidebar } from "../../Elements/sidebar-organizer";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
+import CombinedLayout from "../../Elements/combined-layout";
 
-export default function Home({ logout }: { logout: () => void }){
+export default function Home() {
 	// State for showing more vendors and events
 	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 	const [visibleVendors, setVisibleVendors] = useState(3);
@@ -26,16 +23,15 @@ export default function Home({ logout }: { logout: () => void }){
 
 	return (
 		<div className="flex min-h-screen">
-      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} logout={logout}/>
+      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
       
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
         style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
       >
-        <Header />
-        <WelcomeBanner />
 
+                <CombinedLayout>
 					<div className="container px-4 py-8 sm:px-6 lg:px-8">
 						{/* Find Vendors Section */}
 						<div className="mb-12">
@@ -107,9 +103,7 @@ export default function Home({ logout }: { logout: () => void }){
 							)}
 						</div>
 					</div>
-
-					{/* Footer */}
-					<Footer />
+					</CombinedLayout>
 				</div>
 			</div>
 	);
