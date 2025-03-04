@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
 import HomePageDark from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered dark
+import AboutLoggedOut from "./Major Pages/Dashboards/Unregistered/about-loggedout"
 import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)"; // Login page
 import LoginPageDark from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Dark Mode)"; // Login page
 
@@ -101,6 +102,7 @@ const App: React.FC = () => {
         <Route path="/register/organizer/dark" element={<OrganizerRegistrationDark />} />
         <Route path="/register/vendor" element={<VendorRegistration />} />
         <Route path="/register/vendor/dark" element={<VendorRegistrationDark />} />
+        <Route path="/about" element={<AboutLoggedOut />} />
 
         {/* Protected routes for authenticated users */}
         <Route

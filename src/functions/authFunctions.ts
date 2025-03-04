@@ -5,8 +5,22 @@ import {
   setPersistence,
   browserLocalPersistence,
   browserSessionPersistence,
-  signOut,
+  signOut, 
+  getAuth,
 } from "firebase/auth"
+import { db } from "./firebase";  
+import { collection, query, where, getDocs } from "firebase/firestore";
+
+
+
+
+export const checkIfUserExists = async (email: string) => {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, where("email", "==", email));
+  const querySnapshot = await getDocs(q);
+
+  return !querySnapshot.empty;
+};
 
 const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000 // 30 days in milliseconds
 
@@ -42,21 +56,23 @@ export const loginWithProvider = async (provider: any, rememberMe: boolean) => {
   }
 }
 
-export const logoutUser = async () => {
+export const logout = async (): Promise<void> => {
   try {
-    await signOut(auth)
-    localStorage.removeItem("loginTimestamp")
+    const auth = getAuth();
+    await signOut(auth);
+    window.location.href = "/"; // Redirect to homepage or login page
   } catch (error) {
-    console.error("Logout error:", error)
+    console.error("Logout error:", error);
   }
-}
+};
+
 
 export const checkSessionExpiry = () => {
   const loginTimestamp = localStorage.getItem("loginTimestamp")
   if (loginTimestamp) {
     const elapsedTime = Date.now() - Number.parseInt(loginTimestamp, 10)
     if (elapsedTime > SESSION_DURATION) {
-      logoutUser()
+      logout();
       return true // Session expired
     }
   }

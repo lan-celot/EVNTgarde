@@ -4,6 +4,7 @@ import { Sidebar } from "../../Elements/sidebar-organizer";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
 import CombinedLayout from "../../Elements/combined-layout";
+import { logout } from "@/functions/authFunctions";
 
 export default function Home() {
 	// State for showing more vendors and events
@@ -20,10 +21,11 @@ export default function Home() {
 	const handleLoadMoreEvents = () => {
 		setVisibleEvents((prev) => prev + 3); // Show 3 more past events
 	};
+	  
 
 	return (
 		<div className="flex min-h-screen">
-      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+		<Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} logout={logout} />
       
       {/* Dynamic margin based on sidebar state */}
       <div
