@@ -3,7 +3,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import Select from "react-select"
 import Logo from "/src/assets/OrganizerLogo.png"
-import "../Main Page/RegistrationLogin.css"
+import "../Main Page/RegistrationLogin.css";
 import { useNavigate } from "react-router-dom"
 import { registerUser } from "../../../functions/authFunctions"
 import { createUserAccount } from "../../../functions/userAccount"

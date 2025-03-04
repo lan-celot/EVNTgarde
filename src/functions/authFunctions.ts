@@ -7,6 +7,17 @@ import {
   browserSessionPersistence,
   signOut,
 } from "firebase/auth"
+import { db } from "./firebase";  
+import { collection, query, where, getDocs } from "firebase/firestore";
+
+
+export const checkIfUserExists = async (email: string) => {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, where("email", "==", email));
+  const querySnapshot = await getDocs(q);
+
+  return !querySnapshot.empty;
+};
 
 const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000 // 30 days in milliseconds
 
