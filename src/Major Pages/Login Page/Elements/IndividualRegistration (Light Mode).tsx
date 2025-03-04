@@ -50,7 +50,7 @@ const SoloRegistration: React.FC = () => {
     e.preventDefault()
     setError("")
 
-    if (!companyName || !phoneNumber || !email || !password || !confirmPassword) {
+    if (!companyName || !email || !password || !confirmPassword) {
       setError("All fields are required")
       return
     }

@@ -92,8 +92,8 @@ const App: React.FC = () => {
         {/* Public routes */}
         <Route path="/" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <HomePage />} />
         <Route path="/login" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <LoginPage login={login} />} />
+        <Route path="/login-dark" element={isAuthenticated ? <Navigate to={getDashboardRoute()} /> : <LoginPageDark login={login} />} />
         <Route path="/home-dark" element={<HomePageDark />} />
-        <Route path="/individual-vendor-login-dark" element={<LoginPageDark />} />
         <Route path="/role-selection" element={<RoleSelection />} />
         <Route path="/role-selection-dark" element={<RoleSelectionDark />} />
         <Route path="/register/individual" element={<IndividualRegistration />} />
