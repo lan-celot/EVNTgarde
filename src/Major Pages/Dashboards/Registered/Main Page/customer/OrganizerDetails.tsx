@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import "../../../../../Layout/globals.css";
 import OrganizerLogo from "../../../../../assets/OrganizerLogo.png";
-import BookingModal from './BookingModal';
+import BookingModal from './OrganizerDetailsBooking/BookingModal';
 
 const organizers = [
     {

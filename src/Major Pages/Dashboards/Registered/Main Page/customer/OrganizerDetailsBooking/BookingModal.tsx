@@ -21,7 +21,9 @@ export default function BookingModal({ isOpen, onClose, organizerName }: Booking
     organizationName: '',
     organizationAddress: '',
     email: '',
-    contactNo: ''
+    contactNo: '',
+    startDate: '',
+    endDate: ''
   });
 
   const [showPreview, setShowPreview] = useState(false);
@@ -159,6 +161,8 @@ export default function BookingModal({ isOpen, onClose, organizerName }: Booking
                   <input
                     type="date"
                     className="w-full p-2 border rounded-md"
+                    value={eventDetails.startDate}
+                    onChange={(e) => setEventDetails({ ...eventDetails, startDate: e.target.value })}
                   />
                 </div>
                 <div>
@@ -166,6 +170,8 @@ export default function BookingModal({ isOpen, onClose, organizerName }: Booking
                   <input
                     type="date"
                     className="w-full p-2 border rounded-md"
+                    value={eventDetails.endDate}
+                    onChange={(e) => setEventDetails({ ...eventDetails, endDate: e.target.value })}
                   />
                 </div>
               </div>
