@@ -1,25 +1,24 @@
-"use client";
-
-import { useLocation, useNavigate } from "react-router-dom";
-import { CalendarDays, Star, Package, Settings, LogOut, Menu } from "lucide-react";
-import { Button } from "./ui/combined-ui";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/combined-ui";
+import { useLocation, useNavigate } from "react-router-dom"
+import { CalendarDays, Star, Package, Settings, LogOut, Menu } from "lucide-react"
+import { Button } from "./ui/combined-ui"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/combined-ui"
 
 const sidebarItems = [
   { title: "Bookings", icon: CalendarDays, href: "/customer/bookings" },
   { title: "RSVP", icon: Package, href: "/customer/RSVP" },
   { title: "Reviews", icon: Star, href: "/customer/reviews" },
   { title: "Settings", icon: Settings, href: "/customer/settings" },
-];
+]
 
 interface SidebarProps {
-  isCollapsed: boolean;
-  setIsCollapsed: (collapsed: boolean) => void;
+  isCollapsed: boolean
+  setIsCollapsed: (collapsed: boolean) => void
+  logout: () => void // Add logout prop
 }
 
-export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
-  const location = useLocation();
-  const navigate = useNavigate();
+export function Sidebar({ isCollapsed, setIsCollapsed, logout }: SidebarProps) {
+  const location = useLocation()
+  const navigate = useNavigate()
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -70,10 +69,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
             <TooltipTrigger asChild>
               <button
                 className="flex w-full h-10 items-center gap-3 rounded-lg px-3 text-white transition-colors duration-300 hover:bg-red-600"
-                onClick={() => {
-                  alert("Logging out..."); // Replace with actual logout logic
-                  navigate("/"); // Redirect to homepage or login page
-                }}
+                onClick={logout} // Use the passed logout function instead of alert
               >
                 <LogOut className="h-5 w-5 shrink-0" />
                 {!isCollapsed && <span>Logout</span>}
@@ -88,5 +84,6 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
         </div>
       </div>
     </TooltipProvider>
-  );
+  )
 }
+

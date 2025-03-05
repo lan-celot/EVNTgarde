@@ -1,38 +1,48 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { Sidebar } from "../../Elements/sidebar-customer";
-import { VendorCard } from "../../Elements/vendor-card";
-import { Search, SlidersHorizontal } from "lucide-react";
-import { Button, Input } from "../../Elements/ui/combined-ui";
-import CombinedLayout from "../../Elements/combined-layout";
+import { useState } from "react"
+import { useNavigate } from "react-router-dom" // Import useNavigate
+import { Sidebar } from "../../Elements/sidebar-customer"
+import { VendorCard } from "../../Elements/vendor-card"
+import { Search, SlidersHorizontal } from "lucide-react"
+import { Button, Input } from "../../Elements/ui/combined-ui"
+import CombinedLayout from "../../Elements/combined-layout"
 
-export default function CustomerDashboard() {
-  const navigate = useNavigate(); // Initialize navigate
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-  const [visibleOrganizers, setVisibleOrganizers] = useState(3);
-  const [visibleBookings, setVisibleBookings] = useState(3);
-  const [visiblePackages, setVisiblePackages] = useState(3);
+// Add interface for CustomerDashboard props
+interface CustomerDashboardProps {
+  logout: () => void
+}
+
+// Update the component to accept and use the logout prop
+export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
+  const navigate = useNavigate() // Initialize navigate
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
+  const [visibleOrganizers, setVisibleOrganizers] = useState(3)
+  const [visibleBookings, setVisibleBookings] = useState(3)
+  const [visiblePackages, setVisiblePackages] = useState(3)
 
   // Store favorite vendors in state
-  const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
+  const [favorites, setFavorites] = useState<{ [key: string]: boolean }>({})
 
   // Toggle favorite state for vendors
   const handleToggleFavorite = (id: number, type: string) => {
     setFavorites((prev) => ({
       ...prev,
       [`${type}-${id}`]: !prev[`${type}-${id}`], // Unique key per type
-    }));
-  };
+    }))
+  }
 
   const handleSeeMore = (section: string) => {
-    if (section === "organizers") setVisibleOrganizers((prev) => prev + 3);
-    if (section === "bookings") setVisibleBookings((prev) => prev + 3);
-    if (section === "packages") setVisiblePackages((prev) => prev + 3);
-  };
+    if (section === "organizers") setVisibleOrganizers((prev) => prev + 3)
+    if (section === "bookings") setVisibleBookings((prev) => prev + 3)
+    if (section === "packages") setVisiblePackages((prev) => prev + 3)
+  }
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        logout={logout} // Pass the logout function to Sidebar
+      />
 
       <div
         className="flex flex-1 flex-col transition-all duration-300"
@@ -48,10 +58,7 @@ export default function CustomerDashboard() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <div className="relative flex-grow sm:max-w-xs">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      placeholder="Search for Vendors..."
-                      className="pl-10"
-                    />
+                    <Input placeholder="Search for Vendors..." className="pl-10" />
                   </div>
                   <Button variant="outline" className="w-full sm:w-auto">
                     <SlidersHorizontal className="mr-2 h-4 w-4" />
@@ -133,7 +140,7 @@ export default function CustomerDashboard() {
         </CombinedLayout>
       </div>
     </div>
-  );
+  )
 }
 
 // Updated Sample Data (More Entries Added)
@@ -204,7 +211,7 @@ const organizers = [
     image: "/images/vendor.jpg",
     isFavorite: false,
   },
-];
+]
 
 const bookings = [
   {
@@ -273,7 +280,7 @@ const bookings = [
     image: "/images/vendor.jpg",
     isFavorite: false,
   },
-];
+]
 
 const packages = [
   {
@@ -342,4 +349,5 @@ const packages = [
     image: "/images/vendor.jpg",
     isFavorite: false,
   },
-];
+]
+
