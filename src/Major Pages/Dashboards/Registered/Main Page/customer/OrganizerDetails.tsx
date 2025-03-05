@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import "../../../../../Layout/globals.css";
 import OrganizerLogo from "../../../../../assets/OrganizerLogo.png";
+import BookingModal from './BookingModal';
 
 const organizers = [
     {
@@ -88,13 +89,14 @@ const organizers = [
 
 const reviews = [
     { title: "John Doe", rating: 5, comment: "Amazing service! Everything was well-organized." },
-    { title: "Jane Smith", rating: 4, comment: "Great experience, but there’s room for improvement." }
+    { title: "Jane Smith", rating: 4, comment: "Great experience, but there's room for improvement." }
 ];
 
 export default function OrganizerDetails() {
     const { id } = useParams();
     const [search, setSearch] = useState("");
     const organizer = organizers.find(org => org.id === parseInt(id!));
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -162,7 +164,10 @@ export default function OrganizerDetails() {
         <h1 className="text-2xl font-bold text-dark dark:text-white">{organizer.name}</h1>
 
         <div className="flex items-center gap-4">
-            <button className="bg-[#2B579A] text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
+            <button 
+                className="bg-[#2B579A] text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition"
+                onClick={() => setIsBookingModalOpen(true)}
+            >
                 Book Organizer
             </button>
             
@@ -405,6 +410,12 @@ export default function OrganizerDetails() {
 			</div>
 		</div>
 		</footer>
+
+            <BookingModal 
+                isOpen={isBookingModalOpen}
+                onClose={() => setIsBookingModalOpen(false)}
+                organizerName={organizer.name}
+            />
         </>
     );
 }
