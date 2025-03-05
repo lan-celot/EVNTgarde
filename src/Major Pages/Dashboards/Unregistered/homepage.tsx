@@ -69,7 +69,7 @@ export default function HomePage() {
 						Log in
 					</a>
 					<a 
-						href="/register" 
+						href="/role-selection" 
 						className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
 					>
 						Register

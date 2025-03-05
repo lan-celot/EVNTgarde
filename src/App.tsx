@@ -94,7 +94,6 @@ const App: React.FC = () => {
     setUserType(null)
     localStorage.removeItem("isAuthenticated")
     localStorage.removeItem("userType")
-    // Don't remove theme preference on logout
   }
 
   // Function to determine the correct route based on userType
