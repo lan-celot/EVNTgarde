@@ -2,13 +2,14 @@ import { FC, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import BudgetProposal from './BudgetProposal';
+import { Value } from 'react-calendar/dist/esm/shared/types.js';
 
 interface RequestDetailsProps {
   onClose: () => void;
 }
 
 const RequestDetails: FC<RequestDetailsProps> = ({ onClose }) => {
-  const [date, setDate] = useState(new Date(2023, 2, 1));
+  const [date, setDate] = useState<Date | null>(new Date(2023, 2, 1));
   const [showBudgetProposal, setShowBudgetProposal] = useState(false);
 
   return (
@@ -40,7 +41,7 @@ const RequestDetails: FC<RequestDetailsProps> = ({ onClose }) => {
             {/* Calendar */}
             <div className="w-[350px]">
               <Calendar
-                onChange={setDate}
+                onChange={(value: Value) => value instanceof Date && setDate(value)}
                 value={date}
                 defaultActiveStartDate={new Date(2023, 2, 1)}
                 className="!w-full !border-0 !rounded-lg shadow-sm"
@@ -154,7 +155,7 @@ const RequestDetails: FC<RequestDetailsProps> = ({ onClose }) => {
               onClick={() => setShowBudgetProposal(true)}
               className="w-full py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              Propose a Budget
+              Negotiate Budget
             </button>
           </div>
 
@@ -170,9 +171,9 @@ const RequestDetails: FC<RequestDetailsProps> = ({ onClose }) => {
           </div>
         </div>
 
-        {/* Vendor Requirements Section */}
+        {/* Customer Needs Section */}
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h4 className="font-medium mb-4">Vendor Requirements</h4>
+          <h4 className="font-medium mb-4">Customer Needs</h4>
           <div className="space-y-4">
             <div>
               <p className="text-sm font-medium text-gray-700">Type of Service</p>

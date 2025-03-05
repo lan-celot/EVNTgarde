@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Sidebar } from "../../../../Elements/sidebar-vendor";
+import { Sidebar } from "../../../../Elements/sidebar-organizer";
 import CombinedLayout from "../../../../Elements/combined-layout";
-import RequestDetails from "./RequestDetails";
+import RequestDetails from "./OrganizerRequestDetails";
 
 const Bookings = () => {
   const [selectedTab, setSelectedTab] = useState("Customer");
@@ -34,19 +34,11 @@ const Bookings = () => {
               <RequestDetails onClose={() => setSelectedRequest(null)} />
             ) : (
               <>
-                <h2 className="text-3xl font-bold text-dark dark:text-white mb-6">Job Requests</h2>
+                <h2 className="text-3xl font-bold text-dark dark:text-white mb-6">Organizer Bookings</h2>
                 <div className="flex items-center space-x-4 mb-6">
                   <div className="inline-flex rounded-lg bg-gray-100 p-0.5">
-                    <button
-                      onClick={() => setSelectedTab("Customer")}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        selectedTab === "Customer" 
-                          ? "bg-white text-gray-900 shadow"
-                          : "text-gray-900 hover:text-gray-700"
-                      }`}
-                    >
-                      Customer
-                    </button>
+              
+                   
                     <button
                       onClick={() => setSelectedTab("Organizer")}
                       className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -61,7 +53,7 @@ const Bookings = () => {
                 </div>
                 <div className="border-b border-gray-200 mb-6">
                   <div className="flex space-x-8">
-                    {["Requests", "Budget Proposals", "Accepted"].map((tab) => (
+                    {["Requests", "Accepted", "Rejected"].map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveSection(tab)}
