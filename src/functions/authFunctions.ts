@@ -1,134 +1,131 @@
-import { auth } from "./firebase"
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  setPersistence,
-  browserLocalPersistence,
-  browserSessionPersistence,
-  signOut, 
-  getAuth,
-} from "firebase/auth"
-import { db } from "./firebase";  
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "./firebase";
 
-
-
-
-export const checkIfUserExists = async (email: string) => {
-  const usersRef = collection(db, "users");
-  const q = query(usersRef, where("email", "==", email));
-  const querySnapshot = await getDocs(q);
-
-  return !querySnapshot.empty;
-};
-
-const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000 // 30 days in milliseconds
-
-export const loginUser = async (email: string, password: string, rememberMe: boolean) => {
+// Function to check if email already exists
+export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
-    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
-    const userCredential = await signInWithEmailAndPassword(auth, email, password)
-
-    if (rememberMe) {
-      localStorage.setItem("loginTimestamp", Date.now().toString())
-    }
-
-    return userCredential.user
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
   } catch (error) {
-    console.error("Login error:", error)
-    throw new Error("Invalid login credentials.")
-  }
-}
-
-export const loginWithProvider = async (provider: any, rememberMe: boolean) => {
-  try {
-    await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence)
-    const userCredential = await signInWithPopup(auth, provider)
-
-    if (rememberMe) {
-      localStorage.setItem("loginTimestamp", Date.now().toString())
-    }
-
-    return userCredential.user
-  } catch (error) {
-    console.error("OAuth login error:", error)
-    throw new Error("Login with provider failed.")
-  }
-}
-
-export const logout = async (): Promise<void> => {
-  try {
-    const auth = getAuth();
-    await signOut(auth);
-    window.location.href = "/"; // Redirect to homepage or login page
-  } catch (error) {
-    console.error("Logout error:", error);
+    console.error("Error checking email existence:", error);
+    return false;
   }
 };
 
-
-export const checkSessionExpiry = () => {
-  const loginTimestamp = localStorage.getItem("loginTimestamp")
-  if (loginTimestamp) {
-    const elapsedTime = Date.now() - Number.parseInt(loginTimestamp, 10)
-    if (elapsedTime > SESSION_DURATION) {
-      logout();
-      return true // Session expired
-    }
+// Function to check if phone number already exists
+export const checkPhoneExists = async (phoneNumber: string): Promise<boolean> => {
+  // Skip check if phone number is empty
+  if (!phoneNumber) return false;
+  
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("phoneNumber", "==", phoneNumber));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  } catch (error) {
+    console.error("Error checking phone existence:", error);
+    return false;
   }
-  return false // Session active
-}
+};
 
-export const validatePassword = (password: string, confirmPassword?: string): string => {
-  const minLength = 12
-  const hasUpperCase = /[A-Z]/.test(password)
-  const hasNumber = /\d/.test(password)
-  const hasSpecialChar = /[!@#$%^&*_]/.test(password)
-
-  if (password.length < minLength) return "Password must be at least 12 characters long."
-  if (!hasUpperCase) return "Password must include at least one uppercase letter."
-  if (!hasNumber) return "Password must include at least one number."
-  if (!hasSpecialChar) return "Password must include at least one special character (!@#$%^&*_)."
-  if (confirmPassword && password !== confirmPassword) return "Passwords do not match."
-
-  return ""
-}
-
+// Register a new user
 export const registerUser = async (
   email: string,
   password: string,
   userType: string,
-  userData: Record<string, any>,
+  userData: any
 ) => {
   try {
-    // Validate password
-    const passwordError = validatePassword(password)
-    if (passwordError) {
-      throw new Error(passwordError)
+    // Check if email already exists
+    const emailExists = await checkEmailExists(email);
+    if (emailExists) {
+      throw new Error("Email is already registered. Please use a different email address.");
+    }
+
+    // Check if phone number already exists (if provided)
+    if (userData.phoneNumber) {
+      const phoneExists = await checkPhoneExists(userData.phoneNumber);
+      if (phoneExists) {
+        throw new Error("Phone number is already registered. Please use a different phone number.");
+      }
     }
 
     // Create user in Firebase Authentication
-    const { createUserWithEmailAndPassword } = await import("firebase/auth")
-    const { auth, db } = await import("./firebase")
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    const user = userCredential.user
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-    // Store additional user data in Firestore
-    const { doc, setDoc } = await import("firebase/firestore")
+    // Create user document in Firestore
     await setDoc(doc(db, "users", user.uid), {
-      email,
-      userType,
-      createdAt: new Date(),
+      uid: user.uid,
+      email: email,
+      userType: userType,
       ...userData,
-    })
+      createdAt: new Date().toISOString(),
+    });
 
-    return user
+    return user;
   } catch (error: any) {
-    console.error("Registration error:", error)
     if (error.code === "auth/email-already-in-use") {
-      throw new Error("This email is already registered. Please use a different email or try logging in.")
+      throw new Error("Email is already registered. Please use a different email address.");
     }
-    throw new Error(error.message || "Failed to register. Please try again.")
+    throw error;
   }
-}
+};
 
+// Login user
+export const loginUser = async (email: string, password: string) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Get user data from Firestore
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      
+      // Store user type in localStorage
+      localStorage.setItem("userType", userData.userType);
+      localStorage.setItem("isAuthenticated", "true");
+      
+      return {
+        user,
+        userData
+      };
+    } else {
+      throw new Error("User data not found");
+    }
+  } catch (error: any) {
+    if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
+      throw new Error("Invalid email or password");
+    }
+    throw error;
+  }
+};
+
+// Logout user
+export const logoutUser = async () => {
+  try {
+    await auth.signOut();
+    localStorage.removeItem("userType");
+    localStorage.removeItem("isAuthenticated");
+  } catch (error) {
+    throw error;
+  }
+};
+
+const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+
+export const checkSessionExpiry = () => {
+  const loginTimestamp = localStorage.getItem("loginTimestamp");
+  if (loginTimestamp) {
+    const elapsedTime = Date.now() - Number.parseInt(loginTimestamp, 10);
+    if (elapsedTime > SESSION_DURATION) {
+      logoutUser(); // Fix: Changed from logout() to logoutUser()
+      return true; // Session expired
+    }
+  }
+  return false; // Session active
+};
