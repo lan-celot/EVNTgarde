@@ -1,13 +1,21 @@
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "../Registered/Elements/ui/combined-ui"
-import { Bell, Sun, Moon } from "lucide-react"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../Registered/Elements/ui/combined-ui";
+import { Sun, Moon } from "lucide-react";
 
 const About = () => {
-  const [darkMode, setDarkMode] = useState(false)
+  const [darkMode, setDarkMode] = useState(false);
+  const navigate = useNavigate();
+  const handleNavigation = (path: string) => () => navigate(path);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode)
-  }, [darkMode])
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -17,34 +25,55 @@ const About = () => {
           {/* Left section - Logo */}
           <div className="flex-1">
             <a href="/" className="flex items-center gap-2">
-              <img src="../../src/assets/OrganizerLogo.png" alt="Logo" className="h-8 w-auto object-contain" />
+              <img
+                src="../../src/assets/OrganizerLogo.png"
+                alt="Logo"
+                className="h-8 w-auto object-contain"
+              />
             </a>
           </div>
 
           {/* Center section - Navigation */}
           <nav className="hidden md:flex flex-1 justify-center">
             <ul className="flex items-center space-x-8">
-              {["Home", "About", "Book"].map((item, index) => (
-                <li key={index}>
-                  <a
-                    href={`/${item.toLowerCase()}`}
-                    className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <button
+                  onClick={handleNavigation("/")}
+                  className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
+                >
+                  Home
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={handleNavigation("/about")}
+                  className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
+                >
+                  About
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={handleNavigation("/login")}
+                  className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
+                >
+                  Organizers
+                </button>
+              </li>
             </ul>
           </nav>
 
           {/* Right section - User actions */}
           <div className="flex-1 flex items-center justify-end gap-4">
-            <button className="p-2 text-white hover:text-gray-200 relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-            </button>
-            <button className="p-2 text-white hover:text-gray-200" onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <button
+              className="p-2 text-white hover:text-gray-200"
+              onClick={() => setDarkMode(!darkMode)}
+            >
+              {darkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
             </button>
             <a
               href="/login"
@@ -53,7 +82,7 @@ const About = () => {
               Log in
             </a>
             <a
-              href="/register"
+              href="/role-selection"
               className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
             >
               Register
@@ -66,7 +95,11 @@ const About = () => {
         {/* Welcome Banner Section */}
         <section className="relative overflow-hidden bg-gray-900">
           <div className="absolute inset-0">
-            <img src="../../src/assets/banner.jpg" alt="Concert background" className="h-full w-full object-cover" />
+            <img
+              src="../../src/assets/banner.jpg"
+              alt="Concert background"
+              className="h-full w-full object-cover"
+            />
             <div className="absolute inset-0 bg-black/60"></div>
           </div>
           <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:py-24">
@@ -96,13 +129,16 @@ const About = () => {
             {/* Who We Are */}
             <Card className="p-6 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">Who We Are</CardTitle>
+                <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  Who We Are
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  We are a passionate team dedicated to building modern and innovative solutions that enhance user
-                  experience. Our goal is to create high-quality, scalable, and user-friendly applications tailored to
-                  your needs.
+                  We are a passionate team dedicated to building modern and
+                  innovative solutions that enhance user experience. Our goal is
+                  to create high-quality, scalable, and user-friendly
+                  applications tailored to your needs.
                 </p>
               </CardContent>
             </Card>
@@ -110,13 +146,16 @@ const About = () => {
             {/* Our Mission */}
             <Card className="p-6 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">Our Mission</CardTitle>
+                <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  Our Mission
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Our mission is to provide innovative and efficient technology solutions that help businesses and
-                  individuals achieve their goals. We believe in clean design, smooth user experience, and cutting-edge
-                  technologies.
+                  Our mission is to provide innovative and efficient technology
+                  solutions that help businesses and individuals achieve their
+                  goals. We believe in clean design, smooth user experience, and
+                  cutting-edge technologies.
                 </p>
               </CardContent>
             </Card>
@@ -124,12 +163,14 @@ const About = () => {
             {/* Get in Touch */}
             <Card className="p-6 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">Get in Touch</CardTitle>
+                <CardTitle className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  Get in Touch
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Want to learn more about our work? Feel free to reach out to us through our contact page. We'd love to
-                  hear from you!
+                  Want to learn more about our work? Feel free to reach out to
+                  us through our contact page. We'd love to hear from you!
                 </p>
               </CardContent>
             </Card>
@@ -142,7 +183,11 @@ const About = () => {
         <div className="container mx-auto pl-4 pr-8">
           <div className="flex flex-wrap">
             <div className="w-full md:w-1/3 mb-8 md:mb-0 pr-8">
-              <img src="../../src/assets/OrganizerLogo.png" alt="Logo" className="h-28 w-auto mb-4" />
+              <img
+                src="../../src/assets/OrganizerLogo.png"
+                alt="Logo"
+                className="h-28 w-auto mb-4"
+              />
               <span className="text-sm font-bold tracking-wide text-gray-200 block">
                 Your next successful event starts here
               </span>
@@ -154,14 +199,20 @@ const About = () => {
                 <h4 className="font-semibold mb-4 text-base">Company Info</h4>
                 <ul className="space-y-2">
                   <li>
-                    <a href="#" className="hover:underline text-sm">
+                    <button
+                      onClick={handleNavigation("/about")}
+                      className="hover:underline text-sm text-left"
+                    >
                       About Us
-                    </a>
+                    </button>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline text-sm">
+                    <button
+                      onClick={handleNavigation("/login")}
+                      className="hover:underline text-sm text-left"
+                    >
                       Book now
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -234,7 +285,7 @@ const About = () => {
         </div>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default About
+export default About;
