@@ -7,8 +7,8 @@ import { ThemeProvider } from "./functions/ThemeContext"
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage" // Non-registered home
 import HomePageDark from "./Major Pages/Dashboards/Unregistered/homepage" // Non-registered dark
 import AboutLoggedOut from "./Major Pages/Dashboards/Unregistered/about-loggedout"
-import LoginPage from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Light Mode)" // Login page
-import LoginPageDark from "./Major Pages/Login Page/Elements/IndividualVendorLoginPage (Dark Mode)" // Login page
+import LoginPage from "./Major Pages/Login Page/Elements/LoginPage" // Login page
+import LoginPageDark from "./Major Pages/Login Page/Elements/LoginPageDark" // Login page
 
 import RoleSelection from "./Major Pages/Login Page/Elements/RoleSelection (Light Mode)"
 import RoleSelectionDark from "./Major Pages/Login Page/Elements/RoleSelection (Dark Mode)"

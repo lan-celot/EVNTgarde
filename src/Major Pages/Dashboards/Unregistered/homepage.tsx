@@ -164,31 +164,24 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Organizer & Vendor */}
-        <section className="w-screen max-w-7xl mx-auto py-12 px-4">
+         {/* Organizer & Vendor */}
+         <section className="w-screen max-w-7xl mx-auto py-12 px-4">
           {["Organizers", "Vendors"].map((section, index) => (
             <div key={index} className="mb-12">
               <h2 className="text-2xl font-semibold mb-6">List of {section}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-8 lg:grid-cols-3 gap-8">
                 {Array.from({ length: 6 }).map((_, i) => {
-                  let title = "";
-                  let specialty = "";
-                  const date = "NOV 22";
-                  const location = "Location";
-                  const time = "Full-day Service";
-                  let price = "";
+                  let title = ""
+                  let specialty = ""
+                  const date = "NOV 22"
+                  const location = "Location"
+                  const time = "Full-day Service"
+                  let price = ""
 
                   if (section === "Organizers") {
-                    specialty = [
-                      "Wedding",
-                      "Birthday",
-                      "Fellowship",
-                      "Baptism",
-                      "Community Development",
-                      "Fun Run",
-                    ][i];
-                    title = specialty;
-                    price = "PHP 1000";
+                    specialty = ["Wedding", "Birthday", "Fellowship", "Baptism", "Community Development", "Fun Run"][i]
+                    title = specialty
+                    price = "PHP 1000"
                   } else {
                     specialty = [
                       "Florist",
@@ -197,22 +190,19 @@ export default function HomePage() {
                       "Decorators",
                       "Tech Provider",
                       "Transportation Rentals",
-                    ][i];
-                    title = specialty;
-                    price = "PHP 500-2000";
+                    ][i]
+                    title = specialty
+                    price = "PHP 500-2000"
                   }
 
                   return (
                     <div
                       key={i}
-                      className="bg-white rounded-lg shadow-md overflow-hidden"
+                      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
+                      onClick={handleNavigation("/login")}
                     >
                       <div className="relative">
-                        <img
-                          src="../../src/assets/vendor.jpg"
-                          alt={section}
-                          className="w-full h-50 object-cover"
-                        />{" "}
+                        <img src="../../src/assets/vendor.jpg" alt={section} className="w-full h-50 object-cover" />{" "}
                         <button className="absolute top-2 right-2 text-yellow-500 hover:text-gray-600">
                           <svg
                             className="w-6 h-6 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-400"
@@ -234,9 +224,7 @@ export default function HomePage() {
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600">{date}</span>
                         </div>
-                        <h3 className="font-semibold mb-2 text-gray-600 ">
-                          {title}
-                        </h3>
+                        <h3 className="font-semibold mb-2 text-gray-600 ">{title}</h3>
                         <p className="text-sm text-gray-600">{location}</p>
                         <p className="text-sm text-gray-600">{time}</p>
                         <div className="flex items-center mt-2">
@@ -250,18 +238,16 @@ export default function HomePage() {
                           >
                             <path d="M10 15l-5.878 3.09 1.123-6.545L.583 5.948 6.136 5.411 10 1l3.864 4.411 5.553.537-4.762 4.497 1.123 6.545L10 15z" />
                           </svg>
-                          <span className="text-sm text-gray-600 ml-1">
-                            10 ratings
-                          </span>
+                          <span className="text-sm text-gray-600 ml-1">10 ratings</span>
                         </div>
                       </div>
                     </div>
-                  );
+                  )
                 })}
               </div>
               <div className="mt-8 text-center">
                 <a
-                  href="/login"
+                  onClick={handleNavigation("/login")}                  
                   className="inline-block bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition"
                 >
                   See More
