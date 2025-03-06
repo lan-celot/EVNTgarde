@@ -54,7 +54,7 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
             {/* Organizers Section */}
             <div className="mb-12">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-2xl font-semibold">Find Vendors</h2>
+                <h2 className="text-2xl font-semibold">Find Organizers</h2>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <div className="relative flex-grow sm:max-w-xs">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

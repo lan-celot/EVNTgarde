@@ -16,6 +16,8 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0)
+
 
   useEffect(() => {
     const sessionExpired = checkSessionExpiry();
@@ -66,12 +68,18 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
           throw new Error("Invalid user type.");
       }
     } catch (err: any) {
-      setError(err.message);
+      const newFailedAttempts = failedAttempts + 1
+      setFailedAttempts(newFailedAttempts)
+      // 3 failed attempts, generic message
+      if (newFailedAttempts >= 3) {
+        setError("Login failed. Please check your credentials and try again.")
+      } else {
+          setError("Invalid Email/Invalid Password")
+      }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
-  
+  }
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
       <div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden font-poppins">

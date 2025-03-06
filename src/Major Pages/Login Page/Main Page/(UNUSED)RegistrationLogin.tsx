@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 import SoloRegistrationDark from "../Elements/IndividualRegistration (Dark Mode)";
 import SoloRegistration from "../Elements/IndividualRegistration (Light Mode)";
-import LoginDark from "../Elements/IndividualVendorLoginPage (Dark Mode)";
-import LoginPage from "../Elements/IndividualVendorLoginPage (Light Mode)";
+import LoginDark from "../Elements/LoginPageDark";
+import LoginPage from "../Elements/LoginPage";
 import OrganizerDark from "../Elements/OrganizerLogin (Dark Mode)";
 import OrganizerLogin from "../Elements/OrganizerLogin (Light Mode)";
 import OrganizerRegistrationDark from "../Elements/OrganizerRegistration (Dark Mode)";
