@@ -1,36 +1,97 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import "../../../Layout/globals.css";
-import { Sun, Moon, Search, Filter } from "lucide-react";
+"use client"
+
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import "../../../Layout/globals.css"
+import { Bell, Sun, Moon, Search, Filter } from "lucide-react"
+import { searchAndFilterItems } from "../../../functions/search"
 
 export default function HomePage() {
-  const [darkMode, setDarkMode] = useState(false);
-  const navigate = useNavigate();
-  const handleNavigation = (path: string) => () => navigate(path);
-  const handleExternalLink = (url: string) => () => window.open(url, "_blank");
+  const [darkMode, setDarkMode] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [showFilterMenu, setShowFilterMenu] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
+    document.documentElement.classList.toggle("dark", darkMode)
+  }, [darkMode])
 
-  /*
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
+      const target = event.target as HTMLElement
 
-      if (
-        target.closest("a") &&
-        !["About", "Register"].includes(target.textContent?.trim() || "")
-      ) {
-        event.preventDefault();
-        navigate("/login");
+      if (target.closest("a") && !["About", "Register"].includes(target.textContent?.trim() || "")) {
+        event.preventDefault()
+        navigate("/login")
       }
-    };
+    }
 
-    document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
-  }, [navigate]);
-  */
+    document.addEventListener("click", handleClick)
+    return () => document.removeEventListener("click", handleClick)
+  }, [navigate])
+
+  // Toggle filter menu
+  const toggleFilterMenu = () => {
+    setShowFilterMenu(!showFilterMenu)
+  }
+
+  // Toggle a category selection
+  const toggleCategory = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
+    )
+  }
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedCategories([])
+    setSearchQuery("")
+  }
+
+  // Sample items
+  const createItems = (section: string, index: number) => {
+    let name = ""
+    let specialty = ""
+    const date = "NOV 22"
+    const location = "Location"
+    const time = "Full-day Service"
+    let price = ""
+
+    if (section === "Organizers") {
+      specialty = ["Wedding", "Birthday", "Fellowship", "Baptism", "Community Development", "Fun Run"][index]
+      name = specialty
+      price = "PHP 1000"
+    } else {
+      specialty = ["Florist", "Caterer", "Photographer", "Decorators", "Tech Provider", "Transportation Rentals"][index]
+      name = specialty
+      price = "PHP 500-2000"
+    }
+
+    return {
+      name,
+      specialty,
+      date,
+      location,
+      time,
+      price,
+      image: "../../src/assets/vendor.jpg",
+    }
+  }
+
+  // Generate all items
+  const organizers = Array.from({ length: 6 }).map((_, i) => createItems("Organizers", i))
+  const vendors = Array.from({ length: 6 }).map((_, i) => createItems("Vendors", i))
+
+  // Apply search and filtering
+  const filteredOrganizers = searchAndFilterItems(organizers, searchQuery, selectedCategories)
+  const filteredVendors = searchAndFilterItems(vendors, searchQuery, selectedCategories)
+
+  // Get all unique categories for the filter menu
+  const allCategories = [
+    ...new Set([...organizers.map((item) => item.specialty), ...vendors.map((item) => item.specialty)]),
+  ]
+
   return (
     <>
       {/* Header */}
@@ -39,55 +100,34 @@ export default function HomePage() {
           {/* Left section - Logo */}
           <div className="flex-1">
             <a href="/" className="flex items-center gap-2">
-              <img
-                src="../../src/assets/OrganizerLogo.png"
-                alt="Logo"
-                className="h-8 w-auto object-contain"
-              />
+              <img src="../../src/assets/OrganizerLogo.png" alt="Logo" className="h-8 w-auto object-contain" />
             </a>
           </div>
 
           {/* Center section - Navigation */}
           <nav className="hidden md:flex flex-1 justify-center">
             <ul className="flex items-center space-x-8">
-              <li>
-                <button
-                  onClick={handleNavigation("/")}
-                  className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
-                >
-                  Home
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={handleNavigation("/about")}
-                  className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
-                >
-                  About
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={handleNavigation("/login")}
-                  className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
-                >
-                  Organizers
-                </button>
-              </li>
+              {["Home", "About", "Book"].map((item, index) => (
+                <li key={index}>
+                  <a
+                    href={`/${item.toLowerCase()}`}
+                    className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
+                  >
+                    {item}
+                  </a>
+                </li>
+              ))}
             </ul>
           </nav>
 
           {/* Right section - User actions */}
           <div className="flex-1 flex items-center justify-end gap-4">
-            <button
-              className="p-2 text-white hover:text-gray-200"
-              onClick={() => setDarkMode(!darkMode)}
-            >
-              {darkMode ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
+            <button className="p-2 text-white hover:text-gray-200 relative">
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+            </button>
+            <button className="p-2 text-white hover:text-gray-200" onClick={() => setDarkMode(!darkMode)}>
+              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
             <a
               href="/login"
@@ -109,11 +149,7 @@ export default function HomePage() {
         {/* Welcome Banner Section */}
         <section className="relative overflow-hidden bg-gray-900">
           <div className="absolute inset-0">
-            <img
-              src="../../src/assets/banner.jpg"
-              alt="Concert background"
-              className="h-full w-full object-cover"
-            />
+            <img src="../../src/assets/banner.jpg" alt="Concert background" className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-black/60"></div>
           </div>
           <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:py-24">
@@ -122,7 +158,7 @@ export default function HomePage() {
                 <img
                   src="../../src/assets/OrganizerLogo.png"
                   alt="Event Logo"
-                  className="h-65 sm:h-64 lg:h-[250px]  w-auto object-contain"
+                  className="h-65 sm:h-64 lg:h-[250px] w-auto object-contain"
                 />
               </div>
               <div className="text-center sm:text-left flex flex-col justify-center self-center">
@@ -130,8 +166,7 @@ export default function HomePage() {
                   Welcome to Your Event Management Hub
                 </h1>
                 <p className="mt-6 max-w-lg text-lg text-gray-300 sm:mx-auto md:mt-8 md:max-w-xl md:text-xl lg:mx-0">
-                  Discover tailored events services and manage everything from
-                  one central dashboard.
+                  Discover tailored events services and manage everything from one central dashboard.
                 </p>
               </div>
             </div>
@@ -144,75 +179,79 @@ export default function HomePage() {
             <div className="w-full flex justify-center px-4 gap-4 relative">
               {/* Search Bar */}
               <div className="relative w-[400px] md:w-[500px] lg:w-[600px]">
-                <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="text"
                   placeholder="Search events..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
                 />
               </div>
 
               {/* Filter Button */}
-              <button className="bg-white text-gray-600 px-4 py-2 rounded-lg flex items-center gap-2 border hover:bg-gray-100">
-                <Filter size={20} />
-                <span>Filter</span>
-              </button>
+              <div className="relative">
+                <button
+                  onClick={toggleFilterMenu}
+                  className="bg-white text-gray-600 px-4 py-2 rounded-lg flex items-center gap-2 border hover:bg-gray-100"
+                >
+                  <Filter size={20} />
+                  <span>Filter</span>
+                </button>
+
+                {/* Filter Menu */}
+                {showFilterMenu && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-10 p-4">
+                    <h3 className="font-medium mb-2">Categories</h3>
+                    <div className="space-y-2 mb-4">
+                      {allCategories.map((category) => (
+                        <div key={category} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id={`category-${category}`}
+                            checked={selectedCategories.includes(category)}
+                            onChange={() => toggleCategory(category)}
+                            className="mr-2"
+                          />
+                          <label htmlFor={`category-${category}`}>{category}</label>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={clearFilters}
+                      className="w-full bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300"
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Organizer & Vendor */}
         <section className="w-screen max-w-7xl mx-auto py-12 px-4">
-          {["Organizers", "Vendors"].map((section, index) => (
+          {[
+            { name: "Organizers", data: filteredOrganizers },
+            { name: "Vendors", data: filteredVendors },
+          ].map((section, index) => (
             <div key={index} className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6">List of {section}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-8 lg:grid-cols-3 gap-8">
-                {Array.from({ length: 6 }).map((_, i) => {
-                  let title = "";
-                  let specialty = "";
-                  const date = "NOV 22";
-                  const location = "Location";
-                  const time = "Full-day Service";
-                  let price = "";
-
-                  if (section === "Organizers") {
-                    specialty = [
-                      "Wedding",
-                      "Birthday",
-                      "Fellowship",
-                      "Baptism",
-                      "Community Development",
-                      "Fun Run",
-                    ][i];
-                    title = specialty;
-                    price = "PHP 1000";
-                  } else {
-                    specialty = [
-                      "Florist",
-                      "Caterer",
-                      "Photographer",
-                      "Decorators",
-                      "Tech Provider",
-                      "Transportation Rentals",
-                    ][i];
-                    title = specialty;
-                    price = "PHP 500-2000";
-                  }
-
-                  return (
-                    <div
-                      key={i}
-                      className="bg-white rounded-lg shadow-md overflow-hidden"
-                    >
+              <h2 className="text-2xl font-semibold mb-6">List of {section.name}</h2>
+              {section.data.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">No {section.name.toLowerCase()} found matching your criteria</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {section.data.map((entity, i) => (
+                    <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
                       <div className="relative">
                         <img
-                          src="../../src/assets/vendor.jpg"
-                          alt={section}
+                          src={entity.image || "/placeholder.svg"}
+                          alt={entity.name}
                           className="w-full h-50 object-cover"
-                        />{" "}
+                        />
                         <button className="absolute top-2 right-2 text-yellow-500 hover:text-gray-600">
                           <svg
                             className="w-6 h-6 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-400"
@@ -232,15 +271,13 @@ export default function HomePage() {
                       </div>
                       <div className="p-4">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">{date}</span>
+                          <span className="text-sm text-gray-600">{entity.date}</span>
                         </div>
-                        <h3 className="font-semibold mb-2 text-gray-600 ">
-                          {title}
-                        </h3>
-                        <p className="text-sm text-gray-600">{location}</p>
-                        <p className="text-sm text-gray-600">{time}</p>
+                        <h3 className="font-semibold mb-2 text-gray-600">{entity.name}</h3>
+                        <p className="text-sm text-gray-600">{entity.location}</p>
+                        <p className="text-sm text-gray-600">{entity.time}</p>
                         <div className="flex items-center mt-2">
-                          <span className="text-sm text-gray-600">{price}</span>
+                          <span className="text-sm text-gray-600">{entity.price}</span>
                           {/* Star Icon */}
                           <svg
                             className="w-4 h-4 ml-1 text-yellow-500"
@@ -250,18 +287,16 @@ export default function HomePage() {
                           >
                             <path d="M10 15l-5.878 3.09 1.123-6.545L.583 5.948 6.136 5.411 10 1l3.864 4.411 5.553.537-4.762 4.497 1.123 6.545L10 15z" />
                           </svg>
-                          <span className="text-sm text-gray-600 ml-1">
-                            10 ratings
-                          </span>
+                          <span className="text-sm text-gray-600 ml-1">10 ratings</span>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
+              )}
               <div className="mt-8 text-center">
                 <a
-                  href="/login"
+                  href={`/${section.name.toLowerCase()}`}
                   className="inline-block bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition"
                 >
                   See More
@@ -276,11 +311,7 @@ export default function HomePage() {
           <div className="container mx-auto pl-4 pr-8">
             <div className="flex flex-wrap">
               <div className="w-full md:w-1/3 mb-8 md:mb-0 pr-8">
-                <img
-                  src="../../src/assets/OrganizerLogo.png"
-                  alt="Logo"
-                  className="h-28 w-auto mb-4"
-                />
+                <img src="../../src/assets/Organizerlogo.png" alt="Logo" className="h-28 w-auto mb-4" />
                 <span className="text-sm font-bold tracking-wide text-gray-200 block">
                   Your next successful event starts here
                 </span>
@@ -292,20 +323,14 @@ export default function HomePage() {
                   <h4 className="font-semibold mb-4 text-base">Company Info</h4>
                   <ul className="space-y-2">
                     <li>
-                      <button
-                        onClick={handleNavigation("/about")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         About Us
-                      </button>
+                      </a>
                     </li>
                     <li>
-                      <button
-                        onClick={handleNavigation("/login")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Book now
-                      </button>
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -315,52 +340,34 @@ export default function HomePage() {
                   <h4 className="font-semibold mb-4 text-base">Categories</h4>
                   <ul className="space-y-2">
                     <li>
-                      <button
-                        onClick={handleNavigation("/categories/concerts")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Concerts & Gigs
-                      </button>
+                      </a>
                     </li>
                     <li>
-                      <button
-                        onClick={handleNavigation("/categories/festivals")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Festivals & Lifestyle
-                      </button>
+                      </a>
                     </li>
                     <li>
-                      <button
-                        onClick={handleNavigation("/categories/business")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Business & Networking
-                      </button>
+                      </a>
                     </li>
                     <li>
-                      <button
-                        onClick={handleNavigation("/categories/food")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Food & Drinks
-                      </button>
+                      </a>
                     </li>
                     <li>
-                      <button
-                        onClick={handleNavigation("/categories/arts")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Performing Arts
-                      </button>
+                      </a>
                     </li>
                     <li>
-                      <button
-                        onClick={handleNavigation("/categories/workshops")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Workshops & Classes
-                      </button>
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -370,28 +377,19 @@ export default function HomePage() {
                   <h4 className="font-semibold mb-4 text-base">Follow Us</h4>
                   <ul className="space-y-2">
                     <li>
-                      <button
-                        onClick={handleExternalLink("https://facebook.com")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Facebook
-                      </button>
+                      </a>
                     </li>
                     <li>
-                      <button
-                        onClick={handleExternalLink("https://instagram.com")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Instagram
-                      </button>
+                      </a>
                     </li>
                     <li>
-                      <button
-                        onClick={handleExternalLink("https://twitter.com")}
-                        className="hover:underline text-sm text-left"
-                      >
+                      <a href="#" className="hover:underline text-sm">
                         Twitter
-                      </button>
+                      </a>
                     </li>
                   </ul>
                 </div>
@@ -406,5 +404,6 @@ export default function HomePage() {
         </footer>
       </main>
     </>
-  );
+  )
 }
+
