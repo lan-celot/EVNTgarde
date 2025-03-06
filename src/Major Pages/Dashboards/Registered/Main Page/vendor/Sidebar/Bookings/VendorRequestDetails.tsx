@@ -1,7 +1,8 @@
 import { FC, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import BudgetProposal from './BudgetProposal';
+import BudgetProposal from './VendorBudgetProposal';
+import { Value } from 'react-calendar/dist/esm/shared/types.js';
 
 interface RequestDetailsProps {
   onClose: () => void;
@@ -40,7 +41,7 @@ const RequestDetails: FC<RequestDetailsProps> = ({ onClose }) => {
             {/* Calendar */}
             <div className="w-[350px]">
               <Calendar
-                onChange={setDate}
+                onChange={(value: Value) => value instanceof Date && setDate(value)}
                 value={date}
                 defaultActiveStartDate={new Date(2023, 2, 1)}
                 className="!w-full !border-0 !rounded-lg shadow-sm"

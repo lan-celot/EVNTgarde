@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Sidebar } from "../../../../Elements/sidebar-organizer";
+import { Sidebar } from "../../../../Elements/sidebar-vendor";
 import CombinedLayout from "../../../../Elements/combined-layout";
-import RequestDetails from "./RequestDetails";
+import RequestDetails from "./VendorRequestDetails";
 
 const Bookings = () => {
   const [selectedTab, setSelectedTab] = useState("Customer");
@@ -38,16 +38,6 @@ const Bookings = () => {
                 <div className="flex items-center space-x-4 mb-6">
                   <div className="inline-flex rounded-lg bg-gray-100 p-0.5">
                     <button
-                      onClick={() => setSelectedTab("Customer")}
-                      className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        selectedTab === "Customer" 
-                          ? "bg-white text-gray-900 shadow"
-                          : "text-gray-900 hover:text-gray-700"
-                      }`}
-                    >
-                      Customer
-                    </button>
-                    <button
                       onClick={() => setSelectedTab("Organizer")}
                       className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                         selectedTab === "Organizer" 
@@ -57,6 +47,7 @@ const Bookings = () => {
                     >
                       Organizer
                     </button>
+                   
                   </div>
                 </div>
                 <div className="border-b border-gray-200 mb-6">
