@@ -12,10 +12,10 @@ const useAccEventsData = () => {
 	const [organizers, setOrganizers] = useState<FirestoreRecord<Organizer>[]>([]);
 
 	useEffect(() => {
-		const eventsRef = collection(db, "Events");
-		const customersRef = collection(db, "Customers");
-		const vendorsRef = collection(db, "Vendors");
-		const organizersRef = collection(db, "Organizers");
+		const eventsRef = collection(db, "events");
+		const customersRef = collection(db, "customers");
+		const vendorsRef = collection(db, "cendors");
+		const organizersRef = collection(db, "organizers");
 
 		const eventsQuery = query(eventsRef, orderBy("eventDate", "desc"));
 		const unsubscribeEvents = onSnapshot(eventsQuery, (snapshot) => {
