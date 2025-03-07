@@ -229,29 +229,45 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-
-        {/* Organizer & Vendor */}
-        <section className="w-screen max-w-7xl mx-auto py-12 px-4">
-          {[
-            { name: "Organizers", data: filteredOrganizers },
-            { name: "Vendors", data: filteredVendors },
-          ].map((section, index) => (
+         {/* Organizer & Vendor */}
+         <section className="w-screen max-w-7xl mx-auto py-12 px-4">
+          {["Organizers", "Vendors"].map((section, index) => (
             <div key={index} className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6">List of {section.name}</h2>
-              {section.data.length === 0 ? (
-                <div className="text-center py-10">
-                  <p className="text-gray-500">No {section.name.toLowerCase()} found matching your criteria</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {section.data.map((entity, i) => (
-                    <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <h2 className="text-2xl font-semibold mb-6">List of {section}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-8 lg:grid-cols-3 gap-8">
+                {Array.from({ length: 6 }).map((_, i) => {
+                  let title = ""
+                  let specialty = ""
+                  const date = "NOV 22"
+                  const location = "Location"
+                  const time = "Full-day Service"
+                  let price = ""
+
+                  if (section === "Organizers") {
+                    specialty = ["Wedding", "Birthday", "Fellowship", "Baptism", "Community Development", "Fun Run"][i]
+                    title = specialty
+                    price = "PHP 1000"
+                  } else {
+                    specialty = [
+                      "Florist",
+                      "Caterer",
+                      "Photographer",
+                      "Decorators",
+                      "Tech Provider",
+                      "Transportation Rentals",
+                    ][i]
+                    title = specialty
+                    price = "PHP 500-2000"
+                  }
+
+                  return (
+                    <div
+                      key={i}
+                      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
+                      onClick={handleNavigation("/login")}
+                    >
                       <div className="relative">
-                        <img
-                          src={entity.image || "/placeholder.svg"}
-                          alt={entity.name}
-                          className="w-full h-50 object-cover"
-                        />
+                        <img src="../../src/assets/vendor.jpg" alt={section} className="w-full h-50 object-cover" />{" "}
                         <button className="absolute top-2 right-2 text-yellow-500 hover:text-gray-600">
                           <svg
                             className="w-6 h-6 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-400"
@@ -273,9 +289,9 @@ export default function HomePage() {
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600">{entity.date}</span>
                         </div>
-                        <h3 className="font-semibold mb-2 text-gray-600">{entity.name}</h3>
-                        <p className="text-sm text-gray-600">{entity.location}</p>
-                        <p className="text-sm text-gray-600">{entity.time}</p>
+                        <h3 className="font-semibold mb-2 text-gray-600 ">{title}</h3>
+                        <p className="text-sm text-gray-600">{location}</p>
+                        <p className="text-sm text-gray-600">{time}</p>
                         <div className="flex items-center mt-2">
                           <span className="text-sm text-gray-600">{entity.price}</span>
                           {/* Star Icon */}
@@ -290,13 +306,12 @@ export default function HomePage() {
                           <span className="text-sm text-gray-600 ml-1">10 ratings</span>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    </div>)
+                })}
+              </div>
               <div className="mt-8 text-center">
                 <a
-                  href={`/${section.name.toLowerCase()}`}
+                  onClick={handleNavigation("/login")}                  
                   className="inline-block bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition"
                 >
                   See More

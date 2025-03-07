@@ -11,29 +11,14 @@ const IndividualRegistrationDarkPart1: React.FC = () => {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
-  const [preferences, setPreferences] = useState<string[]>([])
+  const [preferences] = useState<string[]>([])
   const [error, setError] = useState("")
-
-  const preferenceOptions = ["Weddings", "Birthdays", "Corporate", "Concerts"]
-
-  const handlePreferenceChange = (preference: string) => {
-    if (preferences.includes(preference)) {
-      setPreferences(preferences.filter((p) => p !== preference))
-    } else {
-      setPreferences([...preferences, preference])
-    }
-  }
 
   const handleProceed = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!firstName || !lastName) {
       setError("First name and last name are required")
-      return
-    }
-
-    if (preferences.length === 0) {
-      setError("Please select at least one event preference")
       return
     }
 
@@ -108,24 +93,6 @@ const IndividualRegistrationDarkPart1: React.FC = () => {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
                 />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Event Preferences*</label>
-              <div className="flex justify-start space-x-6 text-white items-center mt-2">
-                {preferenceOptions.map((preference) => (
-                  <label key={preference} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="preference"
-                      className="mr-2"
-                      checked={preferences.includes(preference)}
-                      onChange={() => handlePreferenceChange(preference)}
-                    />
-                    {preference}
-                  </label>
-                ))}
               </div>
             </div>
 
