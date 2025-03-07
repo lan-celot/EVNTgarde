@@ -1,4 +1,4 @@
-export type Location = {
+export type Loc = {
     venueName?: string; // Only for Events
     address: string;
     city: string;
@@ -13,7 +13,7 @@ export type Location = {
     organizerId: string;
     vendorsIds: string[];
     eventDate: Date;
-    location: Location;
+    location: Loc;
     categories: string[];
     attendeeIds: string[];
     created_at: Date;
@@ -25,19 +25,21 @@ export type Location = {
     lastName: string;
     email: string;
     phoneNum: string;
-    address: Location;
+    address: Loc;
     registeredEvents: string[];
     favoriteEvents: string[];
     created_at: Date;
   };
   
   export type Organizer = {
-    organizerId: string;
+    organizerId: number;
     organizationName: string;
     contactPerson: string;
+    image: string;
     email: string;
     phoneNum: string;
-    address: Location;
+    address: Loc;
+    price: number;
     eventsOrganized: string[];
     website: string;
     socialMedia: {
@@ -51,6 +53,7 @@ export type Location = {
       startDate: Date;
       endDate: Date;
     };
+    timeSlot: string[];
     certifications: string[];
   };
   
@@ -61,7 +64,7 @@ export type Location = {
     contactPerson: string;
     email: string;
     phoneNum: string;
-    address: Location;
+    address: Loc;
     eventsParticipated: string[];
     ratings: number;
     availability: {

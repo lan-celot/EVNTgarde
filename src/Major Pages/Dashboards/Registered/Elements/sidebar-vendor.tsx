@@ -71,7 +71,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed, logout }: SidebarProps) {
             <TooltipTrigger asChild>
               <button
                 className="flex w-full h-10 items-center gap-3 rounded-lg px-3 text-white transition-colors duration-300 hover:bg-red-600"
-                onClick={logout} // Use the passed logout function instead of alert
+                onClick={logout}
               >
                 <LogOut className="h-5 w-5 shrink-0" />
                 {!isCollapsed && <span>Logout</span>}
