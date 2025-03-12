@@ -282,7 +282,8 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
 								</h2>
 								<p className="text-sm text-gray-500 leading-none">
 									Didn't see what you're looking for?{" "}
-									<span className="text-blue-500 cursor-pointer hover:underline">
+									<span className="text-blue-500 cursor-pointer hover:underline"
+										onClick = {() => setShowModal(true)}>
 										Customize your own package!
 									</span>
 								</p>
