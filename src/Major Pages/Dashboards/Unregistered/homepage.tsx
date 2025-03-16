@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import "../../../Layout/globals.css";
 import { Sun, Moon, Search, Filter } from "lucide-react";
 import { searchAndFilterItems } from "../../../functions/search";
+import { themeSwitch } from "../../../functions/themeSwitch";
 
 export default function HomePage() {
 	const [darkMode, setDarkMode] = useState(false);
+	const { theme, setTheme } = themeSwitch();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [showFilterMenu, setShowFilterMenu] = useState(false);
@@ -178,7 +180,10 @@ export default function HomePage() {
 					<div className="flex-1 flex items-center justify-end gap-4">
 						<button
 							className="p-2 text-white hover:text-gray-200"
-							onClick={() => setDarkMode(!darkMode)}
+							onClick={() => {
+								setDarkMode(!darkMode);
+								setTheme(darkMode ? "light" : "dark");
+							}}
 						>
 							{darkMode ? (
 								<Sun className="h-5 w-5" />
