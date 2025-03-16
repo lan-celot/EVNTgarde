@@ -22,11 +22,8 @@ import IndividualRegistrationDarkPart1 from "./Major Pages/Login Page/Elements/I
 import IndividualRegistrationPart2 from "./Major Pages/Login Page/Elements/IndividualRegistration Part 2 (Light Mode)";
 import IndividualRegistrationDarkPart2 from "./Major Pages/Login Page/Elements/IndividualRegistration Part 2 (Dark Mode)";
 
-// Organizer Registration Components
-import OrganizerRegistrationPart1 from "./Major Pages/Login Page/Elements/OrganizerRegistration Part 1 (Light Mode)";
-import OrganizerRegistrationDarkPart1 from "./Major Pages/Login Page/Elements/OrganizerRegistration Part 1 (Dark Mode)";
-import OrganizerRegistrationPart2 from "./Major Pages/Login Page/Elements/OrganizerRegistration Part 2 (Light Mode)";
-import OrganizerRegistrationDarkPart2 from "./Major Pages/Login Page/Elements/OrganizerRegistration Part 2 (Dark Mode)";
+// Organizer Registration New
+import OrganizerRegistration from "./Major Pages/Login Page/Elements/OrganizerRegistration"
 
 // Vendor Registration Components
 import VendorRegistrationPart1 from "./Major Pages/Login Page/Elements/VendorRegistration Part 1 (Light Mode)";
@@ -176,22 +173,10 @@ const App: React.FC = () => {
 						)}
 					/>
 
-					{/* Organizer Registration Routes - Two-part flow with theme support */}
-					<Route
-						path="/register/organizer"
-						element={getThemedComponent(
-							<OrganizerRegistrationPart1 />,
-							<OrganizerRegistrationDarkPart1 />
-						)}
-					/>
-					<Route
-						path="/register/organizer/part2"
-						element={getThemedComponent(
-							<OrganizerRegistrationPart2 />,
-							<OrganizerRegistrationDarkPart2 />
-						)}
-					/>
+					{/* Organizer Registration New */}
+					<Route path="/register/organizer" element={<OrganizerRegistration />} />
 
+					
 					{/* Vendor Registration Routes - Two-part flow with theme support */}
 					<Route
 						path="/register/vendor"
