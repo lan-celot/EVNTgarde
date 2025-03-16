@@ -5,8 +5,9 @@ import { Search, Filter } from "lucide-react";
 import { searchAndFilterItems } from "../../../functions/search";
 //import { ThemeToggle } from "../Registered/Elements/theme-toggle";
 import { ThemeToggle } from "../../../functions/ThemeToogle";
+import { useTheme } from "@/functions/ThemeContext";
 
-export default function HomePage() {
+const Homepage: React.FC = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [showFilterMenu, setShowFilterMenu] = useState(false);
@@ -125,10 +126,16 @@ export default function HomePage() {
 		]),
 	];
 
+	const { isDarkMode } = useTheme();
+
 	return (
 		<>
 			{/* Header */}
-			<header className="sticky top-0 z-50 w-full bg-[#2B579A] text-white dark:bg-[#1E3A6D] text-yellow">
+			<header
+				className={`sticky top-0 z-50 w-full text-white transition-colors ${
+					isDarkMode ? "bg-[#1E3A6D]" : "bg-[#2B579A]"
+				}`}
+			>
 				<div className="w-full px-8 flex h-14 items-center justify-between">
 					{/* Left section - Logo */}
 					<div className="flex-1">
@@ -514,4 +521,6 @@ export default function HomePage() {
 			</main>
 		</>
 	);
-}
+};
+
+export default Homepage;
