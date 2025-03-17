@@ -249,14 +249,14 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="px-35 py-3 border border-gray-300 rounded-lg text-white-700 hover:bg-gray-500 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                  className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                 >
                   Start Over
                 </button>
                 <button
                   type="button"
                   onClick={handleProceed}
-                  className="px-35 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   Proceed
                 </button>

@@ -239,39 +239,81 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
           className={`w-3/5 ${isDarkMode ? "bg-black text-white" : "bg-white text-gray-800"} p-12 flex flex-col justify-center rounded-l-[50px] shadow-md relative overflow-y-auto`}
         >
           {currentStep === 1 ? (
-            /* Welcome Screen */
-            <>
-              <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
+  /* Welcome Screen */
+  <>
+    <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
-              <div className="mb-8">
-                <h3 className="text-2xl font-semibold mb-4">You're a Company/Solor Vendor!</h3>
-                <p className="text-lg mb-6">Solo Vendor/ Company Vendor Text</p>
-              </div>
+    <div className="mb-6"> {/* Reduced margin-bottom here */}
+      <h3 className="text-2xl font-semibold mb-4">Are you a solo vendor or part of a company?</h3>
+      <p className="text-lg mb-6">This helps us understand how to showcase your offerings.</p>
 
-              <div className="flex justify-between mt-4">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  onClick={handleProceed}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Proceed
-                </button>
-              </div>
+      {/* Add Radio Buttons with Border Styling */}
+      <div className="space-y-4">
+        <label
+          className={`flex items-start p-4 border rounded-lg cursor-pointer ${
+            vendorType === "Solo Vendor"
+              ? "border-blue-500 bg-gray-500 dark:bg-blue-900/30"
+              : "border-gray-300 dark:border-gray-600"
+          }`}
+        >
+          <input
+            type="radio"
+            name="vendorType"
+            className="mt-1 mr-3"
+            checked={vendorType === "Solo Vendor"}
+            onChange={() => setVendorType("Solo Vendor")}
+          />
+          <div>
+            <p className="font-medium">I'm a solo vendor</p>
+          </div>
+        </label>
 
-              <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                Already have an account?{" "}
-                <a href="/login" className="text-blue-600 hover:underline">
-                  Log in
-                </a>
-              </p>
-            </>
+        <label
+          className={`flex items-start p-4 border rounded-lg cursor-pointer ${
+            vendorType === "Company Vendor"
+              ? "border-blue-500 bg-gray-500 dark:bg-blue-200/30"
+              : "border-gray-300 dark:border-gray-600"
+          }`}
+        >
+          <input
+            type="radio"
+            name="vendorType"
+            className="mt-1 mr-3"
+            checked={vendorType === "Company Vendor"}
+            onChange={() => setVendorType("Company Vendor")}
+          />
+          <div>
+            <p className="font-medium">I'm a company vendor</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    {/* Buttons Container */}
+    <div className="flex justify-between gap-4 mt-2"> {/* Reduced margin-top here */}
+      <button
+        type="button"
+        onClick={handleBack}
+        className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+      >
+        Start Over
+      </button>
+      <button
+        type="button"
+        onClick={handleProceed}
+        className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      >
+        Get Started
+      </button>
+    </div>
+
+    <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+      Already have an account?{" "}
+      <a href="/login" className="text-blue-600 hover:underline">
+        Log in
+      </a>
+    </p>
+  </>
           ) : currentStep === 2 ? (
             /* Step 2 Form */
             <>
@@ -566,4 +608,3 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 }
 
 export default VendorRegistration
-
