@@ -1,32 +1,74 @@
 import { useState } from "react";
-import { Sidebar } from "../../../../Elements/sidebar-vendor";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input } from "../../../../Elements/ui/combined-ui";
+import { Sidebar } from "../../../../Elements/sidebar";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+} from "../../../../Elements/ui/combined-ui";
 import CombinedLayout from "../../../../Elements/combined-layout";
 import { Search, Users, Briefcase } from "lucide-react";
 
 const vendors = [
-  { id: 1, name: "Elite Catering", category: "Catering", description: "Providing top-tier culinary experiences for any event." },
-  { id: 2, name: "Dream Events", category: "Event Planning", description: "Creating unforgettable memories with seamless planning." },
-  { id: 3, name: "TechGear Rentals", category: "Equipment Rental", description: "High-quality sound and lighting for your events." },
-  { id: 4, name: "Bliss Weddings", category: "Wedding Planning", description: "Turning your wedding dreams into reality." },
-  { id: 5, name: "Music Masters", category: "Entertainment", description: "Live music and DJs for any special occasion." },
+  {
+    id: 1,
+    name: "Elite Catering",
+    category: "Catering",
+    description: "Providing top-tier culinary experiences for any event.",
+  },
+  {
+    id: 2,
+    name: "Dream Events",
+    category: "Event Planning",
+    description: "Creating unforgettable memories with seamless planning.",
+  },
+  {
+    id: 3,
+    name: "TechGear Rentals",
+    category: "Equipment Rental",
+    description: "High-quality sound and lighting for your events.",
+  },
+  {
+    id: 4,
+    name: "Bliss Weddings",
+    category: "Wedding Planning",
+    description: "Turning your wedding dreams into reality.",
+  },
+  {
+    id: 5,
+    name: "Music Masters",
+    category: "Entertainment",
+    description: "Live music and DJs for any special occasion.",
+  },
 ];
 
 const Book = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [search, setSearch] = useState("");
 
-  const filteredVendors = vendors.filter((vendor) =>
-    vendor.name.toLowerCase().includes(search.toLowerCase()) ||
-    vendor.category.toLowerCase().includes(search.toLowerCase())
+  const filteredVendors = vendors.filter(
+    (vendor) =>
+      vendor.name.toLowerCase().includes(search.toLowerCase()) ||
+      vendor.category.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        logout={() => {
+          console.log("Logout Successful");
+        }} // added prop since nag eerror - euan (?)
+      />
 
       {/* Adjust margin dynamically based on sidebar state */}
-      <div className="flex flex-1 flex-col transition-all duration-300" style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}>
+      <div
+        className="flex flex-1 flex-col transition-all duration-300"
+        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+      >
         <CombinedLayout showWelcomeBanner={false}>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-bold text-dark dark:text-white mb-6 flex items-center gap-2">
@@ -61,8 +103,12 @@ const Book = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm font-medium text-blue-600">{vendor.category}</p>
-                      <p className="mt-2 text-gray-600 dark:text-gray-300">{vendor.description}</p>
+                      <p className="text-sm font-medium text-blue-600">
+                        {vendor.category}
+                      </p>
+                      <p className="mt-2 text-gray-600 dark:text-gray-300">
+                        {vendor.description}
+                      </p>
                       <Button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all">
                         Book Now
                       </Button>
@@ -70,7 +116,9 @@ const Book = () => {
                   </Card>
                 ))
               ) : (
-                <p className="text-gray-500 dark:text-gray-400 text-center col-span-full">No vendors found.</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center col-span-full">
+                  No vendors found.
+                </p>
               )}
             </div>
           </div>

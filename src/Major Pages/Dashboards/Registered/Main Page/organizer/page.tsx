@@ -1,69 +1,70 @@
-import { useState } from "react"
-import { Button, Input } from "../../Elements/ui/combined-ui"
-import { Sidebar } from "../../Elements/sidebar-organizer"
-import { VendorCard } from "../../Elements/vendor-card"
-import { Search, SlidersHorizontal, X } from "lucide-react"
-import CombinedLayout from "../../Elements/combined-layout"
+import { useState } from "react";
+import { Button, Input } from "../../Elements/ui/combined-ui";
+import { Sidebar } from "../../Elements/sidebar";
+import { VendorCard } from "../../Elements/vendor-card";
+import { Search, SlidersHorizontal, X } from "lucide-react";
+import CombinedLayout from "../../Elements/combined-layout";
 import { searchAndFilterItems } from "../../../../../functions/search";
-
 
 // Update the OrganizerPage component to accept and pass the logout prop
 interface OrganizerPageProps {
-  logout: () => void
+  logout: () => void;
 }
 
 export default function Home({ logout }: OrganizerPageProps) {
   // State for showing more vendors and events
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
-  const [visibleVendors, setVisibleVendors] = useState(3)
-  const [visibleEvents, setVisibleEvents] = useState(3)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [visibleVendors, setVisibleVendors] = useState(3);
+  const [visibleEvents, setVisibleEvents] = useState(3);
 
   // Add state for search and filters
-  const [vendorSearchQuery, setVendorSearchQuery] = useState("")
-  const [eventSearchQuery, setEventSearchQuery] = useState("")
-  const [showFilters, setShowFilters] = useState(false)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [vendorSearchQuery, setVendorSearchQuery] = useState("");
+  const [eventSearchQuery, setEventSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   // Function to load more vendors
   const handleLoadMoreVendors = () => {
-    setVisibleVendors((prev) => prev + 3) // Show 3 more vendors
-  }
+    setVisibleVendors((prev) => prev + 3); // Show 3 more vendors
+  };
 
   // Function to load more past events
   const handleLoadMoreEvents = () => {
-    setVisibleEvents((prev) => prev + 3) // Show 3 more past events
-  }
+    setVisibleEvents((prev) => prev + 3); // Show 3 more past events
+  };
 
   // Toggle a category selection
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
-    )
-  }
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
 
   // Clear all filters
   const clearFilters = () => {
-    setSelectedCategories([])
-    setVendorSearchQuery("")
-    setEventSearchQuery("")
-  }
+    setSelectedCategories([]);
+    setVendorSearchQuery("");
+    setEventSearchQuery("");
+  };
 
   // Get all unique locations for the filter menu
-  const vendorLocations = [...new Set(vendors.map((vendor) => vendor.location))]
-
+  const vendorLocations = [
+    ...new Set(vendors.map((vendor) => vendor.location)),
+  ];
 
   const filteredVendors = searchAndFilterItems(
     vendors,
     vendorSearchQuery,
-    selectedCategories.length > 0 ? selectedCategories : undefined,
-  )
+    selectedCategories.length > 0 ? selectedCategories : undefined
+  );
 
- 
   const filteredEvents = searchAndFilterItems(
     pastEvents,
     eventSearchQuery,
-    selectedCategories.length > 0 ? selectedCategories : undefined,
-  )
+    selectedCategories.length > 0 ? selectedCategories : undefined
+  );
 
   return (
     <div className="flex min-h-screen">
@@ -102,7 +103,11 @@ export default function Home({ logout }: OrganizerPageProps) {
                       </button>
                     )}
                   </div>
-                  <Button variant="outline" className="w-full sm:w-auto" onClick={() => setShowFilters(!showFilters)}>
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                    onClick={() => setShowFilters(!showFilters)}
+                  >
                     <SlidersHorizontal className="mr-2 h-4 w-4" />
                     Filters
                   </Button>
@@ -115,7 +120,10 @@ export default function Home({ logout }: OrganizerPageProps) {
                   <h3 className="mb-3 font-medium">Filter by Location</h3>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
                     {vendorLocations.map((location) => (
-                      <div key={location} className="flex items-center space-x-2">
+                      <div
+                        key={location}
+                        className="flex items-center space-x-2"
+                      >
                         <input
                           type="checkbox"
                           id={`location-${location}`}
@@ -123,7 +131,10 @@ export default function Home({ logout }: OrganizerPageProps) {
                           onChange={() => toggleCategory(location)}
                           className="h-4 w-4 rounded border-gray-300"
                         />
-                        <label htmlFor={`location-${location}`} className="text-sm">
+                        <label
+                          htmlFor={`location-${location}`}
+                          className="text-sm"
+                        >
                           {location}
                         </label>
                       </div>
@@ -139,22 +150,37 @@ export default function Home({ logout }: OrganizerPageProps) {
 
               {filteredVendors.length === 0 ? (
                 <div className="my-12 text-center">
-                  <p className="text-muted-foreground">No vendors found matching your search criteria.</p>
-                  <Button variant="link" onClick={clearFilters} className="mt-2">
+                  <p className="text-muted-foreground">
+                    No vendors found matching your search criteria.
+                  </p>
+                  <Button
+                    variant="link"
+                    onClick={clearFilters}
+                    className="mt-2"
+                  >
                     Clear filters
                   </Button>
                 </div>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredVendors.slice(0, visibleVendors).map((vendor) => (
-                    <VendorCard key={vendor.id} {...vendor} showHireButton={true} />
+                    <VendorCard
+                      key={vendor.id}
+                      {...vendor}
+                      showHireButton={true}
+                    />
                   ))}
                 </div>
               )}
 
               {visibleVendors < filteredVendors.length && (
                 <div className="mt-8 text-center">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto" onClick={handleLoadMoreVendors}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full sm:w-auto"
+                    onClick={handleLoadMoreVendors}
+                  >
                     See More
                   </Button>
                 </div>
@@ -186,22 +212,37 @@ export default function Home({ logout }: OrganizerPageProps) {
 
               {filteredEvents.length === 0 ? (
                 <div className="my-12 text-center">
-                  <p className="text-muted-foreground">No events found matching your search criteria.</p>
-                  <Button variant="link" onClick={() => setEventSearchQuery("")} className="mt-2">
+                  <p className="text-muted-foreground">
+                    No events found matching your search criteria.
+                  </p>
+                  <Button
+                    variant="link"
+                    onClick={() => setEventSearchQuery("")}
+                    className="mt-2"
+                  >
                     Clear search
                   </Button>
                 </div>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {filteredEvents.slice(0, visibleEvents).map((event) => (
-                    <VendorCard key={event.id} {...event} showHireButton={false} />
+                    <VendorCard
+                      key={event.id}
+                      {...event}
+                      showHireButton={false}
+                    />
                   ))}
                 </div>
               )}
 
               {visibleEvents < filteredEvents.length && (
                 <div className="mt-8 text-center">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto" onClick={handleLoadMoreEvents}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full sm:w-auto"
+                    onClick={handleLoadMoreEvents}
+                  >
                     See More
                   </Button>
                 </div>
@@ -211,7 +252,7 @@ export default function Home({ logout }: OrganizerPageProps) {
         </CombinedLayout>
       </div>
     </div>
-  )
+  );
 }
 
 // Vendor Data
@@ -226,7 +267,7 @@ const vendors = [
     timeSlot: "08:00 AM - 06:00 PM",
     image: "/images/vendor.jpg",
     isFavorite: false,
-    specialty: "Manila", 
+    specialty: "Manila",
   },
   {
     id: 2,
@@ -237,7 +278,7 @@ const vendors = [
     timeSlot: "09:00 AM - 05:00 PM",
     image: "/images/vendor.jpg",
     isFavorite: false,
-    specialty: "Quezon City", 
+    specialty: "Quezon City",
   },
   {
     id: 3,
@@ -259,7 +300,7 @@ const vendors = [
     timeSlot: "07:00 AM - 09:00 PM",
     image: "/images/vendor.jpg",
     isFavorite: false,
-    specialty: "Taguig", 
+    specialty: "Taguig",
   },
   {
     id: 5,
@@ -270,7 +311,7 @@ const vendors = [
     timeSlot: "08:30 AM - 07:00 PM",
     image: "/images/vendor.jpg",
     isFavorite: false,
-    specialty: "Pasig", 
+    specialty: "Pasig",
   },
   {
     id: 6,
@@ -281,9 +322,9 @@ const vendors = [
     timeSlot: "06:00 PM - 02:00 AM",
     image: "/images/vendor.jpg",
     isFavorite: false,
-    specialty: "Cebu", 
+    specialty: "Cebu",
   },
-]
+];
 
 // Past Events Data
 const pastEvents = [
@@ -296,7 +337,7 @@ const pastEvents = [
     ratings: 150,
     image: "/images/event.jpg",
     isFavorite: false,
-    specialty: "Wedding", 
+    specialty: "Wedding",
   },
   {
     id: 2,
@@ -307,7 +348,7 @@ const pastEvents = [
     ratings: 120,
     image: "/images/event.jpg",
     isFavorite: false,
-    specialty: "Conference", 
+    specialty: "Conference",
   },
   {
     id: 3,
@@ -318,7 +359,7 @@ const pastEvents = [
     ratings: 180,
     image: "/images/event.jpg",
     isFavorite: false,
-    specialty: "Expo", 
+    specialty: "Expo",
   },
   {
     id: 4,
@@ -329,7 +370,7 @@ const pastEvents = [
     ratings: 200,
     image: "/images/event.jpg",
     isFavorite: false,
-    specialty: "Festival", 
+    specialty: "Festival",
   },
   {
     id: 5,
@@ -340,7 +381,7 @@ const pastEvents = [
     ratings: 170,
     image: "/images/event.jpg",
     isFavorite: false,
-    specialty: "Fashion", 
+    specialty: "Fashion",
   },
   {
     id: 6,
@@ -351,7 +392,6 @@ const pastEvents = [
     ratings: 190,
     image: "/images/event.jpg",
     isFavorite: false,
-    specialty: "Charity", 
+    specialty: "Charity",
   },
-]
-
+];

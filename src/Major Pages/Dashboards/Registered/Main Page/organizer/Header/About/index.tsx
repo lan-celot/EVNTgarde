@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { Sidebar } from "../../../../Elements/sidebar-organizer";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../../Elements/ui/combined-ui";
+import { Sidebar } from "../../../../Elements/sidebar";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../../Elements/ui/combined-ui";
 import CombinedLayout from "../../../../Elements/combined-layout";
 
 const About = () => {
@@ -8,7 +13,13 @@ const About = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        logout={() => {
+          console.log("Logout Successful");
+        }} // added prop since nag eerror - euan (?)
+      />
 
       {/* Dynamic margin based on sidebar state */}
       <div
@@ -31,9 +42,10 @@ const About = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    We are a passionate team dedicated to building modern and innovative solutions
-                    that enhance user experience. Our goal is to create high-quality, scalable, and
-                    user-friendly applications tailored to your needs.
+                    We are a passionate team dedicated to building modern and
+                    innovative solutions that enhance user experience. Our goal
+                    is to create high-quality, scalable, and user-friendly
+                    applications tailored to your needs.
                   </p>
                 </CardContent>
               </Card>
@@ -47,9 +59,10 @@ const About = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    Our mission is to provide innovative and efficient technology solutions that help
-                    businesses and individuals achieve their goals. We believe in clean design, smooth
-                    user experience, and cutting-edge technologies.
+                    Our mission is to provide innovative and efficient
+                    technology solutions that help businesses and individuals
+                    achieve their goals. We believe in clean design, smooth user
+                    experience, and cutting-edge technologies.
                   </p>
                 </CardContent>
               </Card>
@@ -63,8 +76,8 @@ const About = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    Want to learn more about our work? Feel free to reach out to us through our
-                    contact page. We'd love to hear from you!
+                    Want to learn more about our work? Feel free to reach out to
+                    us through our contact page. We'd love to hear from you!
                   </p>
                 </CardContent>
               </Card>
