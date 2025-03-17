@@ -1,46 +1,39 @@
 import { ReactNode } from "react";
-import { Bell, User } from "lucide-react";
 import { Button } from "./ui/combined-ui";
 import { ThemeToggle } from "@/Major Pages/Dashboards/Registered/Elements/theme-toggle";
+
 interface CombinedLayoutProps {
   children: ReactNode;
-  showWelcomeBanner?: boolean; 
+  showWelcomeBanner?: boolean;
+  isLoggedIn?: boolean; // New prop to check if user is logged in
+}
+
+export default function CombinedLayout({ children, showWelcomeBanner = true, isLoggedIn = true }: CombinedLayoutProps) {
+  return (
+    <div className="layout">
+      <div className="HeaderContainer">
+        <Header />
+      </div>
+
+        {/* <div className="SidebarContainer">
+        <Sidebar onLogout={handleLogout} />
+      </div> */}
+
+      {showWelcomeBanner && <WelcomeBanner />}
+      <div className="MainContainer">
+        <div className="MainContent">{children}</div>
+      </div>
+      
+      {!isLoggedIn && ( // Hide footer if user is logged in
+        <div className="FooterContainer">
+          <Footer />
+        </div>
+      )}
+    </div>
+  );
 }
 
 function Header() {
-  const pathname = window.location.pathname; 
-
-  console.log("Current pathname:", pathname); 
-
-  const section =
-    pathname.includes("/customer") ? "customer" :
-    pathname.includes("/organizer") ? "organizer" :
-    pathname.includes("/vendor") ? "vendor" :
-    "default"; 
-
-  console.log("Detected section:", section); 
-
-  const navigation = {
-    customer: [
-      { name: "Home", href: "/customer" },
-      { name: "About", href: "/customer/about" },
-      { name: "Book", href: "/customer/book" },
-    ],
-    organizer: [
-      { name: "Home", href: "/organizer" },
-      { name: "About", href: "/organizer/about" },
-      { name: "Book", href: "/organizer/book" },
-    ],
-    vendor: [
-      { name: "Home", href: "/vendor" },
-      { name: "About", href: "/vendor/about" },
-      { name: "Book", href: "/vendor/book" },
-    ],
-    default: [{ name: "Home", href: "/" }],
-  };
-
-  const filteredNavigation = navigation[section] || navigation.default;
-
   return (
     <header className="sticky top-0 z-50 w-full bg-[#2B579A] text-white dark:bg-[#1E3A6D]">
       <div className="container flex h-14 items-center gap-6">
@@ -49,32 +42,29 @@ function Header() {
             <img src="/src/assets/OrganizerLogo.png" alt="Logo" className="h-full w-full object-contain" />
           </div>
         </a>
-        <nav className="mx-auto flex items-center gap-6">
-          {filteredNavigation.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className={`relative text-sm font-medium transition-colors 
-                ${pathname === item.href ? "text-yellow-400" : ""}
-                before:absolute before:-bottom-1 before:left-0 before:w-full before:h-[2px] 
-                before:bg-yellow-400 before:scale-x-0 before:origin-left before:transition-transform 
-                before:duration-300 hover:before:scale-x-100`}
-            >
-              {item.name}
-            </a>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto">
           <ThemeToggle />
           <Button variant="ghost" size="icon" className="text-white hover:bg-blue-600 dark:hover:bg-blue-800">
-            <Bell className="h-5 w-5" />
+            <span className="sr-only">Toggle Notifications</span>
           </Button>
           <Button variant="ghost" size="icon" className="text-white hover:bg-blue-600 dark:hover:bg-blue-800">
-            <User className="h-5 w-5" />
+            <span className="sr-only">User Profile</span>
           </Button>
         </div>
       </div>
     </header>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="bg-[#2B579A] text-white dark:bg-[rgb(30,58,109)] py-8">
+      <div className="container mx-auto px-4">
+        <div className="text-center text-sm">
+          © {new Date().getFullYear()} Platform. All rights reserved.
+        </div>
+      </div>
+    </footer>
   );
 }
 
@@ -101,79 +91,5 @@ function WelcomeBanner() {
         </div>
       </div>
     </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="bg-[#2B579A] text-white dark:bg-[rgb(30,58,109)] py-8">
-      <div className="container mx-auto pl-4 pr-8">
-        {/* Reduced left padding, kept right padding */}
-        <div className="flex flex-wrap">
-          <div className="w-full md:w-1/3 mb-8 md:mb-0 pr-8">
-            <img 
-              src="../../src/assets/Organizerlogo.png" 
-              alt="Logo" 
-              className="h-28 w-auto mb-4 cursor-pointer" 
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} 
-            />
-            <span className="text-sm font-bold tracking-wide text-gray-200 block">
-              Your next successful event starts here
-            </span>
-          </div>
-
-          <div className="w-full md:w-2/3 flex flex-wrap">
-            {/* Company Info */}
-            <div className="w-1/2 sm:w-1/3 mb-6 pr-4">
-              <h4 className="font-semibold mb-4 text-base">Company Info</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:underline text-sm">About Us</a></li>
-                <li><a href="#" className="hover:underline text-sm">Book now</a></li>
-              </ul>
-            </div>
-
-            {/* Categories */}
-            <div className="w-1/2 sm:w-1/3 mb-6 pr-4">
-              <h4 className="font-semibold mb-4 text-base">Categories</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:underline text-sm">Concerts & Gigs</a></li>
-                <li><a href="#" className="hover:underline text-sm">Festivals & Lifestyle</a></li>
-                <li><a href="#" className="hover:underline text-sm">Business & Networking</a></li>
-                <li><a href="#" className="hover:underline text-sm">Food & Drinks</a></li>
-                <li><a href="#" className="hover:underline text-sm">Performing Arts</a></li>
-                <li><a href="#" className="hover:underline text-sm">Workshops & Classes</a></li>
-              </ul>
-            </div>
-
-            {/* Follow Us */}
-            <div className="w-1/2 sm:w-1/3 mb-6">
-              <h4 className="font-semibold mb-4 text-base">Follow Us</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:underline text-sm">Facebook</a></li>
-                <li><a href="#" className="hover:underline text-sm">Instagram</a></li>
-                <li><a href="#" className="hover:underline text-sm">Twitter</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Copyright Section */}
-        <div className="mt-8 border-t border-blue-500 pt-6 text-center text-sm">
-          © {new Date().getFullYear()} Platform. All rights reserved.
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-
-export default function CombinedLayout({ children, showWelcomeBanner = true }: CombinedLayoutProps) {
-  return (
-    <div>
-      <Header />
-      {showWelcomeBanner && <WelcomeBanner />}
-      <main>{children}</main>
-      <Footer />
-    </div>
   );
 }
