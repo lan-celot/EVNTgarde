@@ -1,3 +1,5 @@
+"use client"
+
 import { Eye, EyeOff } from "lucide-react"
 import type React from "react"
 import { useState, useEffect } from "react"
@@ -249,31 +251,31 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
             /* Step 2 Form (previously step 1) */
             <>
               <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
-
-              {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
-
-              <div className="flex items-center justify-center gap-4 mb-4">
-                <button
-                   type="button"
-                   onClick={handleGoogleSignUp}
-                    className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
-                     ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-700" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
-                        disabled={isLoading}
-                          >
-                       <FcGoogle size={20} />
-                      <span className="font-medium">Sign up with Google</span>
-                 </button>
-                <button
-                       type="button"
-                        onClick={handleYahooSignUp}
-                        className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
-                        ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-900" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
-                           disabled={isLoading}
-                            >
-                          <AiFillYahoo size={20} className="text-purple-600" />
-                           <span className="font-medium">Sign up with Yahoo</span>
-                    </button>
-              </div>
+              
+                            {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
+              
+                            <div className="flex items-center justify-center gap-4 mb-4">
+                               <button
+                                 type="button"
+                                    onClick={handleGoogleSignUp}
+                                    className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
+                                     ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-700" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                                      disabled={isLoading}
+                                      >
+                                      <FcGoogle size={20} />
+                                      <span className="font-medium">Sign up with Google</span>
+                                   </button>
+                              <button
+                                    type="button"
+                                    onClick={handleYahooSignUp}
+                                     className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
+                                       ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-900" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                                        disabled={isLoading}
+                                          >
+                                      <AiFillYahoo size={20} className="text-purple-600" />
+                                      <span className="font-medium">Sign up with Yahoo</span>
+                                  </button>
+                            </div>
 
               <div className="relative flex items-center py-2 mb-4">
                 <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>

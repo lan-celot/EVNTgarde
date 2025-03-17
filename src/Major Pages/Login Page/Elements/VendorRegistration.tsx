@@ -1,5 +1,3 @@
-"use client"
-
 import { Eye, EyeOff } from "lucide-react"
 import type React from "react"
 import { useState, useEffect } from "react"
@@ -9,6 +7,9 @@ import "@/Major Pages/Login Page/Main Page/RegistrationLogin.css"
 import { registerUser } from "../../../functions/authFunctions"
 import { createUserAccount } from "../../../functions/userAccount"
 import { useTheme } from "../../../functions/ThemeContext"
+import { signInWithGoogle, signInWithYahoo } from "../../../functions/authFunctions"
+import { FcGoogle } from "react-icons/fc"
+import { AiFillYahoo } from "react-icons/ai";
 
 const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const navigate = useNavigate()
@@ -34,9 +35,9 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    setCurrentStep(step);
-  }, [step]);
-  
+    setCurrentStep(step)
+  }, [step])
+
   // Common state
   const [error, setError] = useState("")
 
@@ -195,6 +196,34 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     }
   }
 
+  const handleGoogleSignUp = async () => {
+    setIsLoading(true)
+    setError("")
+    try {
+      await signInWithGoogle("vendor")
+      navigate("/vendor")
+    } catch (err: any) {
+      setError("Failed to sign up with Google. Please try again.")
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleYahooSignUp = async () => {
+    setIsLoading(true)
+    setError("")
+    try {
+      await signInWithYahoo("vendor")
+      navigate("/vendor")
+    } catch (err: any) {
+      setError("Failed to sign up with Yahoo. Please try again.")
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins] p-4">
       <div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden font-poppins">
@@ -216,10 +245,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
               <div className="mb-8">
                 <h3 className="text-2xl font-semibold mb-4">You're a Company/Solor Vendor!</h3>
-                <p className="text-lg mb-6">
-                 Solo Vendor/ Company Vendor Text
-                </p>
-
+                <p className="text-lg mb-6">Solo Vendor/ Company Vendor Text</p>
               </div>
 
               <div className="flex justify-between mt-4">
@@ -252,6 +278,37 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
               {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
+
+              <div className="flex flex-col space-y-4 mb-6">
+                <button
+                  type="button"
+                  onClick={handleGoogleSignUp}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-md border ${
+                    isDarkMode ? "border-gray-600 hover:bg-gray-800" : "border-gray-300 hover:bg-gray-100"
+                  }`}
+                  disabled={isLoading}
+                >
+                  <FcGoogle size={20} />
+                  <span>Sign up with Google</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleYahooSignUp}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-md border ${
+                    isDarkMode ? "border-gray-600 hover:bg-gray-800" : "border-gray-300 hover:bg-gray-100"
+                  }`}
+                  disabled={isLoading}
+                >
+                  <AiFillYahoo size={20} className="text-purple-600" />
+                  <span>Sign up with Yahoo</span>
+                </button>
+              </div>
+
+              <div className="relative flex items-center py-2 mb-4">
+                <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
+                <span className={`flex-shrink mx-4 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>OR</span>
+                <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
+              </div>
 
               <form className="space-y-6" onSubmit={handleNext}>
                 <div className="flex flex-col space-y-2">
@@ -509,3 +566,4 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 }
 
 export default VendorRegistration
+
