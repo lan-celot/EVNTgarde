@@ -4,25 +4,24 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import Logo from "@/assets/OrganizerLogo.png"
 import "@/Major Pages/Login Page/Main Page/RegistrationLogin.css"
-import { registerUser } from "../../../functions/authFunctions"
+import { registerUser, signInWithGoogle, signInWithYahoo } from "../../../functions/authFunctions"
 import { createUserAccount } from "../../../functions/userAccount"
 import { useTheme } from "../../../functions/ThemeContext"
-import { signInWithGoogle, signInWithYahoo } from "../../../functions/authFunctions"
 import { FcGoogle } from "react-icons/fc"
 import { AiFillYahoo } from "react-icons/ai";
 
-const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
+const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(step)
   const { isDarkMode } = useTheme()
 
   // Step 2 form state (previously step 1)
-  const [companyName, setCompanyName] = useState("")
-  const [industry, setIndustry] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [phoneNumber, setPhoneNumber] = useState("")
   const [preferences, setPreferences] = useState<string[]>([])
 
   // Step 3 form state (previously step 2)
-  const [phoneNumber, setPhoneNumber] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -33,24 +32,12 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const [confirmPasswordError, setConfirmPasswordError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  // Common state
-  const [error, setError] = useState("")
-
   useEffect(() => {
     setCurrentStep(step)
   }, [step])
 
-  // Industry options
-  const industryOptions = [
-    { value: "", label: "Please select your company industry" },
-    { value: "events", label: "Events Management" },
-    { value: "hospitality", label: "Hospitality" },
-    { value: "entertainment", label: "Entertainment" },
-    { value: "food", label: "Food & Beverage" },
-  ]
-
-  // Preference options
-  const preferenceOptions = ["Procurement", "Reservations", "Inventory", "Logistics"]
+  // Common state
+  const [error, setError] = useState("")
 
   // Password validation
   useEffect(() => {
@@ -77,56 +64,44 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   // Load data from session storage when moving to step 3
   useEffect(() => {
     if (currentStep === 3) {
-      const storedData = sessionStorage.getItem("organizerRegistration")
+      const storedData = sessionStorage.getItem("individualRegistration")
       if (storedData) {
         const data = JSON.parse(storedData)
-        setCompanyName(data.companyName)
-        setIndustry(data.industry)
+        setFirstName(data.firstName)
+        setLastName(data.lastName)
+        setPhoneNumber(data.phoneNumber.replace("+63", ""))
         setPreferences(data.preferences)
       }
     }
   }, [currentStep])
 
-  // Handle preference change
-  const handlePreferenceChange = (preference: string) => {
-    if (preferences.includes(preference)) {
-      setPreferences(preferences.filter((p) => p !== preference))
-    } else {
-      setPreferences([...preferences, preference])
-    }
-  }
-
   // Handle welcome screen proceed button
   const handleProceed = () => {
-    navigate("/register/organizer/step2")
+    navigate("/register/individual/step2")
   }
 
   // Handle step 2 submission (previously step 1)
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!companyName || !industry) {
-      setError("Company name and industry are required")
-      return
-    }
-
-    if (preferences.length === 0) {
-      setError("Please select at least one system preference")
+    if (!firstName || !lastName) {
+      setError("First name and last name are required")
       return
     }
 
     // Store form data in sessionStorage to retrieve in part 3
     sessionStorage.setItem(
-      "organizerRegistration",
+      "individualRegistration",
       JSON.stringify({
-        companyName,
-        industry,
+        firstName,
+        lastName,
+        phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
         preferences,
       }),
     )
 
     // Navigate to step 3
-    navigate("/register/organizer/step3")
+    navigate("/register/individual/step3")
   }
 
   // Handle back button
@@ -134,9 +109,9 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     if (currentStep === 1) {
       navigate("/role-selection")
     } else if (currentStep === 2) {
-      navigate("/register/organizer")
+      navigate("/register/individual")
     } else {
-      navigate("/register/organizer/step2")
+      navigate("/register/individual/step2")
     }
   }
 
@@ -169,18 +144,18 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
     try {
       // Create user account with data from both parts
-      const userData = createUserAccount("organizer", email, {
-        companyName,
-        industry,
+      const userData = createUserAccount("individual", email, {
+        firstName,
+        lastName,
         phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
         preferences,
       })
 
       // Register user with Firebase
-      await registerUser(email, password, "organizer", userData)
+      await registerUser(email, password, "individual", userData)
 
       // Clear session storage
-      sessionStorage.removeItem("organizerRegistration")
+      sessionStorage.removeItem("individualRegistration")
 
       // Navigate to login page
       navigate("/login")
@@ -195,8 +170,8 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     setIsLoading(true)
     setError("")
     try {
-      await signInWithGoogle("organizer")
-      navigate("/organizer")
+      await signInWithGoogle("individual")
+      navigate("/customer")
     } catch (err: any) {
       setError("Failed to sign up with Google. Please try again.")
       console.error(err)
@@ -209,8 +184,8 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     setIsLoading(true)
     setError("")
     try {
-      await signInWithYahoo("organizer")
-      navigate("/organizer")
+      await signInWithYahoo("individual")
+      navigate("/customer")
     } catch (err: any) {
       setError("Failed to sign up with Yahoo. Please try again.")
       console.error(err)
@@ -239,13 +214,14 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
               <div className="mb-8">
-                <h3 className="text-2xl font-semibold mb-4">You're an Organizer!</h3>
+                <h3 className="text-2xl font-semibold mb-4">You're a Client!</h3>
                 <p className="text-lg mb-6">
-                  Perfect Pick! Connect with vendors to create successful events. We'll help you get set up right away.
+                  Perfect Pick! Find experienced organizers to bring your event to life. We'll help you get set up right
+                  away.
                 </p>
               </div>
 
-              <div className="flex justify-center items-center gap-5">
+              <div className="flex justify-center items-center gap-4">
                 <button
                   type="button"
                   onClick={handleBack}
@@ -258,7 +234,7 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   onClick={handleProceed}
                   className="px-35 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Proceed
+                  Get Started
                 </button>
               </div>
 
@@ -277,25 +253,25 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
 
               <div className="flex items-center justify-center gap-4 mb-4">
-                 <button
-                   type="button"
-                      onClick={handleGoogleSignUp}
-                      className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
-                       ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-700" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
-                        disabled={isLoading}
-                        >
-                        <FcGoogle size={20} />
-                        <span className="font-medium">Sign up with Google</span>
-                     </button>
                 <button
-                      type="button"
-                      onClick={handleYahooSignUp}
-                       className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
-                         ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-900" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
-                          disabled={isLoading}
+                   type="button"
+                   onClick={handleGoogleSignUp}
+                    className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
+                     ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-700" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                        disabled={isLoading}
+                          >
+                       <FcGoogle size={20} />
+                      <span className="font-medium">Sign up with Google</span>
+                 </button>
+                <button
+                       type="button"
+                        onClick={handleYahooSignUp}
+                        className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
+                        ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-900" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                           disabled={isLoading}
                             >
-                        <AiFillYahoo size={20} className="text-purple-600" />
-                        <span className="font-medium">Sign up with Yahoo</span>
+                          <AiFillYahoo size={20} className="text-purple-600" />
+                           <span className="font-medium">Sign up with Yahoo</span>
                     </button>
               </div>
 
@@ -308,73 +284,67 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               <form className="space-y-6" onSubmit={handleNext}>
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    Company Name
+                    First Name
                   </label>
                   <input
                     type="text"
-                    placeholder="John's Event Services"
+                    placeholder="John"
                     className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
                       isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
                     }`}
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     required
                   />
                 </div>
 
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    Industry
+                    Last Name
                   </label>
-                  <select
-                    className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  <input
+                    type="text"
+                    placeholder="Doe"
+                    className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
                       isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
                     }`}
-                    value={industry}
-                    onChange={(e) => setIndustry(e.target.value)}
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     required
-                  >
-                    {industryOptions.map((option) => (
-                      <option
-                        key={option.value}
-                        value={option.value}
-                        className={isDarkMode ? "text-white" : "text-gray-800"}
-                      >
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
 
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    System Preferences
+                    Phone number (optional)
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {preferenceOptions.map((preference) => (
-                      <label key={preference} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="preference"
-                          className="mr-2"
-                          checked={preferences.includes(preference)}
-                          onChange={() => handlePreferenceChange(preference)}
-                        />
-                        {preference}
-                      </label>
-                    ))}
+                  <div className="flex items-center border rounded-md">
+                    <span className={`px-3 py-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>+63</span>
+                    <input
+                      type="text"
+                      placeholder="000 0000 000"
+                      className={`w-full px-4 py-2 rounded-md focus:outline-none ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+                    />
                   </div>
                 </div>
 
-                <div className="flex justify-center items-center gap-5">
+                <div className="flex justify-center items-center gap-3">
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="px-43 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                    className="px-43 py-2 border border-gray-300 rounded-lg text-white-700 hover:bg-gray-500 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
                     Back
                   </button>
-                  <button type="submit" className="px-43 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="px-43 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
                     Next
                   </button>
                 </div>
@@ -397,29 +367,11 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               <form onSubmit={handleCreateAccount}>
                 <div className="mb-4">
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    Phone Number (optional)
-                  </label>
-                  <div className="flex items-center border rounded-md">
-                    <span className={`px-3 py-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>+63</span>
-                    <input
-                      type="text"
-                      placeholder="000 0000 000"
-                      className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
-                      }`}
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
-                    />
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    Company Email Address
+                    Email Address
                   </label>
                   <input
                     type="email"
-                    placeholder="company@gmail.com"
+                    placeholder="Enter your email"
                     className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
                       isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
                     }`}
@@ -464,7 +416,7 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   <div className="relative">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm password"
+                      placeholder="Re-enter password"
                       className={`w-full px-4 py-2 border rounded-md text-sm ${
                         confirmPasswordError && confirmPassword ? "border-red-500" : ""
                       } ${isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"}`}
@@ -504,17 +456,17 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   </label>
                 </div>
 
-                <div className="flex justify-center items-center gap-6">
+                <div className="flex justify-center items-center gap-4">
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="px-40 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                    className="px-40 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
-                    className="px-30 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center"
+                    className="px-30 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-3"
                     disabled={isLoading || !agreeToTerms}
                   >
                     {isLoading ? (
@@ -539,5 +491,5 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   )
 }
 
-export default OrganizerRegistration
+export default IndividualRegistration
 
