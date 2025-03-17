@@ -29,7 +29,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [passwordError, setPasswordError] = useState("")
   const [confirmPasswordError, setConfirmPasswordError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -164,10 +163,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
       return
     }
 
-    if (!agreeToTerms) {
-      setError("You must agree to the terms and conditions")
-      return
-    }
 
     setIsLoading(true)
 
@@ -355,7 +350,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               <form className="space-y-6" onSubmit={handleNext}>
                 <div className="flex flex-col space-y-2">
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    I am a*
+                    I am a
                   </label>
                   <div className="flex space-x-6">
                     {["Solo Vendor", "Company Vendor"].map((type) => (
@@ -376,7 +371,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    Vendor Name*
+                    Vendor Name
                   </label>
                   <input
                     type="text"
@@ -392,7 +387,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    Business Offering*
+                    Business Offering
                   </label>
                   <select
                     className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -416,7 +411,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    System Preferences*
+                    System Preferences
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     {preferenceOptions.map((preference) => (
@@ -555,23 +550,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   )}
                 </div>
 
-                <div className="mb-6">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={agreeToTerms}
-                      onChange={(e) => setAgreeToTerms(e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className={`text-sm ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                      I agree with EVNTgarde's{" "}
-                      <a href="#" className="text-blue-600 hover:underline">
-                        Terms and Conditions
-                      </a>
-                    </span>
-                  </label>
-                </div>
-
                 <div className="flex justify-between">
                   <button
                     type="button"
@@ -583,7 +561,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   <button
                     type="submit"
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center"
-                    disabled={isLoading || !agreeToTerms}
+                    disabled={isLoading}
                   >
                     {isLoading ? (
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
