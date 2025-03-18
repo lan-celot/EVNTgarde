@@ -7,31 +7,16 @@ import {
 	Navigate,
 } from "react-router-dom";
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
-import HomePageDark from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered dark
 import AboutLoggedOut from "./Major Pages/Dashboards/Unregistered/about-loggedout";
 import LoginPage from "./Major Pages/Login Page/Elements/LoginPage"; // Login page
-import LoginPageDark from "./Major Pages/Login Page/Elements/LoginPageDark"; // Login page
 
-import RoleSelection from "./Major Pages/Login Page/Elements/RoleSelection (Light Mode)";
-import RoleSelectionDark from "./Major Pages/Login Page/Elements/RoleSelection (Dark Mode)";
+//consolidated role selection
+import RoleSelection from "./Major Pages/Login Page/Elements/RoleSelection";
 
-// Individual Registration Components
-import IndividualRegistrationPart1 from "./Major Pages/Login Page/Elements/IndividualRegistration Part 1 (Light Mode)";
-import IndividualRegistrationDarkPart1 from "./Major Pages/Login Page/Elements/IndividualRegistration Part 1 (Dark Mode)";
-import IndividualRegistrationPart2 from "./Major Pages/Login Page/Elements/IndividualRegistration Part 2 (Light Mode)";
-import IndividualRegistrationDarkPart2 from "./Major Pages/Login Page/Elements/IndividualRegistration Part 2 (Dark Mode)";
-
-// Organizer Registration Components
-import OrganizerRegistrationPart1 from "./Major Pages/Login Page/Elements/OrganizerRegistration Part 1 (Light Mode)";
-import OrganizerRegistrationDarkPart1 from "./Major Pages/Login Page/Elements/OrganizerRegistration Part 1 (Dark Mode)";
-import OrganizerRegistrationPart2 from "./Major Pages/Login Page/Elements/OrganizerRegistration Part 2 (Light Mode)";
-import OrganizerRegistrationDarkPart2 from "./Major Pages/Login Page/Elements/OrganizerRegistration Part 2 (Dark Mode)";
-
-// Vendor Registration Components
-import VendorRegistrationPart1 from "./Major Pages/Login Page/Elements/VendorRegistration Part 1 (Light Mode)";
-import VendorRegistrationDarkPart1 from "./Major Pages/Login Page/Elements/VendorRegistration Part 1 (Dark Mode)";
-import VendorRegistrationPart2 from "./Major Pages/Login Page/Elements/VendorRegistration Part 2 (Light Mode)";
-import VendorRegistrationDarkPart2 from "./Major Pages/Login Page/Elements/VendorRegistration Part 2 (Dark Mode)";
+// Registration Components
+import OrganizerRegistration from "./Major Pages/Login Page/Elements/OrganizerRegistration";
+import IndividualRegistration from "./Major Pages/Login Page/Elements/IndividualRegistration";
+import VendorRegistration from "./Major Pages/Login Page/Elements/VendorRegistration";
 
 /* CUSTOMER ROUTES */
 import About_customer from "./Major Pages/Dashboards/Registered/Main Page/customer/Header/About/index";
@@ -67,23 +52,14 @@ import VendorPage from "./Major Pages/Dashboards/Registered/Main Page/vendor/pag
 const App: React.FC = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [userType, setUserType] = useState<string | null>(null);
-	const [isDarkMode, setIsDarkMode] = useState(() => {
-		return localStorage.getItem("theme") === "dark";
-	});
 
 	useEffect(() => {
 		const authStatus = localStorage.getItem("isAuthenticated") === "true";
 		const storedUserType = localStorage.getItem("userType");
-		const storedTheme = localStorage.getItem("theme");
 
 		setIsAuthenticated(authStatus);
 		setUserType(storedUserType);
-		setIsDarkMode(storedTheme === "dark");
 	}, []);
-
-	useEffect(() => {
-		localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-	}, [isDarkMode]);
 
 	const login = () => {
 		setIsAuthenticated(true);
@@ -112,14 +88,6 @@ const App: React.FC = () => {
 		}
 	};
 
-	// Function to get the correct component based on theme
-	const getThemedComponent = (
-		lightComponent: React.ReactNode,
-		darkComponent: React.ReactNode
-	) => {
-		return isDarkMode ? darkComponent : lightComponent;
-	};
-
 	return (
 		<Router>
 			{/* Main Content Wrapper */}
@@ -131,7 +99,7 @@ const App: React.FC = () => {
 						isAuthenticated ? (
 							<Navigate to={getDashboardRoute()} />
 						) : (
-							getThemedComponent(<HomePage />, <HomePageDark />)
+							<HomePage />
 						)
 					}
 				/>
@@ -142,97 +110,56 @@ const App: React.FC = () => {
 						isAuthenticated ? (
 							<Navigate to={getDashboardRoute()} />
 						) : (
-							getThemedComponent(
-								<LoginPage login={login} />,
-								<LoginPageDark login={login} />
-							)
+							<LoginPage login={login} />
 						)
 					}
 				/>
 
-				<Route
-					path="/role-selection"
-					element={getThemedComponent(<RoleSelection />, <RoleSelectionDark />)}
-				/>
-
-				{/* Individual Registration Routes - Two-part flow with theme support */}
-				<Route
-					path="/register/individual"
-					element={getThemedComponent(
-						<IndividualRegistrationPart1 />,
-						<IndividualRegistrationDarkPart1 />
-					)}
-				/>
-				<Route
-					path="/register/individual/part2"
-					element={getThemedComponent(
-						<IndividualRegistrationPart2 />,
-						<IndividualRegistrationDarkPart2 />
-					)}
-				/>
-
-				{/* Organizer Registration Routes - Two-part flow with theme support */}
-				<Route
-					path="/register/organizer"
-					element={getThemedComponent(
-						<OrganizerRegistrationPart1 />,
-						<OrganizerRegistrationDarkPart1 />
-					)}
-				/>
-				<Route
-					path="/register/organizer/part2"
-					element={getThemedComponent(
-						<OrganizerRegistrationPart2 />,
-						<OrganizerRegistrationDarkPart2 />
-					)}
-				/>
-
-				{/* Vendor Registration Routes - Two-part flow with theme support */}
-				<Route
-					path="/register/vendor"
-					element={getThemedComponent(
-						<VendorRegistrationPart1 />,
-						<VendorRegistrationDarkPart1 />
-					)}
-				/>
-				<Route
-					path="/register/vendor/part2"
-					element={getThemedComponent(
-						<VendorRegistrationPart2 />,
-						<VendorRegistrationDarkPart2 />
-					)}
-				/>
-
-				{/* Legacy routes for backward compatibility */}
-				<Route path="/login-dark" element={<Navigate to="/login" />} />
-				<Route path="/home-dark" element={<Navigate to="/" />} />
+				{/* Consolidated Role Selection Route */}
+				<Route path="/role-selection" element={<RoleSelection />} />
 				<Route
 					path="/role-selection-dark"
 					element={<Navigate to="/role-selection" />}
 				/>
+
+				{/* Registration Routes */}
 				<Route
-					path="/register/individual/dark"
-					element={<Navigate to="/register/individual" />}
+					path="/register/organizer"
+					element={<OrganizerRegistration step={1} />}
 				/>
 				<Route
-					path="/register/individual/part2/dark"
-					element={<Navigate to="/register/individual/part2" />}
+					path="/register/organizer/step2"
+					element={<OrganizerRegistration step={2} />}
 				/>
 				<Route
-					path="/register/organizer/dark"
-					element={<Navigate to="/register/organizer" />}
+					path="/register/organizer/step3"
+					element={<OrganizerRegistration step={3} />}
+				/>
+
+				<Route
+					path="/register/individual"
+					element={<IndividualRegistration step={1} />}
 				/>
 				<Route
-					path="/register/organizer/part2/dark"
-					element={<Navigate to="/register/organizer/part2" />}
+					path="/register/individual/step2"
+					element={<IndividualRegistration step={2} />}
 				/>
 				<Route
-					path="/register/vendor/dark"
-					element={<Navigate to="/register/vendor" />}
+					path="/register/individual/step3"
+					element={<IndividualRegistration step={3} />}
+				/>
+
+				<Route
+					path="/register/vendor"
+					element={<VendorRegistration step={1} />}
 				/>
 				<Route
-					path="/register/vendor/part2/dark"
-					element={<Navigate to="/register/vendor/part2" />}
+					path="/register/vendor/step2"
+					element={<VendorRegistration step={2} />}
+				/>
+				<Route
+					path="/register/vendor/step3"
+					element={<VendorRegistration step={3} />}
 				/>
 
 				<Route path="/about" element={<AboutLoggedOut />} />

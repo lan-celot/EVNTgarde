@@ -1,15 +1,15 @@
-import { initializeApp } from "firebase/app";
-import { 
-  getAuth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword,  
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  OAuthProvider, 
-  UserCredential, 
-  signOut
-} from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from "firebase/app"
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  OAuthProvider,
+  type UserCredential,
+  signOut,
+} from "firebase/auth"
+import { getFirestore } from "firebase/firestore"
 
 const firebaseConfig = {
   apiKey: "AIzaSyD-775DBmHg6gHOXYPFEVw-d9pHYo5szIM",
@@ -18,15 +18,18 @@ const firebaseConfig = {
   storageBucket: "account-management-fb55c.firebasestorage.app",
   messagingSenderId: "546251900701",
   appId: "1:546251900701:web:df3493a2f3166cc64383f4",
-  measurementId: "G-FX688QBEL9"
-};
+  measurementId: "G-FX688QBEL9",
+}
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const db = getFirestore(app)
 
-const googleProvider = new GoogleAuthProvider();
-const yahooProvider = new OAuthProvider("yahoo.com");
+const googleProvider = new GoogleAuthProvider()
+const yahooProvider = new OAuthProvider("yahoo.com")
+
+googleProvider.addScope("email")
+googleProvider.addScope("profile")
 
 export {
   auth,
@@ -37,5 +40,6 @@ export {
   signInWithEmailAndPassword,
   signInWithPopup,
   type UserCredential,
-  signOut
-};
+  signOut,
+}
+
