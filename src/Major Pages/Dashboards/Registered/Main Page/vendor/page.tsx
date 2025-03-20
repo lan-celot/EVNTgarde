@@ -12,7 +12,6 @@ interface VendorDashboardProps {
 
 // Update the component to accept and use the logout prop
 export default function VendorDashboard({ logout }: VendorDashboardProps) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [visibleOrganizers, setVisibleOrganizers] = useState(3);
   const [visibleSupplierRequests, setVisibleSupplierRequests] = useState(3);
   const [visiblePastEvents, setVisiblePastEvents] = useState(3);
@@ -35,7 +34,7 @@ export default function VendorDashboard({ logout }: VendorDashboardProps) {
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
         <CombinedLayout>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">

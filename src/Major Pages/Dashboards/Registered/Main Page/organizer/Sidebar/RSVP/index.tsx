@@ -14,7 +14,6 @@ interface FavoritesProps {
 }
 
 export default function Favorites({ logout }: FavoritesProps) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
   // Sample favorite items (Replace with dynamic data)
   const favoriteItems = [
@@ -49,7 +48,7 @@ export default function Favorites({ logout }: FavoritesProps) {
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
         <CombinedLayout showWelcomeBanner={false}>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">

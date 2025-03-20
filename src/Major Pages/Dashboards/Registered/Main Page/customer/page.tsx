@@ -16,7 +16,6 @@ interface CustomerDashboardProps {
 // Update the component to accept and use the logout prop
 export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
   const navigate = useNavigate(); // Initialize navigate
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [visibleOrganizers, setVisibleOrganizers] = useState(3);
   const [visibleBookings, setVisibleBookings] = useState(3);
   const [visiblePackages, setVisiblePackages] = useState(3);
@@ -126,7 +125,7 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
 
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "4rem" }}
       >
         {/* Use Combined Layout */}
         <CombinedLayout>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Sidebar } from "../../../../Elements/sidebar";
 import CombinedLayout from "../../../../../../../Layout/combined-layout";
 
@@ -9,7 +8,6 @@ interface BookingsProps {
 
 export default function Bookings({ logout }: BookingsProps) {
   const [selectedTab, setSelectedTab] = useState("Recent Bookings");
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
 
   const events = [
     {
@@ -31,7 +29,7 @@ export default function Bookings({ logout }: BookingsProps) {
       />
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
         <CombinedLayout showWelcomeBanner={false}>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">
