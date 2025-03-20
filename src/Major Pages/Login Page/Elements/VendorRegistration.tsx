@@ -438,8 +438,8 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   >
                     Back
                   </button>
-                  <button type="submit">
-                  className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                  <button type="submit"
+                  className={`px-6 py-2 border ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
                     Next
                   </button>
                 </div>
@@ -552,17 +552,17 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   )}
                 </div>
 
-                <div className="flex justify-between">
+                <div className="flex justify-center gap-4">
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                    className="px-40 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
-                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600  hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                    className={`px-30 py-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600  hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}
                     disabled={isLoading}
                   >
                     {isLoading ? (
