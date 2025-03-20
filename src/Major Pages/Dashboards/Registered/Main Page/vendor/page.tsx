@@ -3,7 +3,7 @@ import { Button, Input } from "../../Elements/ui/combined-ui";
 import { Sidebar } from "../../Elements/sidebar";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
-import CombinedLayout from "../../Elements/combined-layout";
+import CombinedLayout from "../../../../../Layout/combined-layout";
 
 // Add interface for VendorDashboard props
 interface VendorDashboardProps {
@@ -27,8 +27,8 @@ export default function VendorDashboard({ logout }: VendorDashboardProps) {
   return (
     <div className="flex min-h-screen">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        //isCollapsed={isSidebarCollapsed}
+        //setIsCollapsed={setIsSidebarCollapsed}
         logout={logout} // Pass the logout function to Sidebar
       />
 

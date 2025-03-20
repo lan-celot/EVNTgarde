@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../../Elements/ui/combined-ui";
-import CombinedLayout from "../../../../Elements/combined-layout";
+import CombinedLayout from "../../../../../../../Layout/combined-layout";
 
 const About = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -14,8 +14,8 @@ const About = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        //isCollapsed={isSidebarCollapsed}
+        //setIsCollapsed={setIsSidebarCollapsed}
         logout={() => {
           console.log("Logout Successful");
         }} // added prop since nag eerror - euan (?)

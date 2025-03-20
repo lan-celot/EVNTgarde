@@ -4,7 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import evntLogo from "@/assets/OrganizerLogo.png";
 import { Link } from "react-router-dom";
 import { Sidebar } from "../../../../Elements/sidebar";
-import CombinedLayout from "../../../../Elements/combined-layout";
+import CombinedLayout from "../../../../../../../Layout/combined-layout";
 
 interface DashboardProps {
   logout: () => void;
@@ -54,8 +54,8 @@ export default function Dashboard({ logout }: DashboardProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        //isCollapsed={isSidebarCollapsed}
+        //setIsCollapsed={setIsSidebarCollapsed}
         logout={logout}
       />
       <div

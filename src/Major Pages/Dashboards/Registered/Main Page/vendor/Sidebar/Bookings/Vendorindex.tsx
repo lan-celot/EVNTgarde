@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Sidebar } from "../../../../Elements/sidebar";
-import CombinedLayout from "../../../../Elements/combined-layout";
+import CombinedLayout from "../../../../../../../Layout/combined-layout";
 import RequestDetails from "./VendorRequestDetails";
 interface BookingsProps {
   logout: () => void;
@@ -27,8 +27,8 @@ export default function Bookings({ logout }: BookingsProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        //isCollapsed={isSidebarCollapsed}
+        //setIsCollapsed={setIsSidebarCollapsed}
         logout={logout}
       />
       <div

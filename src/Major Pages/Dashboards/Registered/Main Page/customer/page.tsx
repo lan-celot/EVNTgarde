@@ -4,7 +4,7 @@ import { Sidebar } from "../../Elements/sidebar";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Button, Input } from "../../Elements/ui/combined-ui";
-import CombinedLayout from "../../Elements/combined-layout";
+import CombinedLayout from "../../../../../Layout/combined-layout";
 import { mockOrganizers } from "../../../../../functions/mockData";
 import { Loc } from "../../../../../functions/accsEventsCollections";
 
@@ -119,8 +119,8 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
   return (
     <div className="flex min-h-screen">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        // isCollapsed={isSidebarCollapsed}
+        // setIsCollapsed={setIsSidebarCollapsed}
         logout={logout} // Pass the logout function to Sidebar
       />
 

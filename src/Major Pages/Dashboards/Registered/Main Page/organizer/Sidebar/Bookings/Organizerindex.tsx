@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "../../../../Elements/sidebar";
-import CombinedLayout from "../../../../Elements/combined-layout";
+import CombinedLayout from "../../../../../../../Layout/combined-layout";
 import RequestDetails from "./OrganizerRequestDetails";
 import { getRequestsByStatusGroup as getAllOrganizerRequests } from "../../../../../../../functions/OrganizerRequestService";
 import type { CustomerRequest } from "../../../../../../../functions/types";
@@ -74,8 +74,8 @@ export default function Bookings({ logout }: BookingsProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        //isCollapsed={isSidebarCollapsed}
+        //setIsCollapsed={setIsSidebarCollapsed}
         logout={logout}
       />
       <div

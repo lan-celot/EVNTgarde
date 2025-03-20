@@ -3,7 +3,7 @@ import { Button, Input } from "../../Elements/ui/combined-ui";
 import { Sidebar } from "../../Elements/sidebar";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import CombinedLayout from "../../Elements/combined-layout";
+import CombinedLayout from "../../../../../Layout/combined-layout";
 import { searchAndFilterItems } from "../../../../../functions/search";
 
 // Update the OrganizerPage component to accept and pass the logout prop
@@ -69,8 +69,8 @@ export default function Home({ logout }: OrganizerPageProps) {
   return (
     <div className="flex min-h-screen">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        // isCollapsed={isSidebarCollapsed}
+        // setIsCollapsed={setIsSidebarCollapsed}
         logout={logout} // Pass the logout function to Sidebar
       />
 

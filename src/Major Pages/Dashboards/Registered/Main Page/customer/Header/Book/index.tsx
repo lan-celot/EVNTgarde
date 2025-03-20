@@ -8,7 +8,7 @@ import {
   CardTitle,
   Input,
 } from "../../../../Elements/ui/combined-ui";
-import CombinedLayout from "../../../../Elements/combined-layout";
+import CombinedLayout from "../../../../../../../Layout/combined-layout";
 import { Search, Users, Briefcase } from "lucide-react";
 
 const vendors = [
@@ -57,8 +57,8 @@ const Book = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        // isCollapsed={isSidebarCollapsed}
+        // setIsCollapsed={setIsSidebarCollapsed}
         logout={() => {
           console.log("Logout Successful");
         }} // added prop since nag eerror - euan (?)
