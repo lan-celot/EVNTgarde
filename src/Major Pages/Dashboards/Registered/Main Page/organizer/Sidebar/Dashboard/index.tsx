@@ -4,14 +4,13 @@ import "react-calendar/dist/Calendar.css";
 import evntLogo from "@/assets/OrganizerLogo.png";
 import { Link } from "react-router-dom";
 import { Sidebar } from "../../../../Elements/sidebar";
-import CombinedLayout from "../../../../Elements/combined-layout";
+import CombinedLayout from "../../../../../../../Layout/combined-layout";
 
 interface DashboardProps {
   logout: () => void;
 }
 
 export default function Dashboard({ logout }: DashboardProps) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showOngoing, setShowOngoing] = useState(true);
 
@@ -54,13 +53,13 @@ export default function Dashboard({ logout }: DashboardProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        //isCollapsed={isSidebarCollapsed}
+        //setIsCollapsed={setIsSidebarCollapsed}
         logout={logout}
       />
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
         <CombinedLayout>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "../../../../Elements/sidebar";
-import CombinedLayout from "../../../../Elements/combined-layout";
+import CombinedLayout from "../../../../../../../Layout/combined-layout";
 import RequestDetails from "./OrganizerRequestDetails";
 import { getRequestsByStatusGroup as getAllOrganizerRequests } from "../../../../../../../functions/OrganizerRequestService";
 import type { CustomerRequest } from "../../../../../../../functions/types";
@@ -13,7 +13,6 @@ export default function Bookings({ logout }: BookingsProps) {
   const [selectedTab, setSelectedTab] = useState("Organizer");
   const [activeSection, setActiveSection] = useState("Requests");
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [requests, setRequests] = useState<{
     pending: CustomerRequest[];
     accepted: CustomerRequest[];
@@ -74,13 +73,13 @@ export default function Bookings({ logout }: BookingsProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        //isCollapsed={isSidebarCollapsed}
+        //setIsCollapsed={setIsSidebarCollapsed}
         logout={logout}
       />
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
         <CombinedLayout showWelcomeBanner={false}>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">

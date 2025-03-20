@@ -3,7 +3,7 @@ import { Button, Input } from "../../Elements/ui/combined-ui";
 import { Sidebar } from "../../Elements/sidebar";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import CombinedLayout from "../../Elements/combined-layout";
+import CombinedLayout from "../../../../../Layout/combined-layout";
 import { searchAndFilterItems } from "../../../../../functions/search";
 
 // Update the OrganizerPage component to accept and pass the logout prop
@@ -13,7 +13,6 @@ interface OrganizerPageProps {
 
 export default function Home({ logout }: OrganizerPageProps) {
   // State for showing more vendors and events
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [visibleVendors, setVisibleVendors] = useState(3);
   const [visibleEvents, setVisibleEvents] = useState(3);
 
@@ -69,15 +68,15 @@ export default function Home({ logout }: OrganizerPageProps) {
   return (
     <div className="flex min-h-screen">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        // isCollapsed={isSidebarCollapsed}
+        // setIsCollapsed={setIsSidebarCollapsed}
         logout={logout} // Pass the logout function to Sidebar
       />
 
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
         <CombinedLayout>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">

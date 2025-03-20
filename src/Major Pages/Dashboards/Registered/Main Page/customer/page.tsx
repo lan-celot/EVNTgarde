@@ -4,7 +4,7 @@ import { Sidebar } from "../../Elements/sidebar";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Button, Input } from "../../Elements/ui/combined-ui";
-import CombinedLayout from "../../Elements/combined-layout";
+import CombinedLayout from "../../../../../Layout/combined-layout";
 import { mockOrganizers } from "../../../../../functions/mockData";
 import { Loc } from "../../../../../functions/accsEventsCollections";
 
@@ -16,7 +16,6 @@ interface CustomerDashboardProps {
 // Update the component to accept and use the logout prop
 export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
   const navigate = useNavigate(); // Initialize navigate
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [visibleOrganizers, setVisibleOrganizers] = useState(3);
   const [visibleBookings, setVisibleBookings] = useState(3);
   const [visiblePackages, setVisiblePackages] = useState(3);
@@ -119,14 +118,14 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
   return (
     <div className="flex min-h-screen">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        // isCollapsed={isSidebarCollapsed}
+        // setIsCollapsed={setIsSidebarCollapsed}
         logout={logout} // Pass the logout function to Sidebar
       />
 
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "4rem" }}
       >
         {/* Use Combined Layout */}
         <CombinedLayout>
