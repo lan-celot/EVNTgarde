@@ -317,66 +317,43 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
               {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
 
-              <div className="flex flex-col space-y-4 mb-6">
+              <div className="flex items-center justify-center gap-4 mb-4">
                 <button
                   type="button"
                   onClick={handleGoogleSignUp}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-md border ${
-                    isDarkMode ? "border-gray-600 hover:bg-gray-800" : "border-gray-300 hover:bg-gray-100"
-                  }`}
-                  disabled={isLoading}
-                >
+                  className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
+                    ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-700" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                     disabled={isLoading}
+                     >
                   <FcGoogle size={20} />
-                  <span>Sign up with Google</span>
+                  <span className="font-medium">Sign up with Google</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleYahooSignUp}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-md border ${
-                    isDarkMode ? "border-gray-600 hover:bg-gray-800" : "border-gray-300 hover:bg-gray-100"
-                  }`}
-                  disabled={isLoading}
-                >
+                  className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
+                   ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-900" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                          disabled={isLoading}
+                            >
                   <AiFillYahoo size={20} className="text-purple-600" />
-                  <span>Sign up with Yahoo</span>
-                </button>
-              </div>
+                  <span className="font-medium">Sign up with Yahoo</span>
+              </button>
+           </div>
 
-              <div className="relative flex items-center py-2 mb-4">
+           <div className="relative flex items-center py-2 mb-4">
                 <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
                 <span className={`flex-shrink mx-4 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>OR</span>
                 <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
               </div>
 
               <form className="space-y-6" onSubmit={handleNext}>
-                <div className="flex flex-col space-y-2">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    I am a
-                  </label>
-                  <div className="flex space-x-6">
-                    {["Solo Vendor", "Company Vendor"].map((type) => (
-                      <label key={type} className="flex items-center">
-                        <input
-                          type="radio"
-                          name="vendorType"
-                          className="mr-2"
-                          checked={vendorType === type}
-                          onChange={() => setVendorType(type)}
-                          required
-                        />
-                        {type}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    Vendor Name
+                    Business Name
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter your business name"
+                    placeholder="John's Catering"
                     className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
                       isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
                     }`}
@@ -388,7 +365,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
                 <div>
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-                    Business Offering
+                    Services Offered
                   </label>
                   <select
                     className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
@@ -430,16 +407,15 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   </div>
                 </div>
 
-                <div className="flex justify-between mt-4">
+                <div className="flex justify-center items-center gap-5">
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                    className="px-43 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
-                    Back
+                      Back
                   </button>
-                  <button type="submit"
-                  className={`px-6 py-2 border ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
+                  <button type="submit" className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
                     Next
                   </button>
                 </div>
@@ -552,17 +528,17 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   )}
                 </div>
 
-                <div className="flex justify-center gap-4">
+                <div className="flex justify-between">
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="px-40 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
-                    className={`px-30 py-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600  hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600  hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}
                     disabled={isLoading}
                   >
                     {isLoading ? (
