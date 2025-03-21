@@ -21,7 +21,7 @@ const About = () => {
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: "4rem"  }}
+        style={{ marginLeft: "16rem" }}
       >
         <CombinedLayout showWelcomeBanner={false}>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">

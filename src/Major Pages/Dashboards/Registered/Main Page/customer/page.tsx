@@ -125,7 +125,7 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
 
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: "4rem" }}
+        style={{ marginLeft: "16rem" }}
       >
         {/* Use Combined Layout */}
         <CombinedLayout>
@@ -141,7 +141,7 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       placeholder="Search for Organizers..."
-                      className="pl-10"
+                      className="pl-10 placeholder-gray-700 dark:placeholder-gray-400" // hehe para kita sa light mode
                     />
                   </div>
 
@@ -224,7 +224,7 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       placeholder="Search for Events..."
-                      className="pl-10"
+                      className="pl-10 placeholder-gray-700 dark:placeholder-gray-400" // hehe para kita sa light mode
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />

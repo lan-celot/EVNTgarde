@@ -17,13 +17,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/combined-ui";
-import { ThemeToggle } from "@/functions/ThemeToogle";
 
 const sidebarItems: { title: string; icon: any; href: string }[] = [];
 
-const userType = localStorage.getItem("userType") == "individual" ? "customer" : localStorage.getItem("userType");
-
-
+const userType =
+  localStorage.getItem("userType") == "individual"
+    ? "customer"
+    : localStorage.getItem("userType");
 
 if (userType == "organizer" || userType == "vendor") {
   sidebarItems.push({
@@ -73,7 +73,9 @@ interface SidebarProps {
   logout: () => void; // Add logout prop - nag add ng ibang logout props sa mga gumagamamit sa "Sidebar", using only console.log
 }
 
-export function Sidebar({ /*isCollapsed,*/ /*setIsCollapsed,*/ logout }: SidebarProps) {
+export function Sidebar({
+  /*isCollapsed,*/ /*setIsCollapsed,*/ logout,
+}: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const isCollapsed = false; // instead of removing props for future purposes and current interactions (pls)
@@ -85,7 +87,6 @@ export function Sidebar({ /*isCollapsed,*/ /*setIsCollapsed,*/ logout }: Sidebar
           isCollapsed ? "w-16" : "w-64"
         }`}
       >
-        <ThemeToggle />
         {/* Sidebar Toggle Button */}
         <div className="p-3">
           <Button
@@ -114,7 +115,10 @@ export function Sidebar({ /*isCollapsed,*/ /*setIsCollapsed,*/ logout }: Sidebar
                 </button>
               </TooltipTrigger>
               {isCollapsed && (
-                <TooltipContent side="right" className="border-0 bg-gray-900 text-white">
+                <TooltipContent
+                  side="right"
+                  className="border-0 bg-gray-900 text-white"
+                >
                   {item.title}
                 </TooltipContent>
               )}
@@ -135,7 +139,10 @@ export function Sidebar({ /*isCollapsed,*/ /*setIsCollapsed,*/ logout }: Sidebar
               </button>
             </TooltipTrigger>
             {isCollapsed && (
-              <TooltipContent side="right" className="border-0 bg-gray-900 text-white">
+              <TooltipContent
+                side="right"
+                className="border-0 bg-gray-900 text-white"
+              >
                 Logout
               </TooltipContent>
             )}
@@ -143,6 +150,5 @@ export function Sidebar({ /*isCollapsed,*/ /*setIsCollapsed,*/ logout }: Sidebar
         </div>
       </div>
     </TooltipProvider>
-  )
+  );
 }
-
