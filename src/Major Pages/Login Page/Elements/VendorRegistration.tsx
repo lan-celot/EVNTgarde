@@ -1,46 +1,51 @@
-import { Eye, EyeOff } from "lucide-react"
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import Logo from "@/assets/OrganizerLogo.png"
-import "@/Major Pages/Login Page/Main Page/RegistrationLogin.css"
-import { registerUser } from "../../../functions/authFunctions"
-import { createUserAccount } from "../../../functions/userAccount"
-import { useTheme } from "../../../functions/ThemeContext"
-import { signInWithGoogle, signInWithYahoo } from "../../../functions/authFunctions"
-import { FcGoogle } from "react-icons/fc"
+import { Eye, EyeOff } from "lucide-react";
+import type React from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Logo from "@/assets/OrganizerLogo.png";
+import "@/Major Pages/Login Page/Main Page/RegistrationLogin.css";
+import { registerUser } from "../../../functions/authFunctions";
+import { createUserAccount } from "../../../functions/userAccount";
+import { useTheme } from "../../../functions/ThemeContext";
+import { signInWithGoogle, signInWithYahoo } from "../../../functions/authFunctions";
+import { FcGoogle } from "react-icons/fc";
 import { AiFillYahoo } from "react-icons/ai";
 
+type VendorType = "Solo Vendor" | "Company Vendor" | "";
+
 const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
-  const navigate = useNavigate()
-  const [currentStep, setCurrentStep] = useState(step)
-  const { isDarkMode } = useTheme()
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(step);
+  const { isDarkMode } = useTheme();
 
-  // Step 2 form state (previously step 1)
-  const [vendorType, setVendorType] = useState("")
-  const [vendorName, setVendorName] = useState("")
-  const [businessOffering, setBusinessOffering] = useState("")
-  const [preferences, setPreferences] = useState<string[]>([])
+  
+  const [vendorType, setVendorType] = useState<VendorType>("");
+  const [vendorName, setVendorName] = useState("");
+  const [businessOffering, setBusinessOffering] = useState("");
+  const [preferences, setPreferences] = useState<string[]>([]);
 
-  // Step 3 form state (previously step 2)
-  const [phoneNumber, setPhoneNumber] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [passwordError, setPasswordError] = useState("")
-  const [confirmPasswordError, setConfirmPasswordError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  
+  const [hasSelectedVendorType, setHasSelectedVendorType] = useState(false);
 
   useEffect(() => {
-    setCurrentStep(step)
-  }, [step])
+    setCurrentStep(step);
+  }, [step]);
 
-  // Common state
-  const [error, setError] = useState("")
+  
+  const [error, setError] = useState("");
 
-  // Business offering options
+  
   const offeringOptions = [
     { value: "", label: "Please select service offered" },
     { value: "catering", label: "Catering" },
@@ -48,76 +53,85 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     { value: "entertainment", label: "Entertainment" },
     { value: "decoration", label: "Decoration" },
     { value: "photography", label: "Photography" },
-  ]
+  ];
 
-  // Preference options
-  const preferenceOptions = ["Procurement", "Inventory", "Reservations", "Logistics"]
+  
+  const preferenceOptions = ["Procurement", "Inventory", "Reservations", "Logistics"];
 
-  // Password validation
+  
   useEffect(() => {
     const validatePassword = (pass: string): string => {
-      if (pass.length < 12) return "Password must be at least 12 characters long."
-      if (!/[A-Z]/.test(pass)) return "Password must include at least one uppercase letter."
-      if (!/\d/.test(pass)) return "Password must include at least one number."
-      if (!/[!@#$%^&*_]/.test(pass)) return "Password must include at least one special character (!@#$%^&*_)."
-      return ""
-    }
+      if (pass.length < 12) return "Password must be at least 12 characters long.";
+      if (!/[A-Z]/.test(pass)) return "Password must include at least one uppercase letter.";
+      if (!/\d/.test(pass)) return "Password must include at least one number.";
+      if (!/[!@#$%^&*_]/.test(pass)) return "Password must include at least one special character (!@#$%^&*_).";
+      return "";
+    };
 
-    setPasswordError(validatePassword(password))
-  }, [password])
+    setPasswordError(validatePassword(password));
+  }, [password]);
 
-  // Confirm password validation
+  
   useEffect(() => {
     if (confirmPassword && password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match.")
+      setConfirmPasswordError("Passwords do not match.");
     } else {
-      setConfirmPasswordError("")
+      setConfirmPasswordError("");
     }
-  }, [password, confirmPassword])
+  }, [password, confirmPassword]);
 
-  // Load data from session storage when moving to step 3
+  
   useEffect(() => {
     if (currentStep === 3) {
-      const storedData = sessionStorage.getItem("vendorRegistration")
+      const storedData = sessionStorage.getItem("vendorRegistration");
       if (storedData) {
-        const data = JSON.parse(storedData)
-        setVendorType(data.vendorType)
-        setVendorName(data.vendorName)
-        setBusinessOffering(data.businessOffering)
-        setPreferences(data.preferences)
+        const data = JSON.parse(storedData);
+        setVendorType(data.vendorType);
+        setVendorName(data.vendorName);
+        setBusinessOffering(data.businessOffering);
+        setPreferences(data.preferences);
       }
     }
-  }, [currentStep])
+  }, [currentStep]);
 
-  // Handle preference change
+  
   const handlePreferenceChange = (preference: string) => {
     if (preferences.includes(preference)) {
-      setPreferences(preferences.filter((p) => p !== preference))
+      setPreferences(preferences.filter((p) => p !== preference));
     } else {
-      setPreferences([...preferences, preference])
+      setPreferences([...preferences, preference]);
     }
-  }
+  };
 
-  // Handle welcome screen proceed button
+  
+  const handleGetStarted = () => {
+    if (!vendorType) {
+      setError("Please select a vendor type.");
+      return;
+    }
+    setHasSelectedVendorType(true); 
+  };
+
+  
   const handleProceed = () => {
-    navigate("/register/vendor/step2")
-  }
+    navigate("/register/vendor/step2");
+  };
 
-  // Handle step 2 submission (previously step 1)
+  
   const handleNext = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!vendorType || !vendorName || !businessOffering) {
-      setError("Vendor type, name, and business offering are required")
-      return
+      setError("Vendor type, name, and business offering are required");
+      return;
     }
 
     if (preferences.length === 0) {
-      setError("Please select at least one system preference")
-      return
+      setError("Please select at least one system preference");
+      return;
     }
 
-    // Store form data in sessionStorage to retrieve in part 3
+    
     sessionStorage.setItem(
       "vendorRegistration",
       JSON.stringify({
@@ -126,102 +140,101 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         businessOffering,
         preferences,
       }),
-    )
+    );
 
-    // Navigate to step 3
-    navigate("/register/vendor/step3")
-  }
+    
+    navigate("/register/vendor/step3");
+  };
 
-  // Handle back button
+  
   const handleBack = () => {
     if (currentStep === 1) {
-      navigate("/role-selection")
+      navigate("/role-selection");
     } else if (currentStep === 2) {
-      navigate("/register/vendor")
+      navigate("/register/vendor");
     } else {
-      navigate("/register/vendor/step2")
+      navigate("/register/vendor/step2");
     }
-  }
+  };
 
-  // Handle final submission
+  
   const handleCreateAccount = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError("");
 
     if (!email || !password || !confirmPassword) {
-      setError("All fields are required")
-      return
+      setError("All fields are required");
+      return;
     }
 
     if (passwordError) {
-      setError(passwordError)
-      return
+      setError(passwordError);
+      return;
     }
 
     if (confirmPasswordError) {
-      setError(confirmPasswordError)
-      return
+      setError(confirmPasswordError);
+      return;
     }
 
-
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      // Create user account with data from both parts
+      
       const userData = createUserAccount("vendor", email, {
         vendorType,
         businessName: vendorName,
         services: businessOffering,
         phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
         preferences,
-      })
+      });
 
-      // Register user with Firebase
-      await registerUser(email, password, "vendor", userData)
+      
+      await registerUser(email, password, "vendor", userData);
 
-      // Clear session storage
-      sessionStorage.removeItem("vendorRegistration")
+      
+      sessionStorage.removeItem("vendorRegistration");
 
-      // Navigate to login page
-      navigate("/login")
+      
+      navigate("/login");
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignUp = async () => {
-    setIsLoading(true)
-    setError("")
+    setIsLoading(true);
+    setError("");
     try {
-      await signInWithGoogle("vendor")
-      navigate("/vendor")
+      await signInWithGoogle("vendor");
+      navigate("/vendor");
     } catch (err: any) {
-      setError("Failed to sign up with Google. Please try again.")
-      console.error(err)
+      setError("Failed to sign up with Google. Please try again.");
+      console.error(err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleYahooSignUp = async () => {
-    setIsLoading(true)
-    setError("")
+    setIsLoading(true);
+    setError("");
     try {
-      await signInWithYahoo("vendor")
-      navigate("/vendor")
+      await signInWithYahoo("vendor");
+      navigate("/vendor");
     } catch (err: any) {
-      setError("Failed to sign up with Yahoo. Please try again.")
-      console.error(err)
+      setError("Failed to sign up with Yahoo. Please try again.");
+      console.error(err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins] p-4">
-        <div className={`flex w-[1440px] h-[650px] ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
+      <div className={`flex w-[1440px] h-[650px] ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
         {/* Left Side - Logo & Text */}
         <div
           className={`w-2/5 ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} text-white flex flex-col items-center justify-center text-center p-8`}
@@ -236,82 +249,158 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
           className={`w-3/5 ${isDarkMode ? "bg-black text-white" : "bg-white text-gray-800"} p-12 flex flex-col justify-center rounded-l-[50px] shadow-md relative overflow-y-auto`}
         >
           {currentStep === 1 ? (
-  /* Welcome Screen */
-  <>
-    <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
+            !hasSelectedVendorType ? (
+             
+              <>
+                <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
-    <div className="mb-6"> {/* Reduced margin-bottom here */}
-      <h3 className="text-2xl font-semibold mb-4">Are you a solo vendor or part of a company?</h3>
-      <p className="text-lg mb-6">This helps us understand how to showcase your offerings.</p>
+                <div className="mb-6">
+                  <h3 className="text-2xl font-semibold mb-4">Are you a solo vendor or part of a company?</h3>
+                  <p className="text-lg mb-6">This helps us understand how to showcase your offerings.</p>
 
-      {/* Add Radio Buttons with Border Styling */}
-      <div className="space-y-4">
-        <label
-          className={`flex items-start p-4 border rounded-lg cursor-pointer ${
-            vendorType === "Solo Vendor"
-              ? "border-blue-500 bg-gray-500 dark:bg-blue-900/30"
-              : "border-gray-300 dark:border-gray-600"
-          }`}
-        >
-          <input
-            type="radio"
-            name="vendorType"
-            className="mt-1 mr-3"
-            checked={vendorType === "Solo Vendor"}
-            onChange={() => setVendorType("Solo Vendor")}
-          />
-          <div>
-            <p className="font-medium">I'm a solo vendor</p>
-          </div>
-        </label>
+                  {/* Add Radio Buttons with Border Styling */}
+                  <div className="space-y-4">
+                    <label
+                      className={`flex items-start p-4 border rounded-lg cursor-pointer ${
+                        vendorType === "Solo Vendor"
+                          ? "border-blue-500 bg-gray-500 dark:bg-blue-900/30"
+                          : "border-gray-300 dark:border-gray-600"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="vendorType"
+                        className="mt-1 mr-3"
+                        checked={vendorType === "Solo Vendor"}
+                        onChange={() => setVendorType("Solo Vendor")}
+                      />
+                      <div>
+                        <p className="font-medium">I'm a solo vendor</p>
+                      </div>
+                    </label>
 
-        <label
-          className={`flex items-start p-4 border rounded-lg cursor-pointer ${
-            vendorType === "Company Vendor"
-              ? "border-blue-500 bg-gray-500 dark:bg-blue-200/30"
-              : "border-gray-300 dark:border-gray-600"
-          }`}
-        >
-          <input
-            type="radio"
-            name="vendorType"
-            className="mt-1 mr-3"
-            checked={vendorType === "Company Vendor"}
-            onChange={() => setVendorType("Company Vendor")}
-          />
-          <div>
-            <p className="font-medium">I'm a company vendor</p>
-          </div>
-        </label>
-      </div>
-    </div>
+                    <label
+                      className={`flex items-start p-4 border rounded-lg cursor-pointer ${
+                        vendorType === "Company Vendor"
+                          ? "border-blue-500 bg-gray-500 dark:bg-blue-200/30"
+                          : "border-gray-300 dark:border-gray-600"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="vendorType"
+                        className="mt-1 mr-3"
+                        checked={vendorType === "Company Vendor"}
+                        onChange={() => setVendorType("Company Vendor")}
+                      />
+                      <div>
+                        <p className="font-medium">I'm a company vendor</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
 
-    {/* Buttons Container */}
-    <div className="flex justify-between gap-4 mt-2"> {/* Reduced margin-top here */}
-      <button
-        type="button"
-        onClick={handleBack}
-        className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
-      >
-        Start Over
-      </button>
-      <button
-        type="button"
-        onClick={handleProceed}
-               className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "} rounded-xl shadow-lg overflow-hidden font-poppins`}>
-        Get Started
-      </button>
-    </div>
+                {/* Buttons Container */}
+                <div className="flex justify-between gap-4 mt-2">
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                  >
+                    Start Over
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGetStarted} 
+                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                    disabled={!vendorType} 
+                  >
+                    Get Started
+                  </button>
+                </div>
 
-    <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
-      Already have an account?{" "}
-      <a href="/login" className="text-blue-600 hover:underline">
-        Log in
-      </a>
-    </p>
-  </>
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  Already have an account?{" "}
+                  <a href="/login" className="text-blue-600 hover:underline">
+                    Log in
+                  </a>
+                </p>
+              </>
+            ) : vendorType === "Solo Vendor" ? (
+             
+              <>
+                <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
+
+                <div className="mb-8">
+                  <h3 className="text-2xl font-semibold mb-4">You're a Solo Vendor!</h3>
+                  <p className="text-lg mb-6">
+                    Perfect Pick! Showcase your services/business to organizers. We'll help you get set up right away.
+                  </p>
+                </div>
+
+                <div className="flex justify-center items-center gap-5">
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                  >
+                    Start Over
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleProceed} 
+                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                  >
+                    Proceed
+                  </button>
+                </div>
+
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  Already have an account?{" "}
+                  <a href="/login" className="text-blue-600 hover:underline">
+                    Log in
+                  </a>
+                </p>
+              </>
+            ) : (
+             
+              <>
+                <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
+
+                <div className="mb-8">
+                  <h3 className="text-2xl font-semibold mb-4">You're a Company Vendor!</h3>
+                  <p className="text-lg mb-6">
+                    Perfect Pick! Showcase your services/business to organizers. We'll help you get set up right away.
+                  </p>
+                </div>
+
+                <div className="flex justify-center items-center gap-5">
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="flex-1 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
+                  >
+                    Start Over
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleProceed} 
+                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                  >
+                    Proceed
+                  </button>
+                </div>
+
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  Already have an account?{" "}
+                  <a href="/login" className="text-blue-600 hover:underline">
+                    Log in
+                  </a>
+                </p>
+              </>
+            )
           ) : currentStep === 2 ? (
-            /* Step 2 Form */
+           
             <>
               <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
@@ -323,8 +412,8 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   onClick={handleGoogleSignUp}
                   className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
                     ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-700" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
-                     disabled={isLoading}
-                     >
+                  disabled={isLoading}
+                >
                   <FcGoogle size={20} />
                   <span className="font-medium">Sign up with Google</span>
                 </button>
@@ -332,15 +421,15 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   type="button"
                   onClick={handleYahooSignUp}
                   className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
-                   ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-900" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
-                          disabled={isLoading}
-                            >
+                    ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-900" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                  disabled={isLoading}
+                >
                   <AiFillYahoo size={20} className="text-purple-600" />
                   <span className="font-medium">Sign up with Yahoo</span>
-              </button>
-           </div>
+                </button>
+              </div>
 
-           <div className="relative flex items-center py-2 mb-4">
+              <div className="relative flex items-center py-2 mb-4">
                 <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
                 <span className={`flex-shrink mx-4 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>OR</span>
                 <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
@@ -413,7 +502,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                     onClick={handleBack}
                     className="px-43 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
-                      Back
+                    Back
                   </button>
                   <button type="submit" className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
                     Next
@@ -429,7 +518,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               </form>
             </>
           ) : (
-            /* Step 3 Form (previously step 2) */
+           
             <>
               <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
@@ -560,7 +649,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VendorRegistration
+export default VendorRegistration;
