@@ -89,7 +89,7 @@ export default function Home({ logout }: OrganizerPageProps) {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       placeholder="Search for Vendors..."
-                      className="pl-10"
+                      className="pl-10 placeholder-gray-700 dark:placeholder-gray-400"
                       value={vendorSearchQuery}
                       onChange={(e) => setVendorSearchQuery(e.target.value)}
                     />
@@ -194,7 +194,7 @@ export default function Home({ logout }: OrganizerPageProps) {
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     placeholder="Search past events..."
-                    className="pl-10"
+                    className="pl-10 placeholder-gray-700 dark:placeholder-gray-400"
                     value={eventSearchQuery}
                     onChange={(e) => setEventSearchQuery(e.target.value)}
                   />
