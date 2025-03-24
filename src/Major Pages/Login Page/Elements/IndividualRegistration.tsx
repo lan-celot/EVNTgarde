@@ -191,9 +191,11 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins] p-4">
-      <div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden font-poppins">
+      <div className={`flex w-[1440px] h-[650px] ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
         {/* Left Side - Logo & Text */}
-        <div className="w-2/5 bg-blue-600 text-white flex flex-col items-center justify-center text-center p-8">
+        <div
+          className={`w-2/5 ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} text-white flex flex-col items-center justify-center text-center p-8`}
+        >
           <img src={Logo || "/placeholder.svg"} className="max-w-xs mb-4" alt="Logo" />
           <p className="text-lg font-medium mb-2">Discover tailored events services.</p>
           <p className="text-lg font-medium mb-2">Sign up for personalized services today!</p>
@@ -227,8 +229,7 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 <button
                   type="button"
                   onClick={handleProceed}
-                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
+                  className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "} rounded-xl shadow-lg overflow-hidden font-poppins`}>
                   Get Started
                 </button>
               </div>
@@ -338,7 +339,7 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="px-43 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}
                   >
                     Next
                   </button>
@@ -446,7 +447,7 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   </button>
                   <button
                     type="submit"
-                    className="px-30 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-3"
+                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600  hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}
                     disabled={isLoading}
                   >
                     {isLoading ? (
