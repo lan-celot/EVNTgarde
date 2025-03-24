@@ -7,55 +7,30 @@ type ThemeContextType = {
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
 	const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-		// Initialize from localStorage if available
 		const savedTheme = localStorage.getItem("theme");
 		return savedTheme === "dark";
 	});
 
-	// Update localStorage when theme changes
+	// Single useEffect for theme persistence and applying the class
 	useEffect(() => {
-		if (isDarkMode) {
-			document.documentElement.classList.add("dark");
-		} else {
-			document.documentElement.classList.remove("dark");
-		}
-		localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+		const theme = isDarkMode ? "dark" : "light";
+
+		// Ensure only one class is applied
+		document.documentElement.classList.remove("dark", "light");
+		document.documentElement.classList.add(theme);
+
+		// Save to localStorage
+		localStorage.setItem("theme", theme);
 	}, [isDarkMode]);
 
 	const toggleTheme = () => {
-		setIsDarkMode((prev) => {
-			const newTheme = !prev;
-
-			// Update localStorage for persistence
-			localStorage.setItem("theme", newTheme ? "dark" : "light");
-
-			// Apply the class immediately to reflect changes
-			if (newTheme) {
-				document.documentElement.classList.add("dark");
-			} else {
-				document.documentElement.classList.remove("dark");
-			}
-
-			return newTheme;
-		});
+		setIsDarkMode((prev) => !prev);
 	};
-
-	useEffect(() => {
-		const storedTheme = localStorage.getItem("theme");
-		if (storedTheme === "dark") {
-			setIsDarkMode(true);
-			document.documentElement.classList.add("dark");
-		} else {
-			setIsDarkMode(false);
-			document.documentElement.classList.remove("dark");
-		}
-	}, []);
 
 	return (
 		<ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
