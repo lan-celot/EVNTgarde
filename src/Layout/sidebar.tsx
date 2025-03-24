@@ -52,11 +52,15 @@ export function Sidebar({
 
 	const sidebarItems = useMemo(() => {
 		const items = [
-			{
-				title: "Dashboard",
-				icon: LayoutDashboard,
-				href: `/${userType}/dashboard`,
-			},
+			...(userType !== "customer"
+				? [
+						{
+							title: "Dashboard",
+							icon: LayoutDashboard,
+							href: `/${userType}/dashboard`,
+						},
+				  ]
+				: []),
 			{ title: "Bookings", icon: CalendarDays, href: `/${userType}/bookings` },
 			...(userType === "customer" || userType === "organizer"
 				? [{ title: "RSVP", icon: Package, href: `/${userType}/RSVP` }]

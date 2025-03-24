@@ -40,7 +40,7 @@ export default function CombinedLayout({
 	return (
 		<div className="flex min-h-screen">
 			<div
-				className={`fixed left-0 top-0 h-screen w-64 transition-all duration-300 ${
+				className={`fixed left-0 top-0 h-full w-64 transition-all duration-300 ${
 					isDarkMode ? "bg-[#1E3A6D]" : "bg-[#2B579A]"
 				}`}
 			>
@@ -50,7 +50,7 @@ export default function CombinedLayout({
 				<div className="HeaderContainer" style={{ marginLeft: "16rem" }}>
 					<Header />
 				</div>
-				<div className="MainContainer">
+				<div className="MainContainer mt-[56px] p-6">
 					<div className="MainContent">
 						{showWelcomeBanner && <WelcomeBanner />}
 						<Outlet /> {/* Use Outlet instead of children prop */}
