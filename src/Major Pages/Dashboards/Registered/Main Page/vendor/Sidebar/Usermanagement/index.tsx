@@ -15,7 +15,6 @@ interface UserManagementProps {
 }
 
 export default function UserManagement({ logout }: UserManagementProps) {
-
   // Sample Packages
   const packages = [
     {
@@ -54,9 +53,9 @@ export default function UserManagement({ logout }: UserManagementProps) {
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft:"16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
-        <CombinedLayout showWelcomeBanner={false}>
+        <CombinedLayout>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold text-dark dark:text-white mb-8">
               Choose Your Package

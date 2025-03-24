@@ -15,7 +15,6 @@ interface PackagesProps {
 }
 
 export default function Packages({ logout }: PackagesProps) {
-
   // Sample Packages
   const packages = [
     {
@@ -56,7 +55,7 @@ export default function Packages({ logout }: PackagesProps) {
         className="flex flex-1 flex-col transition-all duration-300"
         style={{ marginLeft: "16rem" }}
       >
-        <CombinedLayout showWelcomeBanner={false}>
+        <CombinedLayout>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold text-dark dark:text-white mb-8">
               Choose Your Package

@@ -1,29 +1,36 @@
-import type { ReactNode } from "react"
-import { Button } from "../Major Pages/Dashboards/Registered/Elements/ui/combined-ui"
-import { useNavigate, useLocation } from "react-router-dom"
-import { ThemeToggle } from "../functions/ThemeToogle"
-import { Bell } from "lucide-react"
+import type { ReactNode } from "react";
+import { Button } from "../Major Pages/Dashboards/Registered/Elements/ui/combined-ui";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ThemeToggle } from "../functions/ThemeToogle";
+import { Bell } from "lucide-react";
 
 interface CombinedLayoutProps {
-  children: ReactNode
-  isLoggedIn?: boolean
+  children: ReactNode;
+  isLoggedIn?: boolean;
 }
 
 export default function CombinedLayout({
   children,
   isLoggedIn = localStorage.getItem("isAuthenticated") === "true",
 }: CombinedLayoutProps) {
-  const storedUserType = localStorage.getItem("userType")
-  const userType = storedUserType === "individual" ? "customer" : storedUserType
+  const storedUserType = localStorage.getItem("userType");
+  const userType =
+    storedUserType === "individual" ? "customer" : storedUserType;
 
-  const location = useLocation()
-  const isHomePage = location.pathname === "/" || location.pathname === "/home"
+  const location = useLocation();
+  const isHomePage = location.pathname === "/" || location.pathname === "/home";
 
-  const showWelcomeBanner = isHomePage && (userType === "customer" || userType === "organizer" || userType === "vendor")
+  const showWelcomeBanner =
+    isHomePage &&
+    (userType === "customer" ||
+      userType === "organizer" ||
+      userType === "vendor");
 
   return (
     <div className="layout">
-      <div className="HeaderContainer">{isLoggedIn ? <Header /> : <Header2 />}</div>
+      <div className="HeaderContainer">
+        {isLoggedIn ? <Header /> : <Header2 />}
+      </div>
 
       {showWelcomeBanner && <WelcomeBanner />}
 
@@ -37,41 +44,52 @@ export default function CombinedLayout({
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-[#2B579A] text-white dark:bg-[#1E3A6D]">
       <div className="container flex h-14 items-center">
-        <div className="flex items-center">
-        </div>
+        <div className="flex items-center"></div>
         <div className="flex items-center gap-2 ml-auto">
-          <Button variant="ghost" size="icon" className="text-white hover:bg-blue-600 dark:hover:bg-blue-800">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-blue-600 dark:hover:bg-blue-800"
+          >
             <Bell className="h-5 w-5" />
             <span className="sr-only">Toggle Notifications</span>
           </Button>
-          <Button variant="ghost" size="icon" className="text-white hover:bg-blue-600 dark:hover:bg-blue-800">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-blue-600 dark:hover:bg-blue-800"
+          >
             <ThemeToggle />
             <span className="sr-only">Toggle Theme</span>
           </Button>
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 function Header2() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const handleNavigation = (path: string) => () => navigate(path)
+  const navigate = useNavigate();
+  const location = useLocation();
+  const handleNavigation = (path: string) => () => navigate(path);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#2B579A] text-white dark:bg-[#1E3A6D]">
       <div className="w-full px-8 flex h-14 items-center justify-between">
         <div className="flex-1">
           <a href="/" className="flex items-center">
-            <img src="../../src/assets/OrganizerLogo.png" alt="Logo" className="h-8 w-auto object-contain" />
+            <img
+              src="../../src/assets/OrganizerLogo.png"
+              alt="Logo"
+              className="h-8 w-auto object-contain"
+            />
           </a>
         </div>
 
@@ -105,7 +123,11 @@ function Header2() {
         </nav>
 
         <div className="flex-1 flex items-center justify-end gap-4">
-          <Button variant="ghost" size="icon" className="text-white hover:bg-blue-600 dark:hover:bg-blue-800">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-blue-600 dark:hover:bg-blue-800"
+          >
             <Bell className="h-5 w-5" />
             <span className="sr-only">Toggle Notifications</span>
           </Button>
@@ -125,24 +147,30 @@ function Header2() {
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 function Footer() {
   return (
     <footer className="bg-[#2B579A] text-white dark:bg-[rgb(30,58,109)] py-8">
       <div className="container mx-auto px-4">
-        <div className="text-center text-sm">© {new Date().getFullYear()} Platform. All rights reserved.</div>
+        <div className="text-center text-sm">
+          © {new Date().getFullYear()} Platform. All rights reserved.
+        </div>
       </div>
     </footer>
-  )
+  );
 }
 
 function WelcomeBanner() {
   return (
     <section className="relative overflow-hidden bg-gray-900">
       <div className="absolute inset-0">
-        <img src="/images/banner.jpg" alt="Event crowd" className="h-full w-full object-cover z-10" />
+        <img
+          src="/images/banner.jpg"
+          alt="Event crowd"
+          className="h-full w-full object-cover z-10"
+        />
         <div className="absolute inset-0 bg-black/60" />
       </div>
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:py-24">
@@ -159,12 +187,12 @@ function WelcomeBanner() {
               Welcome to Your Event Management Hub
             </h1>
             <p className="mt-6 max-w-lg text-lg text-gray-300 sm:mx-auto md:mt-8 md:max-w-xl md:text-xl lg:mx-0">
-              Discover tailored events services and manage everything from one central dashboard. Your next successful
-              event starts here.
+              Discover tailored events services and manage everything from one
+              central dashboard. Your next successful event starts here.
             </p>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

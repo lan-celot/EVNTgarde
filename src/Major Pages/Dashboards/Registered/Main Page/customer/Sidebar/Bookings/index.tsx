@@ -31,7 +31,7 @@ export default function Bookings({ logout }: BookingsProps) {
         className="flex flex-1 flex-col transition-all duration-300"
         style={{ marginLeft: "16rem" }}
       >
-        <CombinedLayout showWelcomeBanner={false}>
+        <CombinedLayout>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-dark dark:text-white mb-6">
               Your Bookings
