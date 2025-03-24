@@ -1,24 +1,36 @@
-import { useLocation, useNavigate } from "react-router-dom"
-import { CalendarDays, Star, Package, Settings, LogOut, Menu } from "lucide-react"
-import { Button } from "./ui/combined-ui"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/combined-ui"
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  CalendarDays,
+  Star,
+  Package,
+  Settings,
+  LogOut,
+  Menu,
+} from "lucide-react";
+import { Button } from "./ui/combined-ui";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/combined-ui";
 
 const sidebarItems = [
   { title: "Bookings", icon: CalendarDays, href: "/customer/bookings" },
   { title: "RSVP", icon: Package, href: "/customer/RSVP" },
   { title: "Reviews", icon: Star, href: "/customer/reviews" },
   { title: "Settings", icon: Settings, href: "/customer/settings" },
-]
+];
 
 interface SidebarProps {
-  isCollapsed: boolean
-  setIsCollapsed: (collapsed: boolean) => void
-  logout: () => void // Add logout prop
+  isCollapsed: boolean;
+  setIsCollapsed: (collapsed: boolean) => void;
+  logout: () => void; // Add logout prop
 }
 
 export function Sidebar({ isCollapsed, setIsCollapsed, logout }: SidebarProps) {
-  const location = useLocation()
-  const navigate = useNavigate()
+  const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -55,7 +67,10 @@ export function Sidebar({ isCollapsed, setIsCollapsed, logout }: SidebarProps) {
                 </button>
               </TooltipTrigger>
               {isCollapsed && (
-                <TooltipContent side="right" className="border-0 bg-gray-900 text-white">
+                <TooltipContent
+                  side="right"
+                  className="border-0 bg-gray-900 text-white"
+                >
                   {item.title}
                 </TooltipContent>
               )}
@@ -76,7 +91,10 @@ export function Sidebar({ isCollapsed, setIsCollapsed, logout }: SidebarProps) {
               </button>
             </TooltipTrigger>
             {isCollapsed && (
-              <TooltipContent side="right" className="border-0 bg-gray-900 text-white">
+              <TooltipContent
+                side="right"
+                className="border-0 bg-gray-900 text-white"
+              >
                 Logout
               </TooltipContent>
             )}
@@ -84,6 +102,8 @@ export function Sidebar({ isCollapsed, setIsCollapsed, logout }: SidebarProps) {
         </div>
       </div>
     </TooltipProvider>
-  )
+  );
 }
 
+// gawin yung sidebar code tas comment out yun 3 nauna.
+// stduy code, alamin ano iba, alamin pano ihihiwalay yung iba, alamin pano iaalis yung iba by usertype

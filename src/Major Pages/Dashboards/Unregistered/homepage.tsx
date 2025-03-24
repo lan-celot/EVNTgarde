@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../Layout/globals.css";
 import { Search, Filter } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import { searchAndFilterItems } from "../../../functions/search";
 //import { ThemeToggle } from "../Registered/Elements/theme-toggle";
 import { ThemeToggle } from "../../../functions/ThemeToogle";

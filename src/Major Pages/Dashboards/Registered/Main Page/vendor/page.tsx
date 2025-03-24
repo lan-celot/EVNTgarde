@@ -1,51 +1,56 @@
-import { useState } from "react"
-import { Button, Input } from "../../Elements/ui/combined-ui"
-import { Sidebar } from "../../Elements/sidebar-vendor"
-import { VendorCard } from "../../Elements/vendor-card"
-import { Search, SlidersHorizontal } from "lucide-react"
-import CombinedLayout from "../../Elements/combined-layout"
+import { useState } from "react";
+import { Button, Input } from "../../Elements/ui/combined-ui";
+import { Sidebar } from "../../Elements/sidebar";
+import { VendorCard } from "../../Elements/vendor-card";
+import { Search, SlidersHorizontal } from "lucide-react";
+import CombinedLayout from "../../../../../Layout/combined-layout";
 
 // Add interface for VendorDashboard props
 interface VendorDashboardProps {
-  logout: () => void
+  logout: () => void;
 }
 
 // Update the component to accept and use the logout prop
 export default function VendorDashboard({ logout }: VendorDashboardProps) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
-  const [visibleOrganizers, setVisibleOrganizers] = useState(3)
-  const [visibleSupplierRequests, setVisibleSupplierRequests] = useState(3)
-  const [visiblePastEvents, setVisiblePastEvents] = useState(3)
+  const [visibleOrganizers, setVisibleOrganizers] = useState(3);
+  const [visibleSupplierRequests, setVisibleSupplierRequests] = useState(3);
+  const [visiblePastEvents, setVisiblePastEvents] = useState(3);
 
   const handleSeeMore = (section: string) => {
-    if (section === "organizers") setVisibleOrganizers((prev) => prev + 3)
-    if (section === "supplierRequests") setVisibleSupplierRequests((prev) => prev + 3)
-    if (section === "pastEvents") setVisiblePastEvents((prev) => prev + 3)
-  }
+    if (section === "organizers") setVisibleOrganizers((prev) => prev + 3);
+    if (section === "supplierRequests")
+      setVisibleSupplierRequests((prev) => prev + 3);
+    if (section === "pastEvents") setVisiblePastEvents((prev) => prev + 3);
+  };
 
   return (
     <div className="flex min-h-screen">
       <Sidebar
-        isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={setIsSidebarCollapsed}
+        //isCollapsed={isSidebarCollapsed}
+        //setIsCollapsed={setIsSidebarCollapsed}
         logout={logout} // Pass the logout function to Sidebar
       />
 
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
         <CombinedLayout>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">
             {/* Organizers Looking for Vendors */}
             <div className="mb-12">
               <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-2xl font-semibold">Organizers Looking for Vendors</h2>
+                <h2 className="text-2xl font-semibold">
+                  Organizers Looking for Vendors
+                </h2>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <div className="relative flex-grow sm:max-w-xs">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input placeholder="Search for Organizers..." className="pl-10" />
+                    <Input
+                      placeholder="Search for Organizers..."
+                      className="pl-10 placeholder-gray-700 dark:placeholder-gray-400"
+                    />
                   </div>
                   <Button variant="outline" className="w-full sm:w-auto">
                     <SlidersHorizontal className="mr-2 h-4 w-4" />
@@ -56,13 +61,21 @@ export default function VendorDashboard({ logout }: VendorDashboardProps) {
 
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {organizers.slice(0, visibleOrganizers).map((organizer) => (
-                  <VendorCard key={organizer.id} {...organizer} showHireButton={false} />
+                  <VendorCard
+                    key={organizer.id}
+                    {...organizer}
+                    showHireButton={false}
+                  />
                 ))}
               </div>
 
               {visibleOrganizers < organizers.length && (
                 <div className="mt-8 text-center">
-                  <Button variant="outline" size="lg" onClick={() => handleSeeMore("organizers")}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => handleSeeMore("organizers")}
+                  >
                     See More
                   </Button>
                 </div>
@@ -73,14 +86,24 @@ export default function VendorDashboard({ logout }: VendorDashboardProps) {
             <div className="mt-12">
               <h2 className="mb-6 text-2xl font-semibold">Supplier Requests</h2>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {supplierRequests.slice(0, visibleSupplierRequests).map((request) => (
-                  <VendorCard key={request.id} {...request} showHireButton={false} />
-                ))}
+                {supplierRequests
+                  .slice(0, visibleSupplierRequests)
+                  .map((request) => (
+                    <VendorCard
+                      key={request.id}
+                      {...request}
+                      showHireButton={false}
+                    />
+                  ))}
               </div>
 
               {visibleSupplierRequests < supplierRequests.length && (
                 <div className="mt-8 text-center">
-                  <Button variant="outline" size="lg" onClick={() => handleSeeMore("supplierRequests")}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => handleSeeMore("supplierRequests")}
+                  >
                     See More
                   </Button>
                 </div>
@@ -89,16 +112,26 @@ export default function VendorDashboard({ logout }: VendorDashboardProps) {
 
             {/* Past Events You Participated In */}
             <div className="mt-12">
-              <h2 className="mb-6 text-2xl font-semibold">Past Events You Participated In</h2>
+              <h2 className="mb-6 text-2xl font-semibold">
+                Past Events You Participated In
+              </h2>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {pastEvents.slice(0, visiblePastEvents).map((event) => (
-                  <VendorCard key={event.id} {...event} showHireButton={false} />
+                  <VendorCard
+                    key={event.id}
+                    {...event}
+                    showHireButton={false}
+                  />
                 ))}
               </div>
 
               {visiblePastEvents < pastEvents.length && (
                 <div className="mt-8 text-center">
-                  <Button variant="outline" size="lg" onClick={() => handleSeeMore("pastEvents")}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => handleSeeMore("pastEvents")}
+                  >
                     See More
                   </Button>
                 </div>
@@ -108,7 +141,7 @@ export default function VendorDashboard({ logout }: VendorDashboardProps) {
         </CombinedLayout>
       </div>
     </div>
-  )
+  );
 }
 
 // Sample Data
@@ -179,7 +212,7 @@ const organizers = [
     image: "/images/vendor.jpg",
     isFavorite: false,
   },
-]
+];
 
 const supplierRequests = [
   {
@@ -248,7 +281,7 @@ const supplierRequests = [
     image: "/images/vendor.jpg",
     isFavorite: false,
   },
-]
+];
 
 const pastEvents = [
   {
@@ -317,4 +350,4 @@ const pastEvents = [
     image: "/images/vendor.jpg",
     isFavorite: false,
   },
-]
+];

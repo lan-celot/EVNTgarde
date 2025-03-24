@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -6,16 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from "../Registered/Elements/ui/combined-ui";
-import { Sun, Moon } from "lucide-react";
+import { ThemeToggle } from "../../../functions/ThemeToogle";
 
 const About = () => {
-  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
   const handleNavigation = (path: string) => () => navigate(path);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -65,16 +59,7 @@ const About = () => {
 
           {/* Right section - User actions */}
           <div className="flex-1 flex items-center justify-end gap-4">
-            <button
-              className="p-2 text-white hover:text-gray-200"
-              onClick={() => setDarkMode(!darkMode)}
-            >
-              {darkMode ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </button>
+            <ThemeToggle />
             <a
               href="/login"
               className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"

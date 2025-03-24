@@ -1,21 +1,29 @@
-import { useState } from "react";
-import { Sidebar } from "../../../../Elements/sidebar-customer";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../../Elements/ui/combined-ui";
-import CombinedLayout from "../../../../Elements/combined-layout";
+import { Sidebar } from "../../../../Elements/sidebar";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../../Elements/ui/combined-ui";
+import CombinedLayout from "../../../../../../../Layout/combined-layout";
 
 const About = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
-
   return (
     <div className="flex min-h-screen flex-col">
-      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
+      <Sidebar
+        // isCollapsed={isSidebarCollapsed}
+        // setIsCollapsed={setIsSidebarCollapsed}
+        logout={() => {
+          console.log("Logout Successful");
+        }} // added prop since nag eerror - euan (?)
+      />
 
       {/* Dynamic margin based on sidebar state */}
       <div
         className="flex flex-1 flex-col transition-all duration-300"
-        style={{ marginLeft: isSidebarCollapsed ? "4rem" : "16rem" }}
+        style={{ marginLeft: "16rem" }}
       >
-        <CombinedLayout showWelcomeBanner={false}>
+        <CombinedLayout>
           <div className="container px-4 py-8 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-bold text-dark dark:text-white mb-6 text-center">
               About Us
@@ -31,9 +39,10 @@ const About = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    We are a passionate team dedicated to building modern and innovative solutions
-                    that enhance user experience. Our goal is to create high-quality, scalable, and
-                    user-friendly applications tailored to your needs.
+                    We are a passionate team dedicated to building modern and
+                    innovative solutions that enhance user experience. Our goal
+                    is to create high-quality, scalable, and user-friendly
+                    applications tailored to your needs.
                   </p>
                 </CardContent>
               </Card>
@@ -47,9 +56,10 @@ const About = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    Our mission is to provide innovative and efficient technology solutions that help
-                    businesses and individuals achieve their goals. We believe in clean design, smooth
-                    user experience, and cutting-edge technologies.
+                    Our mission is to provide innovative and efficient
+                    technology solutions that help businesses and individuals
+                    achieve their goals. We believe in clean design, smooth user
+                    experience, and cutting-edge technologies.
                   </p>
                 </CardContent>
               </Card>
@@ -63,8 +73,8 @@ const About = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    Want to learn more about our work? Feel free to reach out to us through our
-                    contact page. We'd love to hear from you!
+                    Want to learn more about our work? Feel free to reach out to
+                    us through our contact page. We'd love to hear from you!
                   </p>
                 </CardContent>
               </Card>
