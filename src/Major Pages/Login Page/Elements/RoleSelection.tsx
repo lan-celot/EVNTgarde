@@ -25,9 +25,11 @@ const RoleSelection: React.FC = () => {
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
-      <div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden">
-        {/* Left Side - Logo & Text */}
-        <div className="w-2/5 bg-blue-600 text-white flex flex-col items-center justify-center text-center p-8">
+       <div className={`flex w-[1440px] h-[650px] ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
+       {/* Left Side - Logo & Text */}
+       <div
+          className={`w-2/5 ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} text-white flex flex-col items-center justify-center text-center p-8`}
+        >
           <img src={Logo || "/placeholder.svg"} className="w-52 mb-6" alt="Logo" />
           <p className="text-lg font-medium">Discover tailored events services.</p>
           <p className="text-lg font-medium">Sign up for personalized services today!</p>
@@ -111,7 +113,13 @@ const RoleSelection: React.FC = () => {
             onClick={handleGetStarted}
             disabled={!selectedRole}
             className={`w-full py-3 rounded-lg font-semibold text-white ${
-              selectedRole ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
+              isDarkMode
+                ? selectedRole
+                  ? "bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                  : "bg-gray-700 border-gray-600 text-gray-400 cursor-not-allowed"
+                : selectedRole
+                ? "bg-blue-600 border-gray-300 text-gray-500 hover:bg-blue-300"
+                : "bg-blue-600 hover:bg-blue-300 border-gray-300 text-gray-400 cursor-not-allowed"
             }`}
           >
             Get Started

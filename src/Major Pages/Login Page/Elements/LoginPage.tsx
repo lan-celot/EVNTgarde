@@ -118,8 +118,10 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins]">
-      <div className="flex w-[1440px] h-[650px] bg-blue-600 rounded-xl shadow-lg overflow-hidden font-poppins">
-        <div className="w-2/5 bg-blue-600 text-white flex flex-col items-center justify-center text-center p-8">
+    <div className={`flex w-[1440px] h-[650px] ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
+        <div
+          className={`w-2/5 ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} text-white flex flex-col items-center justify-center text-center p-8`}
+        >
           <img src={Logo || "/placeholder.svg"} className="max-w-xs mb-4" alt="Logo" />
           <p className="text-lg font-medium mb-2">Discover tailored events services.</p>
           <p className="text-lg font-medium mb-2">Log in now to unlock your personalized experience!</p>
