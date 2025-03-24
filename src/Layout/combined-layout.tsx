@@ -29,26 +29,24 @@ export default function CombinedLayout({
 			userType === "vendor");
 
 	return (
-		<div className="layout">
-			<div className="Sidebar">
-				{isLoggedIn && (
-					<Sidebar logout={() => console.log("User logged out")} />
+		<div className="flex min-h-screen">
+			{isLoggedIn && <Sidebar logout={() => console.log("User logged out")} />}
+			<div className="flex flex-1 flex-col transition-all duration-300">
+				<div className="HeaderContainer" style={{ marginLeft: "16rem" }}>
+					<Header />
+				</div>
+				{showWelcomeBanner && <WelcomeBanner />}
+				<div className="MainContainer">
+					<div className="MainContent">
+						<Outlet /> {/* Use Outlet instead of children prop */}
+					</div>
+				</div>
+				{!isLoggedIn && (
+					<div className="FooterContainer">
+						<Footer />
+					</div>
 				)}
 			</div>
-			<div className="HeaderContainer">
-				<Header />
-			</div>
-			{showWelcomeBanner && <WelcomeBanner />}
-			<div className="MainContainer">
-				<div className="MainContent">
-					<Outlet /> {/* Use Outlet instead of children prop */}
-				</div>
-			</div>
-			{!isLoggedIn && (
-				<div className="FooterContainer">
-					<Footer />
-				</div>
-			)}
 		</div>
 	);
 }
