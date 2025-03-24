@@ -3,12 +3,12 @@ import {
   LayoutDashboard,
   CalendarDays,
   Star,
-  Settings,
   LogOut,
   //Menu,
   UserRound,
   MapPin,
   Package,
+  UserCircle,
 } from "lucide-react";
 //import { Button } from "./ui/combined-ui";
 import {
@@ -54,7 +54,7 @@ export function Sidebar({
   const sidebarItems = useMemo(() => {
     let items = [];
 
-    if (userType === "organizer" || userType === "vendor") {
+    if (userType) {
       items.push({
         title: "Dashboard",
         icon: LayoutDashboard,
@@ -78,20 +78,20 @@ export function Sidebar({
       icon: Star,
       href: `/${userType}/reviews`,
     });
-    if (userType === "vendor") {
+    if (userType === "vendor" || userType === "organizer") {
       items.push(
         {
           title: "User Management",
           icon: UserRound,
-          href: "/vendor/usermanagement",
+          href: `/${userType}/usermanagement`,
         },
-        { title: "Track", icon: MapPin, href: "/vendor/track" }
+        { title: "Track", icon: MapPin, href: `/${userType}/track` }
       );
     }
-    if (userType === "customer" || userType === "vendor") {
+    if (userType) {
       items.push({
-        title: "Settings",
-        icon: Settings,
+        title: "Profile Settings",
+        icon: UserCircle,
         href: `/${userType}/settings`,
       });
     }
