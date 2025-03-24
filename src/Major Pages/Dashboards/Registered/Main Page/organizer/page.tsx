@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Button, Input } from "../../Elements/ui/combined-ui";
-import { Sidebar } from "../../../../../Layout/sidebar";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import CombinedLayout from "../../../../../Layout/combined-layout";
 import { searchAndFilterItems } from "../../../../../functions/search";
 
 // Update the OrganizerPage component to accept and pass the logout prop
@@ -11,7 +9,7 @@ interface OrganizerPageProps {
 	logout: () => void;
 }
 
-export default function Home({ logout }: OrganizerPageProps) {
+export default function Home({}: OrganizerPageProps) {
 	// State for showing more vendors and events
 	const [visibleVendors, setVisibleVendors] = useState(3);
 	const [visibleEvents, setVisibleEvents] = useState(3);
@@ -67,188 +65,173 @@ export default function Home({ logout }: OrganizerPageProps) {
 
 	return (
 		<div className="flex min-h-screen">
-			<Sidebar
-				// isCollapsed={isSidebarCollapsed}
-				// setIsCollapsed={setIsSidebarCollapsed}
-				logout={logout} // Pass the logout function to Sidebar
-			/>
-
 			{/* Dynamic margin based on sidebar state */}
 			<div
 				className="flex flex-1 flex-col transition-all duration-300"
 				style={{ marginLeft: "16rem" }}
 			>
-				<CombinedLayout>
-					<div className="container px-4 py-8 sm:px-6 lg:px-8">
-						{/* Find Vendors Section */}
-						<div className="mb-12">
-							<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-								<h2 className="text-2xl font-semibold">Find Vendors</h2>
-								<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-									<div className="relative flex-grow sm:max-w-xs">
-										<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-										<Input
-											placeholder="Search for Vendors..."
-											className="pl-10 placeholder-gray-700 dark:placeholder-gray-400"
-											value={vendorSearchQuery}
-											onChange={(e) => setVendorSearchQuery(e.target.value)}
-										/>
-										{vendorSearchQuery && (
-											<button
-												onClick={() => setVendorSearchQuery("")}
-												className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-											>
-												<X className="h-4 w-4" />
-											</button>
-										)}
-									</div>
-									<Button
-										variant="outline"
-										className="w-full sm:w-auto"
-										onClick={() => setShowFilters(!showFilters)}
-									>
-										<SlidersHorizontal className="mr-2 h-4 w-4" />
-										Filters
-									</Button>
-								</div>
-							</div>
-
-							{/* Filter dropdown */}
-							{showFilters && (
-								<div className="mb-6 rounded-lg border bg-card p-4 shadow-sm">
-									<h3 className="mb-3 font-medium">Filter by Location</h3>
-									<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-										{vendorLocations.map((location) => (
-											<div
-												key={location}
-												className="flex items-center space-x-2"
-											>
-												<input
-													type="checkbox"
-													id={`location-${location}`}
-													checked={selectedCategories.includes(location)}
-													onChange={() => toggleCategory(location)}
-													className="h-4 w-4 rounded border-gray-300"
-												/>
-												<label
-													htmlFor={`location-${location}`}
-													className="text-sm"
-												>
-													{location}
-												</label>
-											</div>
-										))}
-									</div>
-									<div className="mt-4 flex justify-end">
-										<Button variant="outline" size="sm" onClick={clearFilters}>
-											Clear Filters
-										</Button>
-									</div>
-								</div>
-							)}
-
-							{filteredVendors.length === 0 ? (
-								<div className="my-12 text-center">
-									<p className="text-muted-foreground">
-										No vendors found matching your search criteria.
-									</p>
-									<Button
-										variant="link"
-										onClick={clearFilters}
-										className="mt-2"
-									>
-										Clear filters
-									</Button>
-								</div>
-							) : (
-								<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-									{filteredVendors.slice(0, visibleVendors).map((vendor) => (
-										<VendorCard
-											key={vendor.id}
-											{...vendor}
-											showHireButton={true}
-										/>
-									))}
-								</div>
-							)}
-
-							{visibleVendors < filteredVendors.length && (
-								<div className="mt-8 text-center">
-									<Button
-										variant="outline"
-										size="lg"
-										className="w-full sm:w-auto"
-										onClick={handleLoadMoreVendors}
-									>
-										See More
-									</Button>
-								</div>
-							)}
-						</div>
-
-						{/* Past Events Section */}
-						<div className="mt-12">
-							<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-								<h2 className="text-2xl font-semibold">Past Events</h2>
+				<div className="container px-4 py-8 sm:px-6 lg:px-8">
+					{/* Find Vendors Section */}
+					<div className="mb-12">
+						<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+							<h2 className="text-2xl font-semibold">Find Vendors</h2>
+							<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
 								<div className="relative flex-grow sm:max-w-xs">
 									<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 									<Input
-										placeholder="Search past events..."
+										placeholder="Search for Vendors..."
 										className="pl-10 placeholder-gray-700 dark:placeholder-gray-400"
-										value={eventSearchQuery}
-										onChange={(e) => setEventSearchQuery(e.target.value)}
+										value={vendorSearchQuery}
+										onChange={(e) => setVendorSearchQuery(e.target.value)}
 									/>
-									{eventSearchQuery && (
+									{vendorSearchQuery && (
 										<button
-											onClick={() => setEventSearchQuery("")}
+											onClick={() => setVendorSearchQuery("")}
 											className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
 										>
 											<X className="h-4 w-4" />
 										</button>
 									)}
 								</div>
+								<Button
+									variant="outline"
+									className="w-full sm:w-auto"
+									onClick={() => setShowFilters(!showFilters)}
+								>
+									<SlidersHorizontal className="mr-2 h-4 w-4" />
+									Filters
+								</Button>
 							</div>
+						</div>
 
-							{filteredEvents.length === 0 ? (
-								<div className="my-12 text-center">
-									<p className="text-muted-foreground">
-										No events found matching your search criteria.
-									</p>
-									<Button
-										variant="link"
-										onClick={() => setEventSearchQuery("")}
-										className="mt-2"
-									>
-										Clear search
-									</Button>
-								</div>
-							) : (
-								<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-									{filteredEvents.slice(0, visibleEvents).map((event) => (
-										<VendorCard
-											key={event.id}
-											{...event}
-											showHireButton={false}
-										/>
+						{/* Filter dropdown */}
+						{showFilters && (
+							<div className="mb-6 rounded-lg border bg-card p-4 shadow-sm">
+								<h3 className="mb-3 font-medium">Filter by Location</h3>
+								<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+									{vendorLocations.map((location) => (
+										<div key={location} className="flex items-center space-x-2">
+											<input
+												type="checkbox"
+												id={`location-${location}`}
+												checked={selectedCategories.includes(location)}
+												onChange={() => toggleCategory(location)}
+												className="h-4 w-4 rounded border-gray-300"
+											/>
+											<label
+												htmlFor={`location-${location}`}
+												className="text-sm"
+											>
+												{location}
+											</label>
+										</div>
 									))}
 								</div>
-							)}
-
-							{visibleEvents < filteredEvents.length && (
-								<div className="mt-8 text-center">
-									<Button
-										variant="outline"
-										size="lg"
-										className="w-full sm:w-auto"
-										onClick={handleLoadMoreEvents}
-									>
-										See More
+								<div className="mt-4 flex justify-end">
+									<Button variant="outline" size="sm" onClick={clearFilters}>
+										Clear Filters
 									</Button>
 								</div>
-							)}
-						</div>
+							</div>
+						)}
+
+						{filteredVendors.length === 0 ? (
+							<div className="my-12 text-center">
+								<p className="text-muted-foreground">
+									No vendors found matching your search criteria.
+								</p>
+								<Button variant="link" onClick={clearFilters} className="mt-2">
+									Clear filters
+								</Button>
+							</div>
+						) : (
+							<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+								{filteredVendors.slice(0, visibleVendors).map((vendor) => (
+									<VendorCard
+										key={vendor.id}
+										{...vendor}
+										showHireButton={true}
+									/>
+								))}
+							</div>
+						)}
+
+						{visibleVendors < filteredVendors.length && (
+							<div className="mt-8 text-center">
+								<Button
+									variant="outline"
+									size="lg"
+									className="w-full sm:w-auto"
+									onClick={handleLoadMoreVendors}
+								>
+									See More
+								</Button>
+							</div>
+						)}
 					</div>
-				</CombinedLayout>
+
+					{/* Past Events Section */}
+					<div className="mt-12">
+						<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+							<h2 className="text-2xl font-semibold">Past Events</h2>
+							<div className="relative flex-grow sm:max-w-xs">
+								<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+								<Input
+									placeholder="Search past events..."
+									className="pl-10 placeholder-gray-700 dark:placeholder-gray-400"
+									value={eventSearchQuery}
+									onChange={(e) => setEventSearchQuery(e.target.value)}
+								/>
+								{eventSearchQuery && (
+									<button
+										onClick={() => setEventSearchQuery("")}
+										className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+									>
+										<X className="h-4 w-4" />
+									</button>
+								)}
+							</div>
+						</div>
+
+						{filteredEvents.length === 0 ? (
+							<div className="my-12 text-center">
+								<p className="text-muted-foreground">
+									No events found matching your search criteria.
+								</p>
+								<Button
+									variant="link"
+									onClick={() => setEventSearchQuery("")}
+									className="mt-2"
+								>
+									Clear search
+								</Button>
+							</div>
+						) : (
+							<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+								{filteredEvents.slice(0, visibleEvents).map((event) => (
+									<VendorCard
+										key={event.id}
+										{...event}
+										showHireButton={false}
+									/>
+								))}
+							</div>
+						)}
+
+						{visibleEvents < filteredEvents.length && (
+							<div className="mt-8 text-center">
+								<Button
+									variant="outline"
+									size="lg"
+									className="w-full sm:w-auto"
+									onClick={handleLoadMoreEvents}
+								>
+									See More
+								</Button>
+							</div>
+						)}
+					</div>
+				</div>
 			</div>
 		</div>
 	);

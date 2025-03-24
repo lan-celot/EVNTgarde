@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { Sidebar } from "../../../../../Layout/sidebar";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Button, Input } from "../../Elements/ui/combined-ui";
@@ -13,7 +12,7 @@ interface CustomerDashboardProps {
 }
 
 // Update the component to accept and use the logout prop
-export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
+export default function CustomerDashboard({}: CustomerDashboardProps) {
 	const navigate = useNavigate(); // Initialize navigate
 	const [visibleOrganizers, setVisibleOrganizers] = useState(3);
 	const [visibleBookings, setVisibleBookings] = useState(3);
@@ -116,12 +115,6 @@ export default function CustomerDashboard({ logout }: CustomerDashboardProps) {
 
 	return (
 		<div className="flex min-h-screen">
-			<Sidebar
-				// isCollapsed={isSidebarCollapsed}
-				// setIsCollapsed={setIsSidebarCollapsed}
-				logout={logout} // Pass the logout function to Sidebar
-			/>
-
 			<div
 				className="flex flex-1 flex-col transition-all duration-300"
 				style={{ marginLeft: "16rem" }}

@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
 	LayoutDashboard,
 	CalendarDays,
@@ -29,7 +29,6 @@ export function Sidebar({
 	/*isCollapsed,*/ /*setIsCollapsed,*/ logout,
 }: SidebarProps) {
 	const location = useLocation();
-	const navigate = useNavigate();
 	const isCollapsed = false; // instead of removing props for future purposes and current interactions (pls)
 
 	const [userType, setUserType] = useState(
@@ -85,66 +84,64 @@ export function Sidebar({
 
 	return (
 		<TooltipProvider delayDuration={0}>
-			<div className="fixed left-0 top-0 h-screen w-64 bg-[#2B579A] dark:bg-[#1E3A6D] transition-all duration-300">
-				{/* Logo at the top of sidebar */}
-				<div className="p-6 mb-6 flex justify-center">
-					<Link to="/" className="flex items-center justify-center">
-						<img
-							src="/src/assets/OrganizerLogo.png"
-							alt="Logo"
-							className="h-24 w-auto object-contain"
-						/>
-					</Link>
-				</div>
+			{/* Logo at the top of sidebar */}
+			<div className="p-6 mb-6 flex justify-center">
+				<Link to="/" className="flex items-center justify-center">
+					<img
+						src="/src/assets/OrganizerLogo.png"
+						alt="Logo"
+						className="h-24 w-auto object-contain"
+					/>
+				</Link>
+			</div>
 
-				{/* Sidebar Navigation Items */}
-				<div className="flex flex-col space-y-1 px-2">
-					{sidebarItems.map((item) => (
-						<Link
-							key={item.href}
-							to={item.href}
-							className={`relative flex h-10 w-full items-center gap-3 rounded-md px-3 text-white transition-colors hover:bg-[#1E3A6D]
+			{/* Sidebar Navigation Items */}
+			<div className="flex flex-col space-y-1 px-2">
+				{sidebarItems.map((item) => (
+					<Link
+						key={item.href}
+						to={item.href}
+						className={`relative flex h-10 w-full items-center gap-3 rounded-md px-3 text-white transition-colors hover:bg-[#1E3A6D]
               ${
 								location.pathname === item.href
 									? "bg-[#1E3A6D] after:w-full"
 									: "after:w-0"
 							}
               relative after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-yellow-400 after:transition-all hover:after:w-full`}
-						>
-							<item.icon className="h-5 w-5" />
-							<span>{item.title}</span>
-						</Link>
-					))}
-				</div>
+					>
+						<item.icon className="h-5 w-5" />
+						<span>{item.title}</span>
+					</Link>
+				))}
+			</div>
 
-				{/* Logout Button */}
-				<div className="p-3 mt-auto">
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<button
-								className={`relative flex h-10 w-full items-center gap-3 rounded-md px-3 text-white transition-colors hover:bg-[#1E3A6D]
+			{/* Logout Button */}
+			<div className="p-3 mt-auto">
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<button
+							className={`relative flex h-10 w-full items-center gap-3 rounded-md px-3 text-white transition-colors hover:bg-[#1E3A6D]
                 ${
 									location.pathname === "/logout"
 										? "bg-[#1E3A6D] after:w-full"
 										: "after:w-0"
 								}
                 relative after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-yellow-400 after:transition-all hover:after:w-full`}
-								onClick={logout} // Use the passed logout function instead of alert
-							>
-								<LogOut className="h-5 w-5 shrink-0" />
-								{!isCollapsed && <span>Logout</span>}
-							</button>
-						</TooltipTrigger>
-						{isCollapsed && (
-							<TooltipContent
-								side="right"
-								className="border-0 bg-gray-900 text-white"
-							>
-								Logout
-							</TooltipContent>
-						)}
-					</Tooltip>
-				</div>
+							onClick={logout} // Use the passed logout function instead of alert
+						>
+							<LogOut className="h-5 w-5 shrink-0" />
+							{!isCollapsed && <span>Logout</span>}
+						</button>
+					</TooltipTrigger>
+					{isCollapsed && (
+						<TooltipContent
+							side="right"
+							className="border-0 bg-gray-900 text-white"
+						>
+							Logout
+						</TooltipContent>
+					)}
+				</Tooltip>
 			</div>
 		</TooltipProvider>
 	);

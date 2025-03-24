@@ -3,6 +3,7 @@ import { useLocation, Outlet } from "react-router-dom";
 import { ThemeToggle } from "../functions/ThemeToogle";
 import { Bell } from "lucide-react";
 import { Sidebar } from "./sidebar";
+import { useTheme } from "@/functions/ThemeContext";
 
 interface CombinedLayoutProps {
 	isLoggedIn?: boolean;
@@ -28,16 +29,30 @@ export default function CombinedLayout({
 			userType === "organizer" ||
 			userType === "vendor");
 
+	const { isDarkMode } = useTheme();
+
+	const handleLogout = () => {
+		localStorage.removeItem("isAuthenticated");
+		localStorage.removeItem("userType");
+		window.location.href = "/"; // Redirect after logout
+	};
+
 	return (
 		<div className="flex min-h-screen">
-			{isLoggedIn && <Sidebar logout={() => console.log("User logged out")} />}
+			<div
+				className={`fixed left-0 top-0 h-screen w-64 transition-all duration-300 ${
+					isDarkMode ? "bg-[#1E3A6D]" : "bg-[#2B579A]"
+				}`}
+			>
+				{isLoggedIn && <Sidebar logout={handleLogout} />}
+			</div>
 			<div className="flex flex-1 flex-col transition-all duration-300">
 				<div className="HeaderContainer" style={{ marginLeft: "16rem" }}>
 					<Header />
 				</div>
-				{showWelcomeBanner && <WelcomeBanner />}
 				<div className="MainContainer">
 					<div className="MainContent">
+						{showWelcomeBanner && <WelcomeBanner />}
 						<Outlet /> {/* Use Outlet instead of children prop */}
 					</div>
 				</div>
@@ -52,8 +67,13 @@ export default function CombinedLayout({
 }
 
 function Header() {
+	const { isDarkMode } = useTheme();
 	return (
-		<header className="sticky top-0 z-50 w-full bg-[#2B579A] text-white dark:bg-[#1E3A6D]">
+		<header
+			className={`fixed top-0 z-50 w-full text-white transition-colors ${
+				isDarkMode ? "bg-[#1E3A6D]" : "bg-[#2B579A]"
+			}`}
+		>
 			<div className="container flex h-14 items-center">
 				<div className="flex items-center"></div>
 				<div className="flex items-center gap-2 ml-auto">
@@ -93,35 +113,38 @@ function Footer() {
 
 function WelcomeBanner() {
 	return (
-		<section className="relative overflow-hidden bg-gray-900">
-			<div className="absolute inset-0">
-				<img
-					src="/images/banner.jpg"
-					alt="Event crowd"
-					className="h-full w-full object-cover z-10"
-				/>
-				<div className="absolute inset-0 bg-black/60" />
-			</div>
-			<div className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:py-24">
-				<div className="flex flex-col sm:flex-row items-center justify-center">
-					<div className="mb-8 sm:mb-0 sm:mr-8 flex-shrink-0">
-						<img
-							src="/src/assets/OrganizerLogo.png"
-							alt="Logo"
-							className="h-48 sm:h-64 lg:h-99 max-w-xs sm:max-w-sm object-contain"
-						/>
-					</div>
-					<div className="text-center sm:text-left flex flex-col justify-center self-center">
-						<h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-							Welcome to Your Event Management Hub
-						</h1>
-						<p className="mt-6 max-w-lg text-lg text-gray-300 sm:mx-auto md:mt-8 md:max-w-xl md:text-xl lg:mx-0">
-							Discover tailored events services and manage everything from one
-							central dashboard. Your next successful event starts here.
-						</p>
+		<main className="w-full">
+			{/* Welcome Banner Section */}
+			<section className="relative overflow-hidden bg-gray-900 ml-64">
+				<div className="absolute inset-0">
+					<img
+						src="../../src/assets/banner.jpg"
+						alt="Concert background"
+						className="h-full w-full object-cover"
+					/>
+					<div className="absolute inset-0 bg-black/60"></div>
+				</div>
+				<div className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:py-24">
+					<div className="flex flex-col sm:flex-row items-center justify-center">
+						<div className="mb-8 sm:mb-0 sm:mr-8 flex-shrink-0">
+							<img
+								src="../../src/assets/OrganizerLogo.png"
+								alt="Event Logo"
+								className="h-65 sm:h-64 lg:h-[250px]  w-auto object-contain"
+							/>
+						</div>
+						<div className="text-center sm:text-left flex flex-col justify-center self-center">
+							<h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+								Welcome to Your Event Management Hub
+							</h1>
+							<p className="mt-6 max-w-lg text-lg text-gray-300 sm:mx-auto md:mt-8 md:max-w-xl md:text-xl lg:mx-0">
+								Discover tailored events services and manage everything from one
+								central dashboard.
+							</p>
+						</div>
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+		</main>
 	);
 }

@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Button, Input } from "../../Elements/ui/combined-ui";
-import { Sidebar } from "../../../../../Layout/sidebar";
 import { VendorCard } from "../../Elements/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
-import CombinedLayout from "../../../../../Layout/combined-layout";
 
 // Add interface for VendorDashboard props
 interface VendorDashboardProps {
@@ -11,7 +9,7 @@ interface VendorDashboardProps {
 }
 
 // Update the component to accept and use the logout prop
-export default function VendorDashboard({ logout }: VendorDashboardProps) {
+export default function VendorDashboard({}: VendorDashboardProps) {
 	const [visibleOrganizers, setVisibleOrganizers] = useState(3);
 	const [visibleSupplierRequests, setVisibleSupplierRequests] = useState(3);
 	const [visiblePastEvents, setVisiblePastEvents] = useState(3);
@@ -25,120 +23,108 @@ export default function VendorDashboard({ logout }: VendorDashboardProps) {
 
 	return (
 		<div className="flex min-h-screen">
-			<Sidebar
-				//isCollapsed={isSidebarCollapsed}
-				//setIsCollapsed={setIsSidebarCollapsed}
-				logout={logout} // Pass the logout function to Sidebar
-			/>
-
 			{/* Dynamic margin based on sidebar state */}
 			<div
 				className="flex flex-1 flex-col transition-all duration-300"
 				style={{ marginLeft: "16rem" }}
 			>
-				<CombinedLayout>
-					<div className="container px-4 py-8 sm:px-6 lg:px-8">
-						{/* Organizers Looking for Vendors */}
-						<div className="mb-12">
-							<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-								<h2 className="text-2xl font-semibold">
-									Organizers Looking for Vendors
-								</h2>
-								<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-									<div className="relative flex-grow sm:max-w-xs">
-										<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-										<Input
-											placeholder="Search for Organizers..."
-											className="pl-10 placeholder-gray-700 dark:placeholder-gray-400"
-										/>
-									</div>
-									<Button variant="outline" className="w-full sm:w-auto">
-										<SlidersHorizontal className="mr-2 h-4 w-4" />
-										Filters
-									</Button>
-								</div>
-							</div>
-
-							<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-								{organizers.slice(0, visibleOrganizers).map((organizer) => (
-									<VendorCard
-										key={organizer.id}
-										{...organizer}
-										showHireButton={false}
-									/>
-								))}
-							</div>
-
-							{visibleOrganizers < organizers.length && (
-								<div className="mt-8 text-center">
-									<Button
-										variant="outline"
-										size="lg"
-										onClick={() => handleSeeMore("organizers")}
-									>
-										See More
-									</Button>
-								</div>
-							)}
-						</div>
-
-						{/* Supplier Requests */}
-						<div className="mt-12">
-							<h2 className="mb-6 text-2xl font-semibold">Supplier Requests</h2>
-							<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-								{supplierRequests
-									.slice(0, visibleSupplierRequests)
-									.map((request) => (
-										<VendorCard
-											key={request.id}
-											{...request}
-											showHireButton={false}
-										/>
-									))}
-							</div>
-
-							{visibleSupplierRequests < supplierRequests.length && (
-								<div className="mt-8 text-center">
-									<Button
-										variant="outline"
-										size="lg"
-										onClick={() => handleSeeMore("supplierRequests")}
-									>
-										See More
-									</Button>
-								</div>
-							)}
-						</div>
-
-						{/* Past Events You Participated In */}
-						<div className="mt-12">
-							<h2 className="mb-6 text-2xl font-semibold">
-								Past Events You Participated In
+				<div className="container px-4 py-8 sm:px-6 lg:px-8">
+					{/* Organizers Looking for Vendors */}
+					<div className="mb-12">
+						<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+							<h2 className="text-2xl font-semibold">
+								Organizers Looking for Vendors
 							</h2>
-							<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-								{pastEvents.slice(0, visiblePastEvents).map((event) => (
+							<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+								<div className="relative flex-grow sm:max-w-xs">
+									<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+									<Input
+										placeholder="Search for Organizers..."
+										className="pl-10 placeholder-gray-700 dark:placeholder-gray-400"
+									/>
+								</div>
+								<Button variant="outline" className="w-full sm:w-auto">
+									<SlidersHorizontal className="mr-2 h-4 w-4" />
+									Filters
+								</Button>
+							</div>
+						</div>
+
+						<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+							{organizers.slice(0, visibleOrganizers).map((organizer) => (
+								<VendorCard
+									key={organizer.id}
+									{...organizer}
+									showHireButton={false}
+								/>
+							))}
+						</div>
+
+						{visibleOrganizers < organizers.length && (
+							<div className="mt-8 text-center">
+								<Button
+									variant="outline"
+									size="lg"
+									onClick={() => handleSeeMore("organizers")}
+								>
+									See More
+								</Button>
+							</div>
+						)}
+					</div>
+
+					{/* Supplier Requests */}
+					<div className="mt-12">
+						<h2 className="mb-6 text-2xl font-semibold">Supplier Requests</h2>
+						<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+							{supplierRequests
+								.slice(0, visibleSupplierRequests)
+								.map((request) => (
 									<VendorCard
-										key={event.id}
-										{...event}
+										key={request.id}
+										{...request}
 										showHireButton={false}
 									/>
 								))}
-							</div>
-
-							{visiblePastEvents < pastEvents.length && (
-								<div className="mt-8 text-center">
-									<Button
-										variant="outline"
-										size="lg"
-										onClick={() => handleSeeMore("pastEvents")}
-									>
-										See More
-									</Button>
-								</div>
-							)}
 						</div>
+
+						{visibleSupplierRequests < supplierRequests.length && (
+							<div className="mt-8 text-center">
+								<Button
+									variant="outline"
+									size="lg"
+									onClick={() => handleSeeMore("supplierRequests")}
+								>
+									See More
+								</Button>
+							</div>
+						)}
 					</div>
-				</CombinedLayout>
+
+					{/* Past Events You Participated In */}
+					<div className="mt-12">
+						<h2 className="mb-6 text-2xl font-semibold">
+							Past Events You Participated In
+						</h2>
+						<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+							{pastEvents.slice(0, visiblePastEvents).map((event) => (
+								<VendorCard key={event.id} {...event} showHireButton={false} />
+							))}
+						</div>
+
+						{visiblePastEvents < pastEvents.length && (
+							<div className="mt-8 text-center">
+								<Button
+									variant="outline"
+									size="lg"
+									onClick={() => handleSeeMore("pastEvents")}
+								>
+									See More
+								</Button>
+							</div>
+						)}
+					</div>
+				</div>
 			</div>
 		</div>
 	);
