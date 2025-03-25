@@ -1,3 +1,4 @@
+import { useTheme } from "@/functions/ThemeContext";
 import { Link, useLocation } from "react-router-dom";
 import {
 	LayoutDashboard,
@@ -7,7 +8,7 @@ import {
 	//Menu,
 	UserRound,
 	MapPin,
-	Package,
+	MailOpenIcon,
 	UserCircle,
 } from "lucide-react";
 //import { Button } from "./ui/combined-ui";
@@ -63,7 +64,7 @@ export function Sidebar({
 				: []),
 			{ title: "Bookings", icon: CalendarDays, href: `/${userType}/bookings` },
 			...(userType === "customer" || userType === "organizer"
-				? [{ title: "RSVP", icon: Package, href: `/${userType}/RSVP` }]
+				? [{ title: "RSVP", icon: MailOpenIcon, href: `/${userType}/RSVP` }]
 				: []),
 			{ title: "Reviews", icon: Star, href: `/${userType}/reviews` },
 			...(userType === "vendor" || userType === "organizer"
@@ -85,68 +86,66 @@ export function Sidebar({
 
 		return items;
 	}, [userType]);
+const { isDarkMode } = useTheme();
 
 	return (
 		<TooltipProvider delayDuration={0}>
-			{/* Logo at the top of sidebar */}
-			<div className="p-6 mb-6 flex justify-center">
-				<Link to="/" className="flex items-center justify-center">
-					<img
-						src="/src/assets/OrganizerLogo.png"
-						alt="Logo"
-						className="h-24 w-auto object-contain"
-					/>
-				</Link>
-			</div>
-
-			{/* Sidebar Navigation Items */}
-			<div className="flex flex-col space-y-1 px-2">
-				{sidebarItems.map((item) => (
-					<Link
-						key={item.href}
-						to={item.href}
-						className={`relative flex h-10 w-full items-center gap-3 rounded-md px-3 text-white transition-colors hover:bg-[#1E3A6D]
-              ${
-								location.pathname === item.href
-									? "bg-[#1E3A6D] after:w-full"
-									: "after:w-0"
-							}
-              relative after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-yellow-400 after:transition-all hover:after:w-full`}
-					>
-						<item.icon className="h-5 w-5" />
-						<span>{item.title}</span>
-					</Link>
-				))}
-			</div>
-
-			{/* Logout Button */}
-			<div className="p-3 mt-auto">
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<button
-							className={`relative flex h-10 w-full items-center gap-3 rounded-md px-3 text-white transition-colors hover:bg-[#1E3A6D]
-                ${
-									location.pathname === "/logout"
-										? "bg-[#1E3A6D] after:w-full"
-										: "after:w-0"
-								}
-                relative after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-yellow-400 after:transition-all hover:after:w-full`}
-							onClick={logout} // Use the passed logout function instead of alert
-						>
-							<LogOut className="h-5 w-5 shrink-0" />
-							{!isCollapsed && <span>Logout</span>}
-						</button>
-					</TooltipTrigger>
-					{isCollapsed && (
-						<TooltipContent
-							side="right"
-							className="border-0 bg-gray-900 text-white"
-						>
-							Logout
-						</TooltipContent>
-					)}
-				</Tooltip>
-			</div>
+		  {/* Logo at the top of sidebar */}
+		  <div className="p-6 mb-6 flex justify-center">
+			<Link to="/" className="flex items-center justify-center">
+			  <img src="/src/assets/OrganizerLogo.png" alt="Logo" className="h-24 w-auto object-contain" />
+			</Link>
+		  </div>
+	
+		  {/* Sidebar Navigation Items */}
+		  <div className="flex flex-col space-y-1 px-2">
+			{sidebarItems.map((item) => (
+			  <Link
+				key={item.href}
+				to={item.href}
+				className={`relative flex h-10 w-full items-center gap-3 rounded-md px-3 text-white transition-colors 
+				  ${
+					isDarkMode
+					  ? `hover:bg-[#1E3A6D] ${location.pathname === item.href ? "bg-[#1E3A6D] after:w-full" : "after:w-0"}`
+					  : `hover:bg-[#2B579A] ${location.pathname === item.href ? "bg-[#2B579A] after:w-full" : "after:w-0"}`
+				  }
+				  relative after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-yellow-400 after:transition-all hover:after:w-full`}
+			  >
+				<item.icon className="h-5 w-5" />
+				<span>{item.title}</span>
+			  </Link>
+			))}
+		  </div>
+	
+		  {/* Logout Button */}
+		  <div className="p-3 mt-auto">
+			<Tooltip>
+			  <TooltipTrigger asChild>
+				<button
+				  className={`relative flex h-10 w-full items-center gap-3 rounded-md px-3 text-white transition-colors 
+					${
+					  isDarkMode
+						? `hover:bg-[#1E3A6D] ${location.pathname === "/logout" ? "bg-[#1E3A6D] after:w-full" : "after:w-0"}`
+						: `hover:bg-[#2B579A] ${location.pathname === "/logout" ? "bg-[#2B579A] after:w-full" : "after:w-0"}`
+					}
+					relative after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-yellow-400 after:transition-all hover:after:w-full`}
+				  onClick={logout}
+				>
+				  <LogOut className="h-5 w-5 shrink-0" />
+				  {!isCollapsed && <span>Logout</span>}
+				</button>
+			  </TooltipTrigger>
+			  {isCollapsed && (
+				<TooltipContent
+				  side="right"
+				  className={`border-0 ${isDarkMode ? "bg-[#1E3A6D]" : "bg-[#2B579A]"} text-white`}
+				>
+				  Logout
+				</TooltipContent>
+			  )}
+			</Tooltip>
+		  </div>
 		</TooltipProvider>
-	);
-}
+	  )
+	}
+	
