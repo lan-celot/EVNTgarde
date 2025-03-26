@@ -79,7 +79,7 @@ function Header() {
     >
       <div className="container flex h-14 items-center">
         <div className="flex items-center"></div>
-        <div className="flex items-center gap-2 ml-[50vw]">
+        <div className="flex items-center gap-2 ml-[70vw]">
           <Button
             variant="ghost"
             size="icon"
