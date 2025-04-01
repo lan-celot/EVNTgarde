@@ -55,9 +55,9 @@ const App: React.FC = () => {
 			case "individual":
 				return "/dashboard";
 			case "organizer":
-				return "/organizer";
+				return "/dashboard";
 			case "vendor":
-				return "/vendor";
+				return "/dashboard";
 			default:
 				return "/";
 		}

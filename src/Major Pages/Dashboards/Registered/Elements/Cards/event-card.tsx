@@ -3,7 +3,7 @@ import {
 	Card,
 	CardContent,
 	CardHeader,
-} from "../../../../Layout/combined-ui";
+} from "../../../../../Layout/combined-ui";
 import { Calendar, MapPin, Users } from "lucide-react";
 
 interface EventCardProps {

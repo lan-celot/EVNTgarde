@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { Button, Card } from "../../../../Layout/combined-ui";
+import { Button, Card } from "../../../../../Layout/combined-ui";
 import { Clock, Star } from "lucide-react";
-import { cn } from "../../../../lib/utils";
+import { cn } from "../../../../../lib/utils";
 
 interface VendorCardProps {
 	id: number;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { VendorCard } from "../Elements/vendor-card";
+import { VendorCard } from "../Elements/Cards/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Button, Input } from "../../../../Layout/combined-ui";
 import { mockOrganizers } from "../../../../functions/mockData";
