@@ -59,7 +59,6 @@ const Bookings: React.FC = () => {
 
 	return (
 		<div style={{ marginLeft: "16rem" }}>
-			<h3 className="text-4xl font-bold ml-6 mt-4 text-[#2D2C3C]">Bookings</h3>
 			<div className="mb-4">
 				<button
 					onClick={() => handleSwitch("bookings")}
@@ -77,6 +76,7 @@ const Bookings: React.FC = () => {
 
 			{currentComponent === "bookings" && (
 				<div>
+					<h3 className="text-4xl font-bold ml-6 mt-4 text-[#2D2C3C]">Bookings</h3>
 					{/* Status buttons */}
 					<div className="flex justify-end mb-6">
 						<div className="inline-flex bg-gray-100 rounded-lg p-1">
