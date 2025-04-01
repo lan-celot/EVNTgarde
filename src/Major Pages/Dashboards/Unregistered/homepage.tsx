@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../../Layout/globals.css";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, SlidersHorizontal } from "lucide-react";
 import { searchAndFilterItems } from "../../../functions/search";
 //import { ThemeToggle } from "../Registered/Elements/theme-toggle";
 import { ThemeToggle } from "../../../functions/ThemeToogle";
 import { useTheme } from "@/functions/ThemeContext";
+import { Button, Input } from "../Registered/Elements/ui/combined-ui";
 
 const Homepage: React.FC = () => {
 	const [searchQuery, setSearchQuery] = useState("");
@@ -14,6 +15,7 @@ const Homepage: React.FC = () => {
 	const navigate = useNavigate();
 	const handleNavigation = (path: string) => () => navigate(path);
 	const handleExternalLink = (url: string) => () => window.open(url, "_blank");
+	const [activeTab, setActiveTab] = useState("about");
 
 	/*
   useEffect(() => {
@@ -130,6 +132,7 @@ const Homepage: React.FC = () => {
 
 	return (
 		<>
+			<div id="about-us" />
 			{/* Header */}
 			<header
 				className={`sticky top-0 z-50 w-full text-white transition-colors ${
@@ -139,13 +142,13 @@ const Homepage: React.FC = () => {
 				<div className="w-full px-8 flex h-14 items-center justify-between">
 					{/* Left section - Logo */}
 					<div className="flex-1">
-						<a href="/" className="flex items-center gap-2">
+						<Link to="/" className="flex items-center gap-2">
 							<img
 								src="../../src/assets/OrganizerLogo.png"
 								alt="Logo"
 								className="h-8 w-auto object-contain"
 							/>
-						</a>
+						</Link>
 					</div>
 
 					{/* Center section - Navigation */}
@@ -153,26 +156,38 @@ const Homepage: React.FC = () => {
 						<ul className="flex items-center space-x-8">
 							<li>
 								<button
-									onClick={handleNavigation("/")}
+									onClick={() =>
+										document
+											.getElementById("about-us")
+											?.scrollIntoView({ behavior: "smooth" })
+									}
 									className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
 								>
-									Home
+									About Us
 								</button>
 							</li>
 							<li>
 								<button
-									onClick={handleNavigation("/about")}
-									className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
-								>
-									About
-								</button>
-							</li>
-							<li>
-								<button
-									onClick={handleNavigation("/login")}
+									onClick={() =>
+										document
+											.getElementById("organizers")
+											?.scrollIntoView({ behavior: "smooth" })
+									}
 									className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
 								>
 									Organizers
+								</button>
+							</li>
+							<li>
+								<button
+									onClick={() =>
+										document
+											.getElementById("vendors")
+											?.scrollIntoView({ behavior: "smooth" })
+									}
+									className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
+								>
+									Vendors
 								</button>
 							</li>
 						</ul>
@@ -197,7 +212,11 @@ const Homepage: React.FC = () => {
 				</div>
 			</header>
 
-			<main className="w-full">
+			<main
+				className={`w-full ${
+					isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-black"
+				}`}
+			>
 				{/* Welcome Banner Section */}
 				<section className="relative overflow-hidden bg-gray-900">
 					<div className="absolute inset-0">
@@ -214,7 +233,7 @@ const Homepage: React.FC = () => {
 								<img
 									src="../../src/assets/OrganizerLogo.png"
 									alt="Event Logo"
-									className="h-65 sm:h-64 lg:h-[250px]  w-auto object-contain"
+									className="h-65 sm:h-64 lg:h-[250px] w-auto object-contain"
 								/>
 							</div>
 							<div className="text-center sm:text-left flex flex-col justify-center self-center">
@@ -229,160 +248,280 @@ const Homepage: React.FC = () => {
 						</div>
 					</div>
 				</section>
+				{/* Search & Filter Section */}
+				<div
+					className={`relative z-10 py-12 ${
+						isDarkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-black"
+					}`}
+				>
+					<div className="max-w-9/10 mx-auto px-4 w-full">
+						<h2 className="text-4xl font-bold text-left mb-4">
+							Why choose us?
+						</h2>
+						<p
+							className={`mb-8 text-left ${
+								isDarkMode ? "text-gray-300" : "text-gray-500"
+							}`}
+						>
+							Let us help you create moments that matter, effortlessly.
+						</p>
 
-				{/* Search & Filter */}
-				<div className="bg-white-100 py-8">
-					<div className="container mx-auto px-4 flex items-center justify-center gap-4">
-						<div className="w-full flex justify-center px-4 gap-4 relative">
-							{/* Search Bar */}
-							<div className="relative w-[400px] md:w-[500px] lg:w-[600px]">
-								<Search
-									className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-									size={20}
-								/>
-								<input
-									type="text"
-									placeholder="Search events..."
-									value={searchQuery}
-									onChange={(e) => setSearchQuery(e.target.value)}
-									className="w-full pl-10 pr-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-								/>
-							</div>
-							{/* Filter Button */}
-							<div className="relative">
-								<button
-									onClick={toggleFilterMenu}
-									className="bg-white text-gray-600 px-4 py-2 rounded-lg flex items-center gap-2 border hover:bg-gray-100"
+						{/* Tab Navigation */}
+						<div className="flex justify-center border-b mb-8">
+							<button
+								className={`flex-1 max-w-[calc(100%/3)] px-8 py-4 mx-1 rounded-t-3xl border-b-2 border-transparent hover:border-gray-400 ${
+									activeTab === "about"
+										? `text-white border-b-transparent ${
+												isDarkMode ? "bg-[#1E3A6D]" : "bg-[#2B579A]"
+										  }`
+										: `border-b-transparent ${
+												isDarkMode
+													? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+													: "bg-gray-50 text-gray-600 hover:bg-blue-100"
+										  }`
+								}`}
+								onClick={() => setActiveTab("about")}
+							>
+								About Us
+							</button>
+
+							<button
+								className={`flex-1 max-w-[calc(100%/3)] px-8 py-4 mx-1 rounded-t-3xl border-b-2 border-transparent hover:border-gray-400 ${
+									activeTab === "mission"
+										? `text-white border-b-transparent ${
+												isDarkMode ? "bg-[#1E3A6D]" : "bg-[#2B579A]"
+										  }`
+										: `border-b-transparent ${
+												isDarkMode
+													? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+													: "bg-gray-50 text-gray-600 hover:bg-blue-100"
+										  }`
+								}`}
+								onClick={() => setActiveTab("mission")}
+							>
+								Mission
+							</button>
+
+							<button
+								className={`flex-1 max-w-[calc(100%/3)] px-8 py-4 mx-1 rounded-t-3xl border-b-2 border-transparent hover:border-gray-400 ${
+									activeTab === "vision"
+										? `text-white border-b-transparent ${
+												isDarkMode ? "bg-[#1E3A6D]" : "bg-[#2B579A]"
+										  }`
+										: `border-b-transparent ${
+												isDarkMode
+													? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+													: "bg-gray-50 text-gray-600 hover:bg-blue-100"
+										  }`
+								}`}
+								onClick={() => setActiveTab("vision")}
+							>
+								Vision
+							</button>
+						</div>
+
+						{/* Tab Content */}
+						<div
+							className={`p-8 rounded-lg shadow-lg border ${
+								isDarkMode
+									? "bg-gray-900 border-gray-700"
+									: "bg-white border border-gray-200"
+							}`}
+						>
+							{activeTab === "about" && (
+								<p
+									className={`text-xl leading-relaxed ${
+										isDarkMode ? "text-gray-300" : "text-gray-700"
+									}`}
 								>
-									<Filter size={20} />
-									<span>Filter</span>
-								</button>
+									EVNTgarde makes event planning effortless. We connect you with
+									trusted suppliers and organizers — from caterers to
+									coordinators — so you can bring your vision to life without
+									the hassle. Whether it’s a wedding, party, or corporate event,
+									we help you create unforgettable moments, stress-free.
+								</p>
+							)}
 
-								{/* Filter Menu */}
-								{showFilterMenu && (
-									<div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-10 p-4">
-										<h3 className="font-medium mb-2">Categories</h3>
-										<div className="space-y-2 mb-4">
-											{allCategories.map((category) => (
-												<div key={category} className="flex items-center">
-													<input
-														type="checkbox"
-														id={`category-${category}`}
-														checked={selectedCategories.includes(category)}
-														onChange={() => toggleCategory(category)}
-														className="mr-2"
-													/>
-													<label htmlFor={`category-${category}`}>
-														{category}
-													</label>
-												</div>
-											))}
-										</div>
-										<button
-											onClick={clearFilters}
-											className="w-full bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300"
-										>
-											Clear Filters
-										</button>
-									</div>
-								)}
-							</div>
+							{activeTab === "mission" && (
+								<p
+									className={`text-xl leading-relaxed ${
+										isDarkMode ? "text-gray-300" : "text-gray-700"
+									}`}
+								>
+									To simplify event planning by seamlessly connecting business
+									and individuals with trusted suppliers, empowering them to
+									create memorable experiences with ease and confidence.
+								</p>
+							)}
+
+							{activeTab === "vision" && (
+								<p
+									className={`text-xl leading-relaxed ${
+										isDarkMode ? "text-gray-300" : "text-gray-700"
+									}`}
+								>
+									To be the leading platform for event services, revolutionizing
+									the way people plan and organize events by fostering a
+									vibrant, reliable, and accessible ecosystem for event
+									professionals.
+								</p>
+							)}
 						</div>
 					</div>
 				</div>
 
-				{/* Organizer & Vendor */}
-				<section className="w-screen max-w-7xl mx-auto py-12 px-4">
-					{[
-						{ name: "Organizers", data: filteredOrganizers },
-						{ name: "Vendors", data: filteredVendors },
-					].map((section, index) => (
-						<div key={index} className="mb-12">
-							<h2 className="text-2xl font-semibold mb-6">
-								List of {section.name}
-							</h2>
-							{section.data.length === 0 ? (
-								<div className="text-center py-10">
-									<p className="text-gray-500">
-										No {section.name.toLowerCase()} found matching your criteria
-									</p>
-								</div>
-							) : (
-								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-									{section.data.map((entity, i) => (
-										<div
-											key={i}
-											className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
-											onClick={handleNavigation("/login")}
-										>
-											<div className="relative">
-												<img
-													src={entity.image || "/placeholder.svg"}
-													alt={entity.name}
-													className="w-full h-50 object-cover"
-												/>
-												<button className="absolute top-2 right-2 text-yellow-500 hover:text-gray-600">
-													<svg
-														className="w-6 h-6 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-400"
-														fill="none"
-														stroke="currentColor"
-														strokeWidth="2"
-														viewBox="0 0 24 24"
-														xmlns="http://www.w3.org/2000/svg"
-													>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-														/>
-													</svg>
-												</button>
-											</div>
-											<div className="p-4">
-												<div className="flex items-center justify-between">
-													<span className="text-sm text-gray-600">
-														{entity.date}
-													</span>
-												</div>
-												<h3 className="font-semibold mb-2 text-gray-600">
-													{entity.name}
-												</h3>
-												<p className="text-sm text-gray-600">
-													{entity.location}
-												</p>
-												<p className="text-sm text-gray-600">{entity.time}</p>
-												<div className="flex items-center mt-2">
-													<span className="text-sm text-gray-600">
-														{entity.price}
-													</span>
-													{/* Star Icon */}
-													<svg
-														className="w-4 h-4 ml-1 text-yellow-500"
-														fill="currentColor"
-														viewBox="0 0 20 20"
-														xmlns="http://www.w3.org/2000/svg"
-													>
-														<path d="M10 15l-5.878 3.09 1.123-6.545L.583 5.948 6.136 5.411 10 1l3.864 4.411 5.553.537-4.762 4.497 1.123 6.545L10 15z" />
-													</svg>
-													<span className="text-sm text-gray-600 ml-1">
-														10 ratings
-													</span>
-												</div>
-											</div>
-										</div>
-									))}
-								</div>
-							)}
-							<div className="mt-8 text-center">
-								<a
-									onClick={handleNavigation("/login")}
-									className="inline-block bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition"
+				<div id="organizers">
+					<br /> <br />
+				</div>
+
+				{/* Organizers Section */}
+				<section
+					className={`w-screen max-w-9/10 mx-auto py-12 px-4 bg-opacity-100${
+						isDarkMode ? "bg-gray-800" : "bg-white"
+					}`}
+				>
+					<div className="mb-12">
+						{/* Flex container to keep both groups on the same line */}
+						<div className="flex justify-between items-center flex-wrap gap-4">
+							{/* Left Section: Heading and Subtitle */}
+							<div>
+								<h2 className="text-4xl font-bold mb-2">Event Organizers</h2>
+								<p
+									className={`transition-colors duration-300 ${
+										isDarkMode ? "text-gray-300" : "text-gray-500"
+									}`}
 								>
-									See More
-								</a>
+									Easily connect with event organizers for your needs
+								</p>
+							</div>
+
+							{/* Right Section: Search, Filter, and Sort */}
+							<div className="flex items-center gap-4">
+								{/* Search Bar */}
+								<div className="relative w-72">
+									<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+									<Input
+										placeholder="Search for Organizers..."
+										className="placeholder-gray-700 dark:placeholder-gray-400 pl-10"
+									/>
+								</div>
+
+								{/* Sorting Dropdown */}
+								<select className="border p-2 rounded"></select>
+
+								{/* Toggle Ascending/Descending */}
+								<Button variant="outline" className="w-full sm:w-auto">
+									<SlidersHorizontal className="mr-2 h-4 w-4" />
+								</Button>
 							</div>
 						</div>
-					))}
+					</div>
+
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+						{organizers.map((organizer, i) => (
+							<div
+								key={i}
+								className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
+							>
+								<div className="relative">
+									<img
+										src={organizer.image || "/placeholder.svg"}
+										alt={organizer.name}
+										className="w-full h-50 object-cover"
+									/>
+								</div>
+								<div className="p-4">
+									<h3 className="font-semibold mb-2 text-gray-600">
+										{organizer.name}
+									</h3>
+									<p className="text-sm text-gray-600">{organizer.location}</p>
+									<p className="text-sm text-gray-600">{organizer.time}</p>
+								</div>
+							</div>
+						))}
+					</div>
+					<div className="mt-8 text-center">
+						<Button variant="outline" className="px-20 py-8 text-md">
+							See More
+						</Button>
+					</div>
+				</section>
+
+				<div id="vendors">
+					<br /> <br />
+				</div>
+
+				{/* Vendors Section */}
+				<section
+					className={`w-screen max-w-9/10 mx-auto py-12 px-4 bg-opacity-100${
+						isDarkMode ? "bg-gray-800" : "bg-white"
+					}`}
+				>
+					<div className="mb-12">
+						{/* Flex container to keep both groups on the same line */}
+						<div className="flex justify-between items-center flex-wrap gap-4">
+							{/* Left Section: Heading and Subtitle */}
+							<div>
+								<h2 className="text-4xl font-bold mb-2">Event Vendors</h2>
+								<p
+									className={`transition-colors duration-300 ${
+										isDarkMode ? "text-gray-300" : "text-gray-500"
+									}`}
+								>
+									Source supplies or services efficiently
+								</p>
+							</div>
+
+							{/* Right Section: Search, Filter, and Sort */}
+							<div className="flex items-center gap-4">
+								{/* Search Bar */}
+								<div className="relative w-72">
+									<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+									<Input
+										placeholder="Search for Organizers..."
+										className="placeholder-gray-700 dark:placeholder-gray-400 pl-10"
+									/>
+								</div>
+
+								{/* Sorting Dropdown */}
+								<select className="border p-2 rounded"></select>
+
+								{/* Toggle Ascending/Descending */}
+								<Button variant="outline" className="w-full sm:w-auto">
+									<SlidersHorizontal className="mr-2 h-4 w-4" />
+								</Button>
+							</div>
+						</div>
+					</div>
+
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+						{vendors.map((vendor, i) => (
+							<div
+								key={i}
+								className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
+							>
+								<div className="relative">
+									<img
+										src={vendor.image || "/placeholder.svg"}
+										alt={vendor.name}
+										className="w-full h-50 object-cover"
+									/>
+								</div>
+								<div className="p-4">
+									<h3 className="font-semibold mb-2 text-gray-600">
+										{vendor.name}
+									</h3>
+									<p className="text-sm text-gray-600">{vendor.location}</p>
+									<p className="text-sm text-gray-600">{vendor.time}</p>
+								</div>
+							</div>
+						))}
+					</div>
+					<div className="mt-8 text-center">
+						<Button variant="outline" className="px-20 py-8 text-md">
+							See More
+						</Button>
+					</div>
 				</section>
 
 				{/* Footer */}
