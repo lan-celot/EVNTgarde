@@ -1,12 +1,9 @@
-import { Link } from "react-router-dom";
-
 const BookingDetails: React.FC = () => {
 	return (
 		<div className="flex flex-col w-full mx-auto">
 			{/* Back Button */}
 			<div className="mb-5">
 				<button className="flex items-center bg-transparent border-none cursor-pointer">
-					<Link to="/bookings"></Link>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="currentColor"
@@ -22,8 +19,8 @@ const BookingDetails: React.FC = () => {
 				</button>
 			</div>
 
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-				{/* Left Column */}
+			<div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+				{/* Left Column (Event Details) */}
 				<div className="flex flex-col gap-5">
 					{/* Event Name and Description Box */}
 					<div className="border border-gray-300 rounded-md p-4">
@@ -31,20 +28,19 @@ const BookingDetails: React.FC = () => {
 						<div className="mb-2 h-10 bg-gray-100 rounded"></div>
 						{/* Placeholder for Description */}
 						<div className="h-16 bg-gray-100 rounded"></div>
-					</div>
-
-					{/* Event Details Box */}
-					<div className="border border-gray-300 rounded-md p-4 grid grid-cols-2 gap-2">
-						{/* Placeholder for Date */}
-						<div className="h-5 bg-gray-100 rounded"></div>
-						{/* Placeholder for Organizer */}
-						<div className="h-5 bg-gray-100 rounded"></div>
-						{/* Placeholder for Time */}
-						<div className="h-5 bg-gray-100 rounded"></div>
-						{/* Placeholder for Guests */}
-						<div className="h-5 bg-gray-100 rounded"></div>
-						{/* Placeholder for Location */}
-						<div className="col-span-2 h-5 bg-gray-100 rounded"></div>
+						{/* Event Details Box */}
+						<div className="p-4 grid grid-cols-2 gap-2">
+							{/* Placeholder for Date */}
+							<div className="h-5 bg-gray-100 rounded"></div>
+							{/* Placeholder for Organizer */}
+							<div className="h-5 bg-gray-100 rounded"></div>
+							{/* Placeholder for Time */}
+							<div className="h-5 bg-gray-100 rounded"></div>
+							{/* Placeholder for Guests */}
+							<div className="h-5 bg-gray-100 rounded"></div>
+							{/* Placeholder for Location */}
+							<div className="col-span-2 h-5 bg-gray-100 rounded"></div>
+						</div>
 					</div>
 
 					{/* Navigation Tabs Box */}
@@ -68,12 +64,10 @@ const BookingDetails: React.FC = () => {
 						<div className="mb-1 h-10 bg-gray-100 rounded"></div>
 						<div className="mb-1 h-10 bg-gray-100 rounded"></div>
 						<div className="mb-1 h-10 bg-gray-100 rounded"></div>
-						{/* Placeholder for Upload File Button */}
-						<div className="mt-4 h-10 bg-gray-200 rounded"></div>
 					</div>
 				</div>
 
-				{/* Right Column */}
+				{/* Middle Column (Attached Files & Budget) */}
 				<div className="flex flex-col gap-5">
 					{/* Attached Files Box */}
 					<div className="border border-gray-300 rounded-md p-4">
@@ -81,8 +75,26 @@ const BookingDetails: React.FC = () => {
 						<div className="mb-2 h-5 bg-gray-100 rounded"></div>
 						{/* Placeholder for File Information */}
 						<div className="h-14 bg-gray-100 rounded mb-2"></div>
+						{/* Placeholder for Upload File Button */}
+						<div className="mt-4 h-10 bg-gray-200 rounded"></div>
 					</div>
 
+					{/* Budget Breakdown Box */}
+					<div className="border border-gray-300 rounded-md p-4">
+						{/* Placeholder for Budget Breakdown Title */}
+						<div className="mb-2 h-5 bg-gray-100 rounded"></div>
+						{/* Placeholder for Total Expenses */}
+						<div className="mb-2 h-7 bg-gray-100 rounded"></div>
+						{/* Placeholder for Budget Items */}
+						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
+						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
+						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
+						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
+					</div>
+				</div>
+
+				{/* Right Column (Organizer Info & Get in Touch) */}
+				<div className="flex flex-col gap-5">
 					{/* Organizer Info Box */}
 					<div className="border border-gray-300 rounded-md p-4">
 						{/* Placeholder for Organizer Name */}
@@ -104,19 +116,6 @@ const BookingDetails: React.FC = () => {
 						{/* Placeholder for Get in Touch Title */}
 						<div className="mb-2 h-5 bg-gray-100 rounded"></div>
 						{/* Placeholder for Social Links */}
-						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
-						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
-						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
-						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
-					</div>
-
-					{/* Budget Breakdown Box */}
-					<div className="border border-gray-300 rounded-md p-4">
-						{/* Placeholder for Budget Breakdown Title */}
-						<div className="mb-2 h-5 bg-gray-100 rounded"></div>
-						{/* Placeholder for Total Expenses */}
-						<div className="mb-2 h-7 bg-gray-100 rounded"></div>
-						{/* Placeholder for Budget Items */}
 						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
 						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
 						<div className="mb-1 h-5 bg-gray-100 rounded"></div>
