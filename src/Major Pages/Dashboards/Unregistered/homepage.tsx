@@ -6,7 +6,7 @@ import { searchAndFilterItems } from "../../../functions/search";
 //import { ThemeToggle } from "../Registered/Elements/theme-toggle";
 import { ThemeToggle } from "../../../functions/ThemeToogle";
 import { useTheme } from "@/functions/ThemeContext";
-import { Button, Input } from "../Registered/Elements/ui/combined-ui";
+import { Button, Input } from "../../../Layout/combined-ui";
 
 const Homepage: React.FC = () => {
 	const [searchQuery, setSearchQuery] = useState("");
