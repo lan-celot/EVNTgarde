@@ -7,7 +7,10 @@ import "@/Major Pages/Login Page/Main Page/RegistrationLogin.css";
 import { registerUser } from "../../../functions/authFunctions";
 import { createUserAccount } from "../../../functions/userAccount";
 import { useTheme } from "../../../functions/ThemeContext";
-import { signInWithGoogle, signInWithYahoo } from "../../../functions/authFunctions";
+import {
+  signInWithGoogle,
+  signInWithYahoo,
+} from "../../../functions/authFunctions";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillYahoo } from "react-icons/ai";
 
@@ -18,13 +21,11 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const [currentStep, setCurrentStep] = useState(step);
   const { isDarkMode } = useTheme();
 
-  
   const [vendorType, setVendorType] = useState<VendorType>("");
   const [vendorName, setVendorName] = useState("");
   const [businessOffering, setBusinessOffering] = useState("");
   const [preferences, setPreferences] = useState<string[]>([]);
 
-  
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,17 +36,14 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  
   const [hasSelectedVendorType, setHasSelectedVendorType] = useState(false);
 
   useEffect(() => {
     setCurrentStep(step);
   }, [step]);
 
-  
   const [error, setError] = useState("");
 
-  
   const offeringOptions = [
     { value: "", label: "Please select service offered" },
     { value: "catering", label: "Catering" },
@@ -55,23 +53,28 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     { value: "photography", label: "Photography" },
   ];
 
-  
-  const preferenceOptions = ["Procurement", "Inventory", "Reservations", "Logistics"];
+  const preferenceOptions = [
+    "Procurement",
+    "Inventory",
+    "Reservations",
+    "Logistics",
+  ];
 
-  
   useEffect(() => {
     const validatePassword = (pass: string): string => {
-      if (pass.length < 12) return "Password must be at least 12 characters long.";
-      if (!/[A-Z]/.test(pass)) return "Password must include at least one uppercase letter.";
+      if (pass.length < 12)
+        return "Password must be at least 12 characters long.";
+      if (!/[A-Z]/.test(pass))
+        return "Password must include at least one uppercase letter.";
       if (!/\d/.test(pass)) return "Password must include at least one number.";
-      if (!/[!@#$%^&*_]/.test(pass)) return "Password must include at least one special character (!@#$%^&*_).";
+      if (!/[!@#$%^&*_]/.test(pass))
+        return "Password must include at least one special character (!@#$%^&*_).";
       return "";
     };
 
     setPasswordError(validatePassword(password));
   }, [password]);
 
-  
   useEffect(() => {
     if (confirmPassword && password !== confirmPassword) {
       setConfirmPasswordError("Passwords do not match.");
@@ -80,7 +83,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     }
   }, [password, confirmPassword]);
 
-  
   useEffect(() => {
     if (currentStep === 3) {
       const storedData = sessionStorage.getItem("vendorRegistration");
@@ -94,7 +96,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     }
   }, [currentStep]);
 
-  
   const handlePreferenceChange = (preference: string) => {
     if (preferences.includes(preference)) {
       setPreferences(preferences.filter((p) => p !== preference));
@@ -103,21 +104,18 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     }
   };
 
-  
   const handleGetStarted = () => {
     if (!vendorType) {
       setError("Please select a vendor type.");
       return;
     }
-    setHasSelectedVendorType(true); 
+    setHasSelectedVendorType(true);
   };
 
-  
   const handleProceed = () => {
     navigate("/register/vendor/step2");
   };
 
-  
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -131,7 +129,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
       return;
     }
 
-    
     sessionStorage.setItem(
       "vendorRegistration",
       JSON.stringify({
@@ -139,14 +136,12 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         vendorName,
         businessOffering,
         preferences,
-      }),
+      })
     );
 
-    
     navigate("/register/vendor/step3");
   };
 
-  
   const handleBack = () => {
     if (currentStep === 1) {
       navigate("/role-selection");
@@ -157,7 +152,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     }
   };
 
-  
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -180,7 +174,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     setIsLoading(true);
 
     try {
-      
       const userData = createUserAccount("vendor", email, {
         vendorType,
         businessName: vendorName,
@@ -189,13 +182,10 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         preferences,
       });
 
-      
       await registerUser(email, password, "vendor", userData);
 
-      
       sessionStorage.removeItem("vendorRegistration");
 
-      
       navigate("/login");
     } catch (err: any) {
       setError(err.message);
@@ -234,29 +224,48 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins] p-4">
-      <div className={`flex w-[1440px] h-[650px] ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
+      <div
+        className={`flex w-[1440px] h-[650px] ${
+          isDarkMode ? "bg-gray-800" : "bg-blue-600"
+        } rounded-xl shadow-lg overflow-hidden font-poppins`}
+      >
         {/* Left Side - Logo & Text */}
         <div
-          className={`w-2/5 ${isDarkMode ? "bg-gray-800" : "bg-blue-600"} text-white flex flex-col items-center justify-center text-center p-8`}
+          className={`w-2/5 ${
+            isDarkMode ? "bg-gray-800" : "bg-blue-600"
+          } text-white flex flex-col items-center justify-center text-center p-8`}
         >
-          <img src={Logo || "/placeholder.svg"} className="max-w-xs mb-4" alt="Logo" />
-          <p className="text-lg font-medium mb-2">Discover tailored events services.</p>
-          <p className="text-lg font-medium mb-2">Sign up for personalized services today!</p>
+          <img
+            src={Logo || "/placeholder.svg"}
+            className="max-w-xs mb-4"
+            alt="Logo"
+          />
+          <p className="text-lg font-medium mb-2">
+            Discover tailored events services.
+          </p>
+          <p className="text-lg font-medium mb-2">
+            Sign up for personalized services today!
+          </p>
         </div>
 
         {/* Right Side - Form */}
         <div
-          className={`w-3/5 ${isDarkMode ? "bg-black text-white" : "bg-white text-gray-800"} p-12 flex flex-col justify-center rounded-l-[50px] shadow-md relative overflow-y-auto`}
+          className={`w-3/5 ${
+            isDarkMode ? "bg-black text-white" : "bg-white text-gray-800"
+          } p-12 flex flex-col justify-center rounded-l-[50px] shadow-md relative overflow-y-auto`}
         >
           {currentStep === 1 ? (
             !hasSelectedVendorType ? (
-             
               <>
                 <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
                 <div className="mb-6">
-                  <h3 className="text-2xl font-semibold mb-4">Are you a solo vendor or part of a company?</h3>
-                  <p className="text-lg mb-6">This helps us understand how to showcase your offerings.</p>
+                  <h3 className="text-2xl font-semibold mb-4">
+                    Are you a solo vendor or part of a company?
+                  </h3>
+                  <p className="text-lg mb-6">
+                    This helps us understand how to showcase your offerings.
+                  </p>
 
                   {/* Add Radio Buttons with Border Styling */}
                   <div className="space-y-4">
@@ -311,15 +320,23 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   </button>
                   <button
                     type="button"
-                    onClick={handleGetStarted} 
-                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "} rounded-xl shadow-lg overflow-hidden font-poppins`}
-                    disabled={!vendorType} 
+                    onClick={handleGetStarted}
+                    className={`flex-1 px-6 py-3 ${
+                      isDarkMode
+                        ? "bg-gray-800 hover:bg-gray-300"
+                        : "bg-blue-600 "
+                    } rounded-xl shadow-lg overflow-hidden font-poppins`}
+                    disabled={!vendorType}
                   >
                     Get Started
                   </button>
                 </div>
 
-                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                <p
+                  className={`text-center mt-4 ${
+                    isDarkMode ? "text-white" : "text-gray-700"
+                  }`}
+                >
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -327,14 +344,16 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 </p>
               </>
             ) : vendorType === "Solo Vendor" ? (
-             
               <>
                 <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
                 <div className="mb-8">
-                  <h3 className="text-2xl font-semibold mb-4">You're a Solo Vendor!</h3>
+                  <h3 className="text-2xl font-semibold mb-4">
+                    You're a Solo Vendor!
+                  </h3>
                   <p className="text-lg mb-6">
-                    Perfect Pick! Showcase your services/business to organizers. We'll help you get set up right away.
+                    Perfect Pick! Showcase your services/business to organizers.
+                    We'll help you get set up right away.
                   </p>
                 </div>
 
@@ -348,14 +367,22 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   </button>
                   <button
                     type="button"
-                    onClick={handleProceed} 
-                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                    onClick={handleProceed}
+                    className={`flex-1 px-6 py-3 ${
+                      isDarkMode
+                        ? "bg-gray-800 hover:bg-gray-300"
+                        : "bg-blue-600 "
+                    } rounded-xl shadow-lg overflow-hidden font-poppins`}
                   >
                     Proceed
                   </button>
                 </div>
 
-                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                <p
+                  className={`text-center mt-4 ${
+                    isDarkMode ? "text-white" : "text-gray-700"
+                  }`}
+                >
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -363,14 +390,16 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 </p>
               </>
             ) : (
-             
               <>
                 <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
                 <div className="mb-8">
-                  <h3 className="text-2xl font-semibold mb-4">You're a Company Vendor!</h3>
+                  <h3 className="text-2xl font-semibold mb-4">
+                    You're a Company Vendor!
+                  </h3>
                   <p className="text-lg mb-6">
-                    Perfect Pick! Showcase your services/business to organizers. We'll help you get set up right away.
+                    Perfect Pick! Showcase your services/business to organizers.
+                    We'll help you get set up right away.
                   </p>
                 </div>
 
@@ -384,14 +413,22 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   </button>
                   <button
                     type="button"
-                    onClick={handleProceed} 
-                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                    onClick={handleProceed}
+                    className={`flex-1 px-6 py-3 ${
+                      isDarkMode
+                        ? "bg-gray-800 hover:bg-gray-300"
+                        : "bg-blue-600 "
+                    } rounded-xl shadow-lg overflow-hidden font-poppins`}
                   >
                     Proceed
                   </button>
                 </div>
 
-                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                <p
+                  className={`text-center mt-4 ${
+                    isDarkMode ? "text-white" : "text-gray-700"
+                  }`}
+                >
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -400,18 +437,25 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               </>
             )
           ) : currentStep === 2 ? (
-           
             <>
               <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
-              {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
+              {error && (
+                <div className="bg-red-500 text-white p-3 rounded-md mb-4">
+                  {error}
+                </div>
+              )}
 
               <div className="flex items-center justify-center gap-4 mb-4">
                 <button
                   type="button"
                   onClick={handleGoogleSignUp}
                   className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
-                    ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-700" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                    ${
+                      isDarkMode
+                        ? "bg-black border-gray-600 text-white hover:bg-gray-700"
+                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"
+                    }`}
                   disabled={isLoading}
                 >
                   <FcGoogle size={20} />
@@ -421,7 +465,11 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   type="button"
                   onClick={handleYahooSignUp}
                   className={`flex items-center justify-center gap-2 px-23 py-3 rounded-lg border w-full md:w-auto 
-                    ${isDarkMode ? "bg-black border-gray-600 text-white hover:bg-gray-900" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"}`}
+                    ${
+                      isDarkMode
+                        ? "bg-black border-gray-600 text-white hover:bg-gray-900"
+                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-100"
+                    }`}
                   disabled={isLoading}
                 >
                   <AiFillYahoo size={20} className="text-purple-600" />
@@ -430,21 +478,41 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               </div>
 
               <div className="relative flex items-center py-2 mb-4">
-                <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
-                <span className={`flex-shrink mx-4 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>OR</span>
-                <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
+                <div
+                  className={`flex-grow border-t ${
+                    isDarkMode ? "border-gray-600" : "border-gray-300"
+                  }`}
+                ></div>
+                <span
+                  className={`flex-shrink mx-4 text-sm ${
+                    isDarkMode ? "text-gray-400" : "text-gray-500"
+                  }`}
+                >
+                  OR
+                </span>
+                <div
+                  className={`flex-grow border-t ${
+                    isDarkMode ? "border-gray-600" : "border-gray-300"
+                  }`}
+                ></div>
               </div>
 
               <form className="space-y-6" onSubmit={handleNext}>
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    }`}
+                  >
                     Business Name
                   </label>
                   <input
                     type="text"
                     placeholder="John's Catering"
                     className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
-                      isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      isDarkMode
+                        ? "bg-gray-700 text-white border-gray-600"
+                        : "bg-white text-gray-800 border-gray-300"
                     }`}
                     value={vendorName}
                     onChange={(e) => setVendorName(e.target.value)}
@@ -453,12 +521,18 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    }`}
+                  >
                     Services Offered
                   </label>
                   <select
                     className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      isDarkMode
+                        ? "bg-gray-700 text-white border-gray-600"
+                        : "bg-white text-gray-800 border-gray-300"
                     }`}
                     value={businessOffering}
                     onChange={(e) => setBusinessOffering(e.target.value)}
@@ -477,7 +551,11 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 </div>
 
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    }`}
+                  >
                     System Preferences
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -504,12 +582,23 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   >
                     Back
                   </button>
-                  <button type="submit" className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}>
+                  <button
+                    type="submit"
+                    className={`flex-1 px-6 py-3 ${
+                      isDarkMode
+                        ? "bg-gray-800 hover:bg-gray-300"
+                        : "bg-blue-600 hover:bg-blue-300"
+                    } rounded-xl shadow-lg overflow-hidden font-poppins`}
+                  >
                     Next
                   </button>
                 </div>
 
-                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                <p
+                  className={`text-center mt-4 ${
+                    isDarkMode ? "text-white" : "text-gray-700"
+                  }`}
+                >
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -518,40 +607,63 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               </form>
             </>
           ) : (
-           
             <>
               <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
-              {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
+              {error && (
+                <div className="bg-red-500 text-white p-3 rounded-md mb-4">
+                  {error}
+                </div>
+              )}
 
               <form onSubmit={handleCreateAccount}>
                 <div className="mb-4">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    }`}
+                  >
                     Phone Number (optional)
                   </label>
                   <div className="flex items-center border rounded-md">
-                    <span className={`px-3 py-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>+63</span>
+                    <span
+                      className={`px-3 py-2 ${
+                        isDarkMode ? "text-white" : "text-gray-700"
+                      }`}
+                    >
+                      +63
+                    </span>
                     <input
                       type="text"
                       placeholder="000 0000 000"
                       className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                        isDarkMode
+                          ? "bg-gray-700 text-white border-gray-600"
+                          : "bg-white text-gray-800 border-gray-300"
                       }`}
                       value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+                      onChange={(e) =>
+                        setPhoneNumber(e.target.value.replace(/\D/g, ""))
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    }`}
+                  >
                     Business Email Address
                   </label>
                   <input
                     type="email"
                     placeholder="business@example.com"
                     className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
-                      isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      isDarkMode
+                        ? "bg-gray-700 text-white border-gray-600"
+                        : "bg-white text-gray-800 border-gray-300"
                     }`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -560,7 +672,11 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 </div>
 
                 <div className="mb-4">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    }`}
+                  >
                     Enter Password
                   </label>
                   <div className="relative">
@@ -569,7 +685,11 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                       placeholder="Enter password"
                       className={`w-full px-4 py-2 border rounded-md text-sm ${
                         passwordError && password ? "border-red-500" : ""
-                      } ${isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"}`}
+                      } ${
+                        isDarkMode
+                          ? "bg-gray-700 text-white border-gray-600"
+                          : "bg-white text-gray-800 border-gray-300"
+                      }`}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -583,12 +703,22 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                     </button>
                   </div>
                   {passwordError && password && (
-                    <p className={`text-sm mt-1 ${isDarkMode ? "text-red-400" : "text-red-500"}`}>{passwordError}</p>
+                    <p
+                      className={`text-sm mt-1 ${
+                        isDarkMode ? "text-red-400" : "text-red-500"
+                      }`}
+                    >
+                      {passwordError}
+                    </p>
                   )}
                 </div>
 
                 <div className="mb-6">
-                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    }`}
+                  >
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -596,8 +726,14 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm password"
                       className={`w-full px-4 py-2 border rounded-md text-sm ${
-                        confirmPasswordError && confirmPassword ? "border-red-500" : ""
-                      } ${isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"}`}
+                        confirmPasswordError && confirmPassword
+                          ? "border-red-500"
+                          : ""
+                      } ${
+                        isDarkMode
+                          ? "bg-gray-700 text-white border-gray-600"
+                          : "bg-white text-gray-800 border-gray-300"
+                      }`}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
@@ -605,13 +741,23 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                     <button
                       type="button"
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
-                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      {showConfirmPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
                     </button>
                   </div>
                   {confirmPasswordError && confirmPassword && (
-                    <p className={`text-sm mt-1 ${isDarkMode ? "text-red-400" : "text-red-500"}`}>
+                    <p
+                      className={`text-sm mt-1 ${
+                        isDarkMode ? "text-red-400" : "text-red-500"
+                      }`}
+                    >
                       {confirmPasswordError}
                     </p>
                   )}
@@ -627,7 +773,11 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   </button>
                   <button
                     type="submit"
-                    className={`flex-1 px-6 py-3 ${isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600  hover:bg-blue-300"} rounded-xl shadow-lg overflow-hidden font-poppins`}
+                    className={`flex-1 px-6 py-3 ${
+                      isDarkMode
+                        ? "bg-gray-800 hover:bg-gray-300"
+                        : "bg-blue-600  hover:bg-blue-300"
+                    } rounded-xl shadow-lg overflow-hidden font-poppins`}
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -637,7 +787,11 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                   </button>
                 </div>
 
-                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                <p
+                  className={`text-center mt-4 ${
+                    isDarkMode ? "text-white" : "text-gray-700"
+                  }`}
+                >
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
