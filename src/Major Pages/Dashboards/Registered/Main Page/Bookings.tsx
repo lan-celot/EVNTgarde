@@ -127,7 +127,7 @@ const Bookings: React.FC = () => {
     ],
   };
 
-  // Sort the bookings based on the date
+  // Sort the bookings based on the date (test only to try the order of the events)
   const sortedPendingBookings = [...bookingsData.Pending].sort((a, b) => {
     const dateA = new Date(a.date);
     const dateB = new Date(b.date);
@@ -222,7 +222,7 @@ const Bookings: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Placeholder Section */}
+                {/* Placeholder for each event */}
                 <div className="flex-1 border-transparent rounded-lg p-6 shadow-sm bg-white ml-25">
                   {" "}
                   <h3 className="text-xl font-semibold text-blue-600 mb-2">
