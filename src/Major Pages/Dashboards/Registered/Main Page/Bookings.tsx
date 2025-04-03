@@ -18,139 +18,137 @@ const Bookings: React.FC = () => {
     setActiveStatus(status);
   };
 
-  // sample lang to see if the buttons work
-  const bookingsData = {
-    Pending: [
-      {
-        id: 1,
-        date: "Mar 26",
-        day: "Wednesday",
-        title: "Super Duper Long Event Placeholder",
-        startTime: "5:30 PM",
-        endTime: "10:00 PM",
-        customer: "Customer Name",
-        location: "Location Name",
-        guests: "1,234 Guests",
-      },
-      {
-        id: 4,
-        date: "Mar 27",
-        day: "Thursday",
-        title: "Another Event Placeholder",
-        startTime: "3:00 PM",
-        endTime: "8:00 PM",
-        customer: "Another Customer",
-        location: "Another Location",
-        guests: "567 Guests",
-      },
-      {
-        id: 5,
-        date: "Mar 28",
-        day: "Friday",
-        title: "Yet Another Event Placeholder",
-        startTime: "6:00 PM",
-        endTime: "11:00 PM",
-        customer: "Yet Another Customer",
-        location: "Yet Another Location",
-        guests: "890 Guests",
-      },
-    ],
-    Upcoming: [
-      {
-        id: 2,
-        date: "Mar 29",
-        day: "Saturday",
-        title: "Super Duper Long Event Placeholder",
-        startTime: "5:30 PM",
-        endTime: "10:00 PM",
-        customer: "Customer Name",
-        location: "Location Name",
-        guests: "1,234 Guests",
-      },
-      {
-        id: 6,
-        date: "Mar 30",
-        day: "Sunday",
-        title: "Upcoming Event Placeholder",
-        startTime: "2:00 PM",
-        endTime: "7:00 PM",
-        customer: "Upcoming Customer",
-        location: "Upcoming Location",
-        guests: "456 Guests",
-      },
-      {
-        id: 7,
-        date: "Mar 31",
-        day: "Monday",
-        title: "Next Event Placeholder",
-        startTime: "4:00 PM",
-        endTime: "9:00 PM",
-        customer: "Next Customer",
-        location: "Next Location",
-        guests: "789 Guests",
-      },
-    ],
-    Past: [
-      {
-        id: 3,
-        date: "Mar 23",
-        day: "Sunday",
-        title: "Super Duper Long Event Placeholder",
-        startTime: "5:30 PM",
-        endTime: "10:00 PM",
-        customer: "Customer Name",
-        location: "Location Name",
-        guests: "1,234 Guests",
-      },
-      {
-        id: 8,
-        date: "Mar 24",
-        day: "Monday",
-        title: "Past Event Placeholder",
-        startTime: "1:00 PM",
-        endTime: "6:00 PM",
-        customer: "Past Customer",
-        location: "Past Location",
-        guests: "345 Guests",
-      },
-      {
-        id: 9,
-        date: "Mar 25",
-        day: "Tuesday",
-        title: "Previous Event Placeholder",
-        startTime: "7:00 PM",
-        endTime: "11:00 PM",
-        customer: "Previous Customer",
-        location: "Previous Location",
-        guests: "678 Guests",
-      },
-    ],
-  };
+  const bookingsData = [
+    {
+      id: 1,
+      date: "Apr 3",  
+      day: "Wednesday",
+      title: "Super Duper Long Event Placeholder",
+      startTime: "5:30 PM",
+      endTime: "10:00 PM",
+      customer: "Customer Name",
+      location: "Location Name",
+      guests: "1,234 Guests",
+      status: "Pending",
+    },
+    {
+      id: 2,
+      date: "Apr 4",  
+      day: "Thursday",
+      title: "Super Duper Long Event Placeholder",
+      startTime: "5:30 PM",
+      endTime: "10:00 PM",
+      customer: "Customer Name",
+      location: "Location Name",
+      guests: "1,234 Guests",
+      status: "Upcoming",
+    },
+    {
+      id: 3,
+      date: "Apr 1",  
+      day: "Monday",
+      title: "Super Duper Long Event Placeholder",
+      startTime: "5:30 PM",
+      endTime: "10:00 PM",
+      customer: "Customer Name",
+      location: "Location Name",
+      guests: "1,234 Guests",
+      status: "Past",
+    },
+    {
+      id: 4,
+      date: "Apr 5",  
+      day: "Friday",
+      title: "Another Event Placeholder",
+      startTime: "3:00 PM",
+      endTime: "8:00 PM",
+      customer: "Another Customer",
+      location: "Another Location",
+      guests: "567 Guests",
+      status: "Pending",
+    },
+    {
+      id: 5,
+      date: "Apr 6",  
+      day: "Saturday",
+      title: "Yet Another Event Placeholder",
+      startTime: "6:00 PM",
+      endTime: "11:00 PM",
+      customer: "Yet Another Customer",
+      location: "Yet Another Location",
+      guests: "890 Guests",
+      status: "Pending",
+    },
+    {
+      id: 6,
+      date: "Apr 7",  
+      day: "Sunday",
+      title: "Upcoming Event Placeholder",
+      startTime: "2:00 PM",
+      endTime: "7:00 PM",
+      customer: "Upcoming Customer",
+      location: "Upcoming Location",
+      guests: "456 Guests",
+      status: "Upcoming",
+    },
+    {
+      id: 7,
+      date: "Apr 8",  
+      day: "Monday",
+      title: "Next Event Placeholder",
+      startTime: "4:00 PM",
+      endTime: "9:00 PM",
+      customer: "Next Customer",
+      location: "Next Location",
+      guests: "789 Guests",
+      status: "Upcoming",
+    },
+    {
+      id: 8,
+      date: "Apr 2",  
+      day: "Tuesday",
+      title: "Past Event Placeholder",
+      startTime: "1:00 PM",
+      endTime: "6:00 PM",
+      customer: "Past Customer",
+      location: "Past Location",
+      guests: "345 Guests",
+      status: "Past",
+    },
+    {
+      id: 9,
+      date: "Mar 31",  
+      day: "Sunday",
+      title: "Previous Event Placeholder",
+      startTime: "7:00 PM",
+      endTime: "11:00 PM",
+      customer: "Previous Customer",
+      location: "Previous Location",
+      guests: "678 Guests",
+      status: "Past",
+    },
+  ];
 
-  // Sort the bookings based on the date (test only to try the order of the events)
-  const sortedPendingBookings = [...bookingsData.Pending].sort((a, b) => {
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-    return dateB.getTime() - dateA.getTime();
-  });
+  // Filter bookings based on active status
+  let displayedBookings = bookingsData.filter(booking => booking.status === activeStatus);
 
-  const sortedPastBookings = [...bookingsData.Past].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
 
-  const sortedUpcomingBookings = [...bookingsData.Upcoming].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
-
-  const displayedBookings =
-    activeStatus === "Pending"
-      ? sortedPendingBookings
-      : activeStatus === "Upcoming"
-      ? sortedUpcomingBookings
-      : activeStatus === "Past"
-      ? sortedPastBookings
-      : bookingsData[activeStatus];
-
+  if (activeStatus === "Upcoming") {
+    // For Upcoming, show in chronological order
+    displayedBookings = [...displayedBookings].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA.getTime() - dateB.getTime();
+    });
+  } else if (activeStatus === "Past") {
+    // For Past, show most recent first
+    displayedBookings = [...displayedBookings].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }
+  
   return (
     <div style={{ marginLeft: "16rem" }}>
       <div className="mb-4">
@@ -180,9 +178,7 @@ const Bookings: React.FC = () => {
                 <button
                   key={status}
                   onClick={() =>
-                    handleStatusChange(
-                      status as "Pending" | "Upcoming" | "Past"
-                    )
+                    handleStatusChange(status as "Pending" | "Upcoming" | "Past")
                   }
                   className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
                     activeStatus === status
@@ -196,17 +192,15 @@ const Bookings: React.FC = () => {
             </div>
           </div>
 
-          {/* Bookings List (sample only) */}
+          {/* Bookings List */}
           <div className="relative">
-            {/* Timeline Line - nag aadjust based sa event placeholders */}
+            {/* Timeline Line */}
             <div
               className="absolute left-[12.95rem] w-0.5 bg-gray-600"
               style={{
                 top: "2rem",
                 bottom: "0",
-                height: `calc(100% - ${
-                  bookingsData[activeStatus].length * 0
-                }rem)`,
+                height: `calc(100% - ${displayedBookings.length * 0}rem)`,
               }}
             ></div>
             {displayedBookings.map((booking) => (
@@ -216,15 +210,14 @@ const Bookings: React.FC = () => {
                   <div className="font-bold">{booking.date}</div>
                   <div className="text-gray-500 text-sm">{booking.day}</div>
 
-                  {/* Timeline Circle - every event may circle */}
+                  {/* Timeline Circle */}
                   <div className="absolute left-[13rem] top-[calc(50%-2.3rem)] transform -translate-y-1/2 -translate-x-1/2">
                     <div className="w-4.5 h-4.5 bg-gray-600 rounded-full"></div>
                   </div>
                 </div>
 
-                {/* Placeholder for each event */}
+                {/* Event details */}
                 <div className="flex-1 border-transparent rounded-lg p-6 shadow-sm bg-white ml-25">
-                  {" "}
                   <h3 className="text-xl font-semibold text-blue-600 mb-2">
                     {booking.title}
                   </h3>
