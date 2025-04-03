@@ -3,9 +3,8 @@ import { useState } from "react";
 const EventOverview: React.FC = () => {
   const [activeTab, setActiveTab] = useState("services");
 
-  // test data for the event overview
   return (
-    <div className="flex flex-col gap-5">
+    <div className="w-[430px] mx-auto p-5 bg-white rounded-md shadow-md">
       {/* Event Name and Description Box */}
       <div className="border border-gray-300 rounded-md p-4">
         {/* Event Name */}
