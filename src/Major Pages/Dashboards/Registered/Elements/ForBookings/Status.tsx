@@ -1,124 +1,198 @@
-import type React from "react"
-import { Facebook, Instagram, Linkedin, Globe } from "lucide-react"
+import React, { useState } from 'react';
+import { FaFacebook, FaInstagram, FaLinkedin, FaGlobe } from 'react-icons/fa';
+
+type StatusType = 'awaiting' | 'accepted' | 'completed';
 
 interface StatusProps {
-  status?: "awaiting" | "accepted" | "completed"
-  organizer?: {
-    name?: string
-    role?: string
-    email?: string
-    phone?: string
-    avatar?: string
-  }
-  dates?: {
-    request?: string
-    accepted?: string
-    completed?: string
-    payment?: string
-    paymentDue?: string
-    paid?: string
-  }
-  onMarkCompleted?: () => void // define this function to change to completed status once clicked
-  onShareExperience?: () => void 
+	initialStatus?: StatusType;
 }
 
-const Status: React.FC<StatusProps> = ({
-  status = "awaiting",
-  organizer,
-  dates, // to be used in accepted and completed status
-  onMarkCompleted, // on click function for "Mark Event as Completed" button inside accepted status
-  onShareExperience, // on click function for "Share Experience" button
-}) => {
+const Status: React.FC<StatusProps> = ({ initialStatus = 'completed' }) => {
 
-  const renderOrganizerInfo = () => (
-    <div className="border border-gray-300 rounded-md p-4">
-      <div className="flex items-center gap-4 mb-4">
-        {organizer?.avatar ? (
-          <div className="w-16 h-16 rounded-full overflow-hidden">
-            <img
-              src={organizer.avatar || "/placeholder.svg"}
-              alt={organizer?.name || "Organizer Name"}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-blue-200"></div>
-        )}
-        <div>
-          <h1 className="text-2xl font-bold">{organizer?.name || "Organizer Name"}</h1>
-          <p className="text-gray-500">{organizer?.role || "Organizer"}</p>
-        </div>
-      </div>
+	const [status, setStatus] = useState<StatusType>(initialStatus);
 
-      <div className="space-y-4">
-        <div>
-          <h3 className="font-semibold">Email</h3>
-          <p className="text-gray-500">{organizer?.email || "organizer@gmail.com"}</p>
-        </div>
-        <div>
-          <h3 className="font-semibold">Phone</h3>
-          <p className="text-gray-500">{organizer?.phone || "09123456789"}</p>
-        </div>
-      </div>
-    </div>
-  )
+	const organizerData = {
+		name: "Organizer Name",
+		role: "Organizer",
+		email: "santo.tomas@gmail.com",
+		phone: "0919-683-2396",
+		avatarUrl: "https://placehold.co/100x100/87CEEB/FFF",
+		dates: {
+			requestDate: "Aug 1, 2025",
+			acceptedDate: "Aug 10, 2025",
+			paymentDate: "Aug 1, 2025",
+			completedDate: "Aug 10, 2025"
+		},
+		socialLinks: {
+			facebook: "@linktofacebook",
+			instagram: "@linktoinstagram",
+			linkedin: "@linktolinkedin",
+			website: "@linktowebsite"
+		}
+	};
 
-  // status box based on current status (awaiting, accepted, completed)
-  const renderStatusSection = () => {
-    switch (status) {
-      case "awaiting":
-        return (
-			<div className="border border-gray-300 rounded-md p-4 bg-gray-50">
-			  <h2 className="text-2xl font-bold mb-2">Awaiting Response</h2>
-			  <p className="text-gray-500">
-				You have booked this organizer, please wait for the organizer to respond to your event request.
-			  </p>
-		<div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <Facebook className="w-5 h-5 text-gray-600" />
-              <span className="text-gray-500">@linktofacebook</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Instagram className="w-5 h-5 text-gray-600" />
-              <span className="text-gray-500">@linktoinstagram</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Linkedin className="w-5 h-5 text-gray-600" />
-              <span className="text-gray-500">@linktolinkedin</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Globe className="w-5 h-5 text-gray-600" />
-              <span className="text-gray-500">@linktowebsite</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-		  case "accepted":
-			return (
-			  <>
-				{/* Accepted status content */}
-			  </>
-			)
-      case "completed":
-        return (
-          <div className="border border-gray-300 rounded-md overflow-hidden">
-			    {/* Completed status content */}
-          </div>
-        )
-      default:
-        return null
-    }
-  }
+	const handleShareExperience = () => {
+		console.log("Sharing experience...");
 
-  return (
-    <div className="flex flex-col gap-5">
-      {renderOrganizerInfo()}
-      {renderStatusSection()}
-    </div>
-  )
-}
+	};
 
-export default Status
+	return (
+		<div className="flex flex-col max-w-md mx-auto shadow-lg rounded-lg overflow-hidden bg-white">
+			{/* Organizer Info Box */}
+			<div className="p-6">
+				<div className="flex items-center">
+					<div className="w-12 h-12 rounded-full overflow-hidden mr-4">
+						<img
+							src={organizerData.avatarUrl}
+							alt={organizerData.name}
+							className="w-full h-full object-cover"
+						/>
+					</div>
+					<div>
+						<h2 className="text-xl font-semibold text-gray-800">{organizerData.name}</h2>
+						<p className="text-gray-500">{organizerData.role}</p>
+					</div>
+				</div>
+
+				<div className="mt-6">
+					<div className="mb-4">
+						<p className="text-gray-600 font-medium">Email</p>
+						<p className="text-gray-500">{organizerData.email}</p>
+					</div>
+
+					<div>
+						<p className="text-gray-600 font-medium">Phone</p>
+						<p className="text-gray-500">{organizerData.phone}</p>
+					</div>
+				</div>
+			</div>
+
+			{/* Status Section - Conditionally rendered based on status */}
+			{status === 'awaiting' ? (
+				<>
+					<hr className="border-gray-200 m-0" />
+					<div className="p-6">
+						<h2 className="text-2xl font-bold text-gray-800 mb-2">Awaiting Response</h2>
+						<p className="text-gray-500">
+							You have booked this organizer, please wait for the organizer to respond to your event request.
+						</p>
+					</div>
+				</>
+			) : status === 'accepted' ? (
+				<>
+					{/* Accepted Banner */}
+					<div className="bg-yellow-400 p-6 text-white">
+						<h2 className="text-2xl font-bold mb-2">Accepted</h2>
+						<p>
+							The event has been accepted, and all the payments for the vendor <span className="font-bold">have been settled.</span>
+						</p>
+					</div>
+
+					{/* Event Details with Dates */}
+					<div className="p-6 space-y-4">
+						<div>
+							<p className="text-gray-800 font-medium">Request Date</p>
+							<p className="text-gray-500">{organizerData.dates.requestDate}</p>
+						</div>
+
+						<div>
+							<p className="text-gray-800 font-medium">Date Accepted</p>
+							<p className="text-gray-500">{organizerData.dates.acceptedDate}</p>
+						</div>
+
+						<div>
+							<p className="text-gray-800 font-medium">Payment Due Date</p>
+							<p className="text-gray-500">{organizerData.dates.paymentDate}</p>
+						</div>
+
+						<div>
+							<p className="text-gray-800 font-medium">Date Completed</p>
+							<p className="text-gray-500">-</p>
+						</div>
+
+						<button
+							onClick={() => setStatus('completed')}
+							className="w-full mt-4 py-3 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+						>
+							Mark Event as Completed
+						</button>
+					</div>
+				</>
+			) : (
+				<>
+					{/* Completed Banner - Green background as shown in the image */}
+					<div className="bg-green-700 p-6 text-white">
+						<h2 className="text-2xl font-bold mb-2">Completed</h2>
+						<p>
+							The event has concluded, and all the payments have been received
+						</p>
+					</div>
+
+					{/* Event Details with Dates - order matches the image */}
+					<div className="p-6 space-y-4">
+						<div>
+							<p className="text-gray-800 font-medium">Request Date</p>
+							<p className="text-gray-500">{organizerData.dates.requestDate}</p>
+						</div>
+
+						<div>
+							<p className="text-gray-800 font-medium">Date Accepted</p>
+							<p className="text-gray-500">{organizerData.dates.acceptedDate}</p>
+						</div>
+
+						<div>
+							<p className="text-gray-800 font-medium">Date Completed</p>
+							<p className="text-gray-500">{organizerData.dates.completedDate}</p>
+						</div>
+
+						<div>
+							<p className="text-gray-800 font-medium">Payment Date</p>
+							<p className="text-gray-500">{organizerData.dates.paymentDate}</p>
+						</div>
+
+						{/* Share Experience button */}
+						<button
+							onClick={handleShareExperience}
+							className="w-full mt-4 py-3 bg-blue-600 rounded-md text-white font-medium hover:bg-blue-700 transition-colors"
+						>
+							Share Experience
+						</button>
+					</div>
+				</>
+			)}
+
+			{status === 'awaiting' && (
+				<>
+					<hr className="border-gray-200 m-0" />
+					<div className="p-6">
+						<h2 className="text-2xl font-bold text-gray-800 mb-4">Get in Touch</h2>
+
+						<div className="space-y-3">
+							<div className="flex items-center">
+								<FaFacebook className="text-gray-600 w-6 h-6 mr-3" />
+								<span className="text-gray-500">{organizerData.socialLinks.facebook}</span>
+							</div>
+
+							<div className="flex items-center">
+								<FaInstagram className="text-gray-600 w-6 h-6 mr-3" />
+								<span className="text-gray-500">{organizerData.socialLinks.instagram}</span>
+							</div>
+
+							<div className="flex items-center">
+								<FaLinkedin className="text-gray-600 w-6 h-6 mr-3" />
+								<span className="text-gray-500">{organizerData.socialLinks.linkedin}</span>
+							</div>
+
+							<div className="flex items-center">
+								<FaGlobe className="text-gray-600 w-6 h-6 mr-3" />
+								<span className="text-gray-500">{organizerData.socialLinks.website}</span>
+							</div>
+						</div>
+					</div>
+				</>
+			)}
+		</div>
+	);
+};
+
+export default Status;
