@@ -1,10 +1,10 @@
 const Status: React.FC = () => {
   return (
-    <div className="w-[280px] p-4 bg-white rounded-md shadow-md">
+    <div className="w-[280px] p-4 bg-white rounded-md shadow-md h-[570px]">
       {/* The outer container that holds the entire status content */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 h-full">
         {/* Organizer Info Box */}
-        <div className="rounded-md p-3 w-full border-b-4 border-gray-300">
+        <div className="rounded-md p-3 w-full border-b border-gray-300 flex-grow">
           {/* Organizer Name */}
           <div className="mb-2">
             <div className="text-lg font-semibold text-gray-700">
@@ -29,7 +29,7 @@ const Status: React.FC = () => {
         </div>
 
         {/* Awaiting Response Box */}
-        <div className="rounded-md p-3 w-full">
+        <div className="rounded-md p-3 w-full flex-grow">
           {/* Awaiting Response Title */}
           <div className="mb-2 text-xl font-bold text-gray-700">
             Awaiting Response
@@ -41,24 +41,18 @@ const Status: React.FC = () => {
           </div>
         </div>
 
-        {/* Get in Touch Box */}
-        <div className="rounded-md p-3 w-full">
+        {/* Get in Touch Box (Move Higher with reduced space) */}
+        <div className="rounded-md p-3 w-full flex-grow-1">
           {/* Get in Touch Title */}
           <div className="mb-2 text-xl font-semibold text-gray-800">
             Get In Touch
           </div>
           {/* Social Links */}
-          <div className="mb-1 h-5 rounded w-full text-gray-700">
-            @linktofacebook
-          </div>
-          <div className="mb-1 h-5 rounded w-full text-gray-700">
-            @linktoinstagram
-          </div>
-          <div className="mb-1 h-5 rounded w-full text-gray-700">
-            @linktolinkedin
-          </div>
-          <div className="mb-1 h-5 rounded w-full text-gray-700">
-            @linktowebsite
+          <div className="space-y-1">
+            <div className="h-5 rounded text-gray-700">@linktofacebook</div>
+            <div className="h-5 rounded text-gray-700">@linktoinstagram</div>
+            <div className="h-5 rounded text-gray-700">@linktolinkedin</div>
+            <div className="h-5 rounded text-gray-700">@linktowebsite</div>
           </div>
         </div>
       </div>

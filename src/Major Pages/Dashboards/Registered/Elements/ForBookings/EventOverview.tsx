@@ -79,11 +79,33 @@ const EventOverview: React.FC = () => {
       <div className="rounded-md p-4">
         {/* Requested Services Title */}
         <h3 className="text-lg font-semibold mb-2">Requested Services</h3>
+        {/* Description Text */}
+        <p className="text-sm text-gray-500 mb-2">
+          List of requested services by the customer
+        </p>
         {/* List of Services */}
-        <ul className="list-disc pl-5">
-          <li>Audio/Visual Equipment Setup</li>
-          <li>Catering Services</li>
-          <li>Security Personnel</li>
+        <ul className="list-none p-0">
+          <li className="flex justify-between items-center">
+            <span>Audio/Visual Equipment Setup</span>
+            <span>
+              <span className="text-blue-600">Php 5,000</span>
+              <p className="text-xs text-gray-500 ml-6">included</p>
+            </span>
+          </li>
+          <li className="flex justify-between items-center">
+            <span>Catering Services</span>
+            <span>
+              <span className="text-blue-600">Php 10,000</span>
+              <p className="text-xs text-gray-500 ml-7">included</p>
+            </span>
+          </li>
+          <li className="flex justify-between items-center">
+            <span>Security Personnel</span>
+            <span>
+              <span className="text-blue-600">Php 8,000</span>
+              <p className="text-xs text-gray-500 ml-6">included</p>
+            </span>
+          </li>
         </ul>
       </div>
     </div>

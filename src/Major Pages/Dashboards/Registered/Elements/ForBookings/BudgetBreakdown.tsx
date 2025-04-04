@@ -12,16 +12,16 @@ const BudgetBreakdown: React.FC = () => {
       </div>
       {/* Budget Items */}
       <div className="mb-1 h-5 rounded text-sm">
-        Item 1: <span className="text-red-800"> -1,000</span>
+        Item 1 <span className="text-red-800"> -1,000</span>
       </div>
       <div className="mb-1 h-5 rounded text-sm">
-        Item 2: <span className="text-red-800"> -1,000</span>
+        Item 2 <span className="text-red-800"> -1,000</span>
       </div>
       <div className="mb-1 h-5 rounded text-sm">
-        Item 3: <span className="text-red-800"> -1,000</span>
+        Item 3 <span className="text-red-800"> -1,000</span>
       </div>
       <div className="mb-1 h-5 rounded text-sm">
-        Item 4: <span className="text-red-800"> -1,000</span>
+        Item 4 <span className="text-red-800"> -1,000</span>
       </div>
     </div>
   );

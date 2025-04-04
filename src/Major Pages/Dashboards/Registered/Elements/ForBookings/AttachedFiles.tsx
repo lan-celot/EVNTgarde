@@ -15,7 +15,7 @@ const AttachedFiles: React.FC = () => {
   };
 
   return (
-    <div className="w-60 ml-45 p-5 bg-white rounded-md shadow-md flex flex-col min-h-[400px]">
+    <div className="w-60 ml-45 p-5 bg-white rounded-md shadow-md flex flex-col h-[400px]">
       {/* Title */}
       <div>
         <h2 className="text-lg font-semibold">Attached Files</h2>
