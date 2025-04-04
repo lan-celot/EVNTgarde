@@ -7,10 +7,8 @@ const Status: React.FC = () => {
         <div className="rounded-md p-3 w-full border-b border-gray-300 flex-grow">
           {/* Organizer Name */}
           <div className="mb-2">
-            <div className="text-lg font-semibold text-gray-700">
-              Organizer Name
-            </div>
-            <div className="h-6 rounded w-full text-gray-700">John Doe</div>
+            <div className="text-lg font-semibold text-gray-700">John Doe</div>
+            <div className="h-6 rounded w-full text-gray-700">Organizer</div>
           </div>
 
           {/* Email Label and Placeholder */}
