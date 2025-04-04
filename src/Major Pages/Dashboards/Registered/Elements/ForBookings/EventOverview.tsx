@@ -8,7 +8,7 @@ const EventOverview: React.FC = () => {
       {/* Event Name and Description Box */}
       <div className="rounded-md p-4">
         {/* Event Name */}
-        <h2 className="text-xl font-semibold mb-2">
+        <h2 className="text-xl text-gray-900 font-semibold mb-2">
           Annual Tech Conference 2025
         </h2>
         {/* Event Description */}
@@ -17,7 +17,7 @@ const EventOverview: React.FC = () => {
           tech enthusiasts to discuss the future of technology.
         </p>
         {/* Event Details Box */}
-        <div className="p-4 grid grid-cols-2 gap-2">
+        <div className="p-4 grid grid-cols-2 gap-2 text-gray-900">
           {/* Date */}
           <p>
             <strong>Date:</strong> April 15, 2025
@@ -41,8 +41,8 @@ const EventOverview: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Tabs Box (Border Kept) */}
-      <div className="border-b border-gray-300 flex">
+      {/* Navigation Tabs Box */}
+      <div className="border-b border-gray-300 flex text-gray-900">
         <button
           className={`flex-1 py-2 bg-transparent cursor-pointer font-semibold ${
             activeTab === "services"
@@ -76,7 +76,7 @@ const EventOverview: React.FC = () => {
       </div>
 
       {/* Requested Services Box */}
-      <div className="rounded-md p-4">
+      <div className="rounded-md p-4 text-gray-900">
         {/* Requested Services Title */}
         <h3 className="text-lg font-semibold mb-2">Requested Services</h3>
         {/* Description Text */}

@@ -18,7 +18,7 @@ const AttachedFiles: React.FC = () => {
     <div className="w-60 ml-45 p-5 bg-white rounded-md shadow-md flex flex-col h-[400px]">
       {/* Title */}
       <div>
-        <h2 className="text-lg font-semibold">Attached Files</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Attached Files</h2>
         <p className="text-sm text-gray-600 mb-3">
           Document and images provided by the customer
         </p>
@@ -44,9 +44,9 @@ const AttachedFiles: React.FC = () => {
       </div>
 
       {/* Upload Button at the Bottom */}
-      <label className="mt-auto flex items-center justify-center gap-2 p-2 bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 transition">
+      <label className="mt-auto flex items-center justify-center gap-2 p-2 bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300 transition text-gray-900">
         <Upload className="w-5 h-5" />
-        <span className="text-sm font-medium">Upload File</span>
+        <span className="text-sm font-medium text-gray-900">Upload File</span>
         <input
           type="file"
           className="hidden"
