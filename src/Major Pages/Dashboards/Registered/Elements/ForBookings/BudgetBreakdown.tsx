@@ -1,6 +1,6 @@
 const BudgetBreakdown: React.FC = () => {
   return (
-    <div className="bg-white border border-gray-300 rounded-md p-4 h-60 w-60">
+    <div className="w-60 p-5 ml-45 bg-white rounded-md shadow-md">
       {/* Budget Breakdown Title */}
       <div className="mb-2 h-5 rounded text-sm font-semibold">
         Budget Breakdown

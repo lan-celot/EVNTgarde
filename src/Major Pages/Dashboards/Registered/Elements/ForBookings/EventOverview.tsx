@@ -4,9 +4,9 @@ const EventOverview: React.FC = () => {
   const [activeTab, setActiveTab] = useState("services");
 
   return (
-    <div className="w-[430px] mx-auto p-5 bg-white rounded-md shadow-md">
+    <div className="w-145 ml-5 p-5 bg-white rounded-md shadow-md">
       {/* Event Name and Description Box */}
-      <div className="border border-gray-300 rounded-md p-4">
+      <div className="rounded-md p-4">
         {/* Event Name */}
         <h2 className="text-xl font-semibold mb-2">
           Annual Tech Conference 2025
@@ -41,10 +41,10 @@ const EventOverview: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Tabs Box */}
+      {/* Navigation Tabs Box (Border Kept) */}
       <div className="border-b border-gray-300 flex">
         <button
-          className={`flex-1 py-2 border-none bg-transparent cursor-pointer font-semibold ${
+          className={`flex-1 py-2 bg-transparent cursor-pointer font-semibold ${
             activeTab === "services"
               ? "border-b-2 border-blue-500 text-black"
               : "text-gray-600"
@@ -54,7 +54,7 @@ const EventOverview: React.FC = () => {
           Services
         </button>
         <button
-          className={`flex-1 py-2 border-none bg-transparent cursor-pointer ${
+          className={`flex-1 py-2 bg-transparent cursor-pointer ${
             activeTab === "venue"
               ? "border-b-2 border-blue-500 text-black"
               : "text-gray-600"
@@ -64,7 +64,7 @@ const EventOverview: React.FC = () => {
           Venue Map
         </button>
         <button
-          className={`flex-1 py-2 border-none bg-transparent cursor-pointer ${
+          className={`flex-1 py-2 bg-transparent cursor-pointer ${
             activeTab === "timeline"
               ? "border-b-2 border-blue-500 text-black"
               : "text-gray-600"
@@ -76,7 +76,7 @@ const EventOverview: React.FC = () => {
       </div>
 
       {/* Requested Services Box */}
-      <div className="border border-gray-300 rounded-md p-4">
+      <div className="rounded-md p-4">
         {/* Requested Services Title */}
         <h3 className="text-lg font-semibold mb-2">Requested Services</h3>
         {/* List of Services */}

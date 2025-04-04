@@ -1,54 +1,63 @@
 const Status: React.FC = () => {
   return (
-    <div className="h-130 w-80 mx-auto p-4 bg-white rounded-md shadow-md">
+    <div className="w-[280px] p-4 bg-white rounded-md shadow-md">
       {/* The outer container that holds the entire status content */}
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-4">
         {/* Organizer Info Box */}
-        <div className="border border-gray-300 rounded-md p-4 w-70">
-          {/* Set width of Organizer Info Box */}
-          {/* Placeholder for Organizer Name */}
-          <div className="mb-2 h-5 bg-gray-100 rounded w-full">John Doe</div>
-          {/* Placeholder for Email */}
-          <div className="mb-2 h-7 bg-gray-100 rounded w-full">
-            johndoeust@gmail.com
+        <div className="rounded-md p-3 w-full border-b-4 border-gray-300">
+          {/* Organizer Name */}
+          <div className="mb-2">
+            <div className="text-lg font-semibold text-gray-700">
+              Organizer Name
+            </div>
+            <div className="h-6 rounded w-full text-gray-700">John Doe</div>
           </div>
-          {/* Placeholder for Phone */}
-          <div className="mb-2 h-7 bg-gray-100 rounded w-full">09564558095</div>
+
+          {/* Email Label and Placeholder */}
+          <div className="mb-2">
+            <div className="text-sm text-gray-600">Email</div>
+            <div className="h-6 rounded w-full text-gray-700">
+              johndoeust@gmail.com
+            </div>
+          </div>
+
+          {/* Phone Label and Placeholder */}
+          <div className="mb-2">
+            <div className="text-sm text-gray-600">Phone</div>
+            <div className="h-6 rounded w-full text-gray-700">09564558095</div>
+          </div>
         </div>
 
         {/* Awaiting Response Box */}
-        <div className="border border-gray-300 rounded-md p-4 bg-gray-50 w-70">
-          {/* Set width of Awaiting Response Box */}
-          {/* Placeholder for Awaiting Response Title */}
-          <div className="mb-2 h-5 bg-gray-100 rounded w-full">
+        <div className="rounded-md p-3 w-full">
+          {/* Awaiting Response Title */}
+          <div className="mb-2 text-xl font-bold text-gray-700">
             Awaiting Response
           </div>
-          {/* Placeholder for Awaiting Response Text */}
-          <div className="text-sm bg-gray-200 rounded w-full p-2">
-            {/* Made the text smaller and added padding for better spacing */}
+          {/* Awaiting Response Text */}
+          <div className="text-sm w-full p-2 text-gray-700">
             You have booked for this organizer, please wait for the organizer to
-            respond to your event request
+            respond to your event request.
           </div>
         </div>
 
         {/* Get in Touch Box */}
-        <div className="border border-gray-300 rounded-md p-4 w-70">
-          {/* Set width of Get in Touch Box */}
-          {/* Placeholder for Get in Touch Title */}
-          <div className="mb-2 h-5 bg-gray-100 rounded w-full">
+        <div className="rounded-md p-3 w-full">
+          {/* Get in Touch Title */}
+          <div className="mb-2 text-xl font-semibold text-gray-800">
             Get In Touch
           </div>
-          {/* Placeholder for Social Links */}
-          <div className="mb-1 h-5 bg-gray-100 rounded w-full">
+          {/* Social Links */}
+          <div className="mb-1 h-5 rounded w-full text-gray-700">
             @linktofacebook
           </div>
-          <div className="mb-1 h-5 bg-gray-100 rounded w-full">
+          <div className="mb-1 h-5 rounded w-full text-gray-700">
             @linktoinstagram
           </div>
-          <div className="mb-1 h-5 bg-gray-100 rounded w-full">
+          <div className="mb-1 h-5 rounded w-full text-gray-700">
             @linktolinkedin
           </div>
-          <div className="mb-1 h-5 bg-gray-100 rounded w-full">
+          <div className="mb-1 h-5 rounded w-full text-gray-700">
             @linktowebsite
           </div>
         </div>
