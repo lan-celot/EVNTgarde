@@ -20,3 +20,4 @@ npm install @radix-ui/themes
 npm install cmdk
 npm install react-calendar
 npm install react-icons
+npm install prettier -D --save-exact

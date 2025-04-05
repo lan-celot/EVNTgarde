@@ -3,12 +3,18 @@ import BudgetBreakdown from "./BudgetBreakdown";
 import EventOverview from "./EventOverview";
 import Status from "./Status";
 
-const BookingDetails: React.FC = () => {
+type DetailsProps = {
+	onBackClick: () => void;
+  };
+
+const BookingDetails: React.FC<DetailsProps> = ({onBackClick}) => {
 	return (
 		<div className="flex flex-col w-full mx-auto">
 			{/* Back Button */}
 			<div className="mb-5">
-				<button className="flex items-center bg-transparent border-none cursor-pointer">
+				<button 
+				onClick={onBackClick}
+				className="flex items-center bg-transparent border-none cursor-pointer">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="currentColor"
