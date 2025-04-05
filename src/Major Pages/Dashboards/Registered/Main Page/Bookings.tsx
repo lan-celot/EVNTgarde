@@ -17,10 +17,10 @@ type Booking = {
 
 const Bookings: React.FC = () => {
   const [activeStatus, setActiveStatus] = useState<
-    "Pending" | "Upcoming" | "Past"
+    "Pending" | "Upcoming" | "Past" | "Rejected"
   >("Pending");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null); // Track selected booking
-  const handleStatusChange = (status: "Pending" | "Upcoming" | "Past") => {
+  const handleStatusChange = (status: "Pending" | "Upcoming" | "Past" | "Rejected") => {
     setActiveStatus(status);
   };
 
@@ -130,8 +130,22 @@ const Bookings: React.FC = () => {
         location: "Previous Location",
         guests: "678 Guests",
       },
-    ],
-  };
+	],
+	  Rejected: [
+		{
+		  id: 10,
+		  date: "Mar 20",
+		  day: "Wednesday",
+		  title: "Rejected Event Example",
+		  startTime: "3:00 PM",
+		  endTime: "8:00 PM",
+		  customer: "Rejected Customer",
+		  location: "Rejected Location",
+		  guests: "0 Guests",
+		},
+	  ],
+	};
+    
 
   // Sort the bookings based on the date
   const sortedPendingBookings = [...bookingsData.Pending].sort((a, b) => {
@@ -180,11 +194,11 @@ const Bookings: React.FC = () => {
       {/* Status buttons */}
       <div className="flex justify-end mb-6">
         <div className="inline-flex bg-gray-100 rounded-lg p-1">
-          {["Pending", "Upcoming", "Past"].map((status) => (
+          {["Pending", "Upcoming", "Past" , "Rejected"].map((status) => (
             <button
               key={status}
               onClick={() =>
-                handleStatusChange(status as "Pending" | "Upcoming" | "Past")
+                handleStatusChange(status as "Pending" | "Upcoming" | "Past" | "Rejected")
               }
               className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeStatus === status
