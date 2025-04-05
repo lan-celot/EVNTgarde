@@ -5,7 +5,7 @@ import Status from "./Status";
 
 type DetailsProps = {
   onBackClick: () => void;
-  activeStatus: "Pending" | "Upcoming" | "Past";
+  activeStatus: "Pending" | "Upcoming" | "Past" | "Rejected";
   selectedBooking: any;
 };
 
