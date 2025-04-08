@@ -16,11 +16,11 @@ const BookingDetails: React.FC<DetailsProps> = ({
 }) => {
   return (
     <div
-      className="flex flex-col mx-auto"
+      className="flex flex-col mx-auto font-poppins"
       style={{ width: "calc(100vw - 21rem)", marginLeft: "16rem" }}
     >
       {/* Back Button */}
-      <div className="mb-5">
+      <div className="mb-5 font-poppins">
         <button
           onClick={onBackClick}
           className="flex items-center bg-transparent border-none cursor-pointer"
@@ -40,7 +40,7 @@ const BookingDetails: React.FC<DetailsProps> = ({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[45%_27%_28%] gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[45%_27%_28%] gap-5 font-poppins">
         <EventOverview
           activeStatus={activeStatus}
           selectedBooking={selectedBooking}
@@ -48,7 +48,7 @@ const BookingDetails: React.FC<DetailsProps> = ({
 
         {/* Middle Column (Attached Files & Budget) */}
         <div className="bg-white h-fit w-full">
-          <div className="flex flex-col gap-5 pr-5 p-5">
+          <div className="flex flex-col gap-5 pr-5 p-5 font-poppins">
             {/* Attached Files Box */}
             <AttachedFiles />
 
@@ -58,7 +58,12 @@ const BookingDetails: React.FC<DetailsProps> = ({
         </div>
 
         {/* Right Column (Organizer Info & Get in Touch) */}
-        <Status activeStatus={activeStatus} selectedBooking={selectedBooking} />
+        <div className="font-poppins">
+          <Status
+            activeStatus={activeStatus}
+            selectedBooking={selectedBooking}
+          />
+        </div>
       </div>
     </div>
   );
