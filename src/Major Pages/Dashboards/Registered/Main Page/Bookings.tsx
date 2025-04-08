@@ -17,10 +17,10 @@ type Booking = {
 
 const Bookings: React.FC = () => {
   const [activeStatus, setActiveStatus] = useState<
-    "Pending" | "Upcoming" | "Past"
+    "Pending" | "Upcoming" | "Past" | "Rejected"
   >("Pending");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null); // Track selected booking
-  const handleStatusChange = (status: "Pending" | "Upcoming" | "Past") => {
+  const handleStatusChange = (status: "Pending" | "Upcoming" | "Past" | "Rejected") => {
     setActiveStatus(status);
   };
 
@@ -130,8 +130,44 @@ const Bookings: React.FC = () => {
         location: "Previous Location",
         guests: "678 Guests",
       },
-    ],
-  };
+	],
+	  Rejected: [
+		{
+		  id: 10,
+		  date: "Mar 20",
+		  day: "Wednesday",
+		  title: "Rejected Event Example",
+		  startTime: "3:00 PM",
+		  endTime: "8:00 PM",
+		  customer: "Rejected Customer",
+		  location: "Rejected Location",
+		  guests: "0 Guests",
+		},
+    {
+      id: 11,
+      date: "Mar 18",
+      day: "Monday",
+      title: "Cancelled Conference",
+      startTime: "9:00 AM",
+      endTime: "2:00 PM",
+      customer: "Cancelled Client",
+      location: "Cancelled Venue",
+      guests: "150 Guests",
+    },
+    {
+      id: 12,
+      date: "Mar 19",
+      day: "Tuesday",
+      title: "Rejected Music Festival",
+      startTime: "1:00 PM",
+      endTime: "11:00 PM",
+      customer: "Festival Organizer",
+      location: "Outdoor Park",
+      guests: "2,000 Guests",
+    },
+	  ],
+	};
+    
 
   // Sort the bookings based on the date
   const sortedPendingBookings = [...bookingsData.Pending].sort((a, b) => {
@@ -148,13 +184,19 @@ const Bookings: React.FC = () => {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
+  const sortedRejectedBookings = [...bookingsData.Rejected].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
   const displayedBookings =
-    activeStatus === "Pending"
-      ? sortedPendingBookings
-      : activeStatus === "Upcoming"
-        ? sortedUpcomingBookings
-        : activeStatus === "Past"
-          ? sortedPastBookings
+  activeStatus === "Pending"
+    ? sortedPendingBookings
+    : activeStatus === "Upcoming"
+      ? sortedUpcomingBookings
+      : activeStatus === "Past"
+        ? sortedPastBookings
+        : activeStatus === "Rejected"
+          ? sortedRejectedBookings
           : bookingsData[activeStatus];
 
   const onBookingClick = (booking: Booking) => {
@@ -180,11 +222,11 @@ const Bookings: React.FC = () => {
       {/* Status buttons */}
       <div className="flex justify-end mb-6">
         <div className="inline-flex bg-gray-100 rounded-lg p-1">
-          {["Pending", "Upcoming", "Past"].map((status) => (
+          {["Pending", "Upcoming", "Past" , "Rejected"].map((status) => (
             <button
               key={status}
               onClick={() =>
-                handleStatusChange(status as "Pending" | "Upcoming" | "Past")
+                handleStatusChange(status as "Pending" | "Upcoming" | "Past" | "Rejected")
               }
               className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeStatus === status
@@ -217,7 +259,7 @@ const Bookings: React.FC = () => {
               <div className="text-gray-500 text-sm">{booking.day}</div>
 
               {/* Timeline Circle - every event may circle */}
-              <div className="absolute left-[13rem] top-[calc(50%-2.3rem)] transform -translate-y-1/2 -translate-x-1/2">
+              <div className="absolute left-[13rem] top-[calc(50%-4.3rem)] transform -translate-y-1/2 -translate-x-1/2">
                 <div className="w-4.5 h-4.5 bg-gray-600 rounded-full"></div>
               </div>
             </div>
