@@ -1,34 +1,36 @@
-"use client"
+"use client";
 
-import React from "react"
-import { User, MapPin, Clock } from "lucide-react"
+import React from "react";
+import { User, MapPin, Clock } from "lucide-react";
 
 // Type for the booking structure - imported from parent component
 type Booking = {
-  id: number
-  date: string
-  day: string
-  title: string
-  startTime: string
-  endTime: string
-  customer: string
-  location: string
-  guests: string
-}
+  id: number;
+  date: string;
+  day: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  customer: string;
+  location: string;
+  guests: string;
+};
 
 type BookingDetailsProps = {
-  onBackClick: () => void
-  activeStatus: "Pending" | "Upcoming" | "Past"
-  selectedBooking: Booking
-}
+  activeStatus: string;
+  selectedBooking: Booking;
+};
 
-const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedBooking }) => {
+const BookingDetails: React.FC<BookingDetailsProps> = ({
+  activeStatus,
+  selectedBooking,
+}) => {
   // Sample services
   const services = [
     { id: 1, name: "Catering Services", price: "PHP 560,000" },
     { id: 2, name: "Catering Services", price: "PHP 560,000" },
     { id: 3, name: "Catering Services", price: "PHP 560,000" },
-  ]
+  ];
 
   // Sample timeline
   const timeline = [
@@ -39,7 +41,7 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
     { id: 5, time: "12:00 PM - 12:45 PM", activity: "Opening Program" },
     { id: 6, time: "12:45 PM - 1:00 PM", activity: "Keynote Speech" },
     { id: 7, time: "1:00 PM - 3:00 PM", activity: "Awarding of Honors" },
-  ]
+  ];
 
   // Sample venue details
   const venueDetails = {
@@ -48,19 +50,24 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
     zipCode: "101",
     street: "España Blvd, Sampaloc, Manila, Metro Manila",
     country: "Philippines",
-  }
+  };
 
   // Convert number of guests from "1,234 Guests" to just number
-  const guestsNumber = selectedBooking.guests.split(" ")[0]
+  const guestsNumber = selectedBooking.guests.split(" ")[0];
 
   // Conditionally render content based on activeStatus
   const renderContent = () => {
     // Services tab content is the same for all statuses
     const servicesContent = (
       <div className="p-4">
-        <p className="text-gray-600 mb-4">List of requested services by the customer</p>
+        <p className="text-gray-600 mb-4">
+          List of requested services by the customer
+        </p>
         {services.map((service) => (
-          <div key={service.id} className="flex justify-between items-center mb-4 border-b pb-4">
+          <div
+            key={service.id}
+            className="flex justify-between items-center mb-4 border-b pb-4"
+          >
             <div className="flex items-center">
               <div className="bg-gray-100 p-2 rounded-full mr-3">
                 <User size={20} className="text-gray-500" />
@@ -74,7 +81,7 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
           </div>
         ))}
       </div>
-    )
+    );
 
     // Venue tab content
     const venueContent = (
@@ -89,7 +96,9 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
         </div>
 
         <div className="mt-4">
-          <h3 className="text-lg font-bold text-gray-800 mb-2">{venueDetails.name}</h3>
+          <h3 className="text-lg font-bold text-gray-800 mb-2">
+            {venueDetails.name}
+          </h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-gray-500 text-sm">Floor, Building</p>
@@ -101,7 +110,9 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
             </div>
           </div>
           <div className="mt-4">
-            <p className="text-gray-500 text-sm">Street Address, District, City, Province/State</p>
+            <p className="text-gray-500 text-sm">
+              Street Address, District, City, Province/State
+            </p>
             <p className="font-medium">{venueDetails.street}</p>
           </div>
           <div className="mt-4">
@@ -110,7 +121,7 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
           </div>
         </div>
       </div>
-    )
+    );
 
     // Timeline tab content varies by status
     const pendingTimelineContent = (
@@ -119,10 +130,11 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
           <Clock className="text-yellow-500" size={24} />
         </div>
         <p className="text-base text-center">
-          Your proposal is still under review. Once the organizer accepts it, the event timeline will appear here.
+          Your proposal is still under review. Once the organizer accepts it,
+          the event timeline will appear here.
         </p>
       </div>
-    )
+    );
 
     const upcomingTimelineContent = (
       <div className="p-4 flex flex-col items-center justify-center h-48">
@@ -130,10 +142,11 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
           <Clock className="text-blue-500" size={24} />
         </div>
         <p className="text-base text-center">
-          Your proposal is now accepted! Once the organizer sets the event timeline, it will appear here.
+          Your proposal is now accepted! Once the organizer sets the event
+          timeline, it will appear here.
         </p>
       </div>
-    )
+    );
 
     const pastTimelineContent = (
       <div className="p-4">
@@ -144,7 +157,7 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
           </div>
         ))}
       </div>
-    )
+    );
 
     // Return the appropriate timeline content based on status
     const timelineContent =
@@ -152,32 +165,37 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
         ? pendingTimelineContent
         : activeStatus === "Upcoming"
           ? upcomingTimelineContent
-          : pastTimelineContent
+          : pastTimelineContent;
 
     return {
       servicesContent,
       venueContent,
       timelineContent,
-    }
-  }
+    };
+  };
 
-  const { servicesContent, venueContent, timelineContent } = renderContent()
+  const { servicesContent, venueContent, timelineContent } = renderContent();
 
   // State for active tab
-  const [activeTab, setActiveTab] = React.useState<"Services" | "Venue Map" | "Timeline">("Services")
+  const [activeTab, setActiveTab] = React.useState<
+    "Services" | "Venue Map" | "Timeline"
+  >("Services");
 
   return (
-    <div className="bg-white min-h-screen w-full">
+    <div className="bg-white h-fit w-full">
       <div className="flex flex-col gap-5 mx-4">
         {/* Event Name and Description Box */}
-        <div className="border border-gray-300 rounded-md p-4">
+        <div className="border border-gray-300 rounded-md p-4 mt-5">
           <div className="mb-2">
-            <h2 className="text-blue-600 font-bold text-xl">{selectedBooking.title}</h2>
+            <h2 className="text-blue-600 font-bold text-xl">
+              {selectedBooking.title}
+            </h2>
             <p className="text-gray-500 text-sm">Concert</p>
           </div>
           <div className="mb-4">
             <p className="text-gray-600 text-sm">
-              This is a placeholder for the description of the event, this one's for the boys with the booming system
+              This is a placeholder for the description of the event, this one's
+              for the boys with the booming system
             </p>
           </div>
 
@@ -215,9 +233,13 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
           {["Services", "Venue Map", "Timeline"].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab as "Services" | "Venue Map" | "Timeline")}
+              onClick={() =>
+                setActiveTab(tab as "Services" | "Venue Map" | "Timeline")
+              }
               className={`flex-1 py-2 border-none bg-transparent cursor-pointer ${
-                activeTab === tab ? "border-b-2 border-blue-500 font-semibold" : "text-gray-600"
+                activeTab === tab
+                  ? "border-b-2 border-blue-500 font-semibold"
+                  : "text-gray-600"
               }`}
             >
               {tab}
@@ -226,14 +248,14 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedB
         </div>
 
         {/* Tab Content Box */}
-        <div className="border border-gray-300 rounded-md">
+        <div className="border border-gray-300 rounded-md mb-5">
           {activeTab === "Services" && servicesContent}
           {activeTab === "Venue Map" && venueContent}
           {activeTab === "Timeline" && timelineContent}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BookingDetails
+export default BookingDetails;

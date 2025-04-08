@@ -16,8 +16,8 @@ const BookingDetails: React.FC<DetailsProps> = ({
 }) => {
   return (
     <div
-      className="flex flex-col w-full mx-auto"
-      style={{ marginLeft: "16rem" }}
+      className="flex flex-col mx-auto"
+      style={{ width: "calc(100vw - 21rem)", marginLeft: "16rem" }}
     >
       {/* Back Button */}
       <div className="mb-5">
@@ -40,19 +40,21 @@ const BookingDetails: React.FC<DetailsProps> = ({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[45%_27%_28%] gap-5">
         <EventOverview
           activeStatus={activeStatus}
           selectedBooking={selectedBooking}
         />
 
         {/* Middle Column (Attached Files & Budget) */}
-        <div className="flex flex-col gap-5">
-          {/* Attached Files Box */}
-          <AttachedFiles />
+        <div className="bg-white h-fit w-full">
+          <div className="flex flex-col gap-5 pr-5 p-5">
+            {/* Attached Files Box */}
+            <AttachedFiles />
 
-          {/* Budget Breakdown Box */}
-          <BudgetBreakdown />
+            {/* Budget Breakdown Box */}
+            <BudgetBreakdown />
+          </div>
         </div>
 
         {/* Right Column (Organizer Info & Get in Touch) */}

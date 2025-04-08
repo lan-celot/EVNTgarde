@@ -1,24 +1,24 @@
-import type React from "react"
-import { Facebook, Instagram, Linkedin, Globe } from "lucide-react"
+import type React from "react";
+import { Facebook, Instagram, Linkedin, Globe } from "lucide-react";
 
 interface StatusProps {
-  activeStatus?: "Pending" | "Upcoming" | "Past"
-  selectedBooking?: any
+  activeStatus?: string;
+  selectedBooking?: any;
   organizer?: {
-    name?: string
-    role?: string
-    email?: string
-    phone?: string
-    avatar?: string
-  }
+    name?: string;
+    role?: string;
+    email?: string;
+    phone?: string;
+    avatar?: string;
+  };
   socialLinks?: {
-    facebook?: string
-    instagram?: string
-    linkedin?: string
-    website?: string
-  }
-  onMarkCompleted?: () => void
-  onShareExperience?: () => void
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+    website?: string;
+  };
+  onMarkCompleted?: () => void;
+  onShareExperience?: () => void;
 }
 
 const Status: React.FC<StatusProps> = ({
@@ -34,7 +34,6 @@ const Status: React.FC<StatusProps> = ({
   onMarkCompleted,
   onShareExperience,
 }) => {
-
   const dates = {
     requestDate: "Aug 1, 2025",
     acceptedDate: "Aug 10, 2025",
@@ -42,7 +41,7 @@ const Status: React.FC<StatusProps> = ({
     paidDate: "Sept 1, 2025",
     paymentDate: "Aug 1, 2025",
     completedDate: "Aug 10, 2025",
-  }
+  };
 
   const displayStatus = activeStatus
     ? activeStatus === "Pending"
@@ -50,7 +49,7 @@ const Status: React.FC<StatusProps> = ({
       : activeStatus === "Upcoming"
         ? "accepted"
         : "completed"
-    : "awaiting"
+    : "awaiting";
 
   const renderOrganizerInfo = () => {
     return (
@@ -68,7 +67,9 @@ const Status: React.FC<StatusProps> = ({
             <div className="w-16 h-16 rounded-full bg-blue-200"></div>
           )}
           <div>
-            <h1 className="text-2xl font-bold">{organizer?.name || "Organizer Name"}</h1>
+            <h1 className="text-2xl font-bold">
+              {organizer?.name || "Organizer Name"}
+            </h1>
             <p className="text-gray-500">{organizer?.role || "Organizer"}</p>
           </div>
         </div>
@@ -76,16 +77,20 @@ const Status: React.FC<StatusProps> = ({
         <div className="space-y-4">
           <div>
             <h3 className="font-semibold">Email</h3>
-            <p className="text-gray-500">{organizer?.email || "santo.tomas@gmail.com"}</p>
+            <p className="text-gray-500">
+              {organizer?.email || "santo.tomas@gmail.com"}
+            </p>
           </div>
           <div>
             <h3 className="font-semibold">Phone</h3>
-            <p className="text-gray-500">{organizer?.phone || "0919-683-2396"}</p>
+            <p className="text-gray-500">
+              {organizer?.phone || "0919-683-2396"}
+            </p>
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   // Render the status section based on current status
   const renderStatusContent = () => {
@@ -97,7 +102,8 @@ const Status: React.FC<StatusProps> = ({
             <div className="border border-gray-300 rounded-md p-4 bg-gray-50">
               <h2 className="text-3xl font-bold mb-2">Awaiting Response</h2>
               <p className="text-gray-500">
-                You have booked this organizer, please wait for the organizer to respond to your event request.
+                You have booked this organizer, please wait for the organizer to
+                respond to your event request.
               </p>
             </div>
 
@@ -123,7 +129,7 @@ const Status: React.FC<StatusProps> = ({
               </div>
             </div>
           </>
-        )
+        );
       case "accepted":
         return (
           <>
@@ -132,7 +138,8 @@ const Status: React.FC<StatusProps> = ({
               <div className="bg-yellow-400 p-6 text-white">
                 <h2 className="text-3xl font-bold mb-2">Accepted</h2>
                 <p>
-                  The event has been accepted, and all the payments for the vendor <strong>have been settled.</strong>
+                  The event has been accepted, and all the payments for the
+                  vendor <strong>have been settled.</strong>
                 </p>
               </div>
               <div className="p-4 space-y-4 bg-white">
@@ -159,12 +166,13 @@ const Status: React.FC<StatusProps> = ({
                 <button
                   className="w-full border border-gray-300 rounded-md py-3 px-4 text-black font-medium hover:bg-gray-300"
                   onClick={onMarkCompleted}
-                >Mark Event as Completed
+                >
+                  Mark Event as Completed
                 </button>
               </div>
             </div>
           </>
-        )
+        );
       case "completed":
         return (
           <>
@@ -172,7 +180,10 @@ const Status: React.FC<StatusProps> = ({
             <div className="border border-gray-300 rounded-md overflow-hidden">
               <div className="bg-green-700 p-6 text-white">
                 <h2 className="text-3xl font-bold mb-2">Completed</h2>
-                <p>The event has concluded, and all the payments have been received</p>
+                <p>
+                  The event has concluded, and all the payments have been
+                  received
+                </p>
               </div>
               <div className="p-4 space-y-4 bg-white">
                 <div>
@@ -200,13 +211,19 @@ const Status: React.FC<StatusProps> = ({
               </div>
             </div>
           </>
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
-  return <div className="flex flex-col gap-5 pr-5">{renderStatusContent()}</div>
-}
+  return (
+    <div className="bg-white h-fit w-full">
+      <div className="flex flex-col gap-5 pr-5 p-5">
+        {renderStatusContent()}
+      </div>
+    </div>
+  );
+};
 
-export default Status
+export default Status;
