@@ -1,245 +1,239 @@
-import { useState, useEffect, useRef } from "react";
-import { Clock } from "lucide-react";
+"use client"
 
-// Services Tab Content
-const ServicesContent = ({ services = [] }) => {
-  const defaultServices = [
-    { name: "Catering Services", price: "Php 560,000", included: true },
-    { name: "Lighting Services", price: "Php 120,000", included: true },
-    { name: "Sound System", price: "Php 80,000", included: true },
-  ];
+import React from "react"
+import { User, MapPin, Clock } from "lucide-react"
 
-  const servicesToRender = services.length > 0 ? services : defaultServices;
+// Type for the booking structure - imported from parent component
+type Booking = {
+  id: number
+  date: string
+  day: string
+  title: string
+  startTime: string
+  endTime: string
+  customer: string
+  location: string
+  guests: string
+}
 
-  return (
-    <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-4xl mx-auto">
-      <h3 className="text-lg font-semibold text-gray-900 mb-3">
-        Requested Services
-      </h3>
-      <p className="text-sm text-gray-500 mb-4">
-        List of requested services by the customer
-      </p>
-      <ul className="space-y-3">
-        {servicesToRender.map((service, index) => (
-          <li key={index} className="flex justify-between text-gray-700">
-            <span className="text-blue-600 font-medium">{service.name}</span>
-            <span className="text-gray-900 font-semibold">{service.price}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
+type BookingDetailsProps = {
+  onBackClick: () => void
+  activeStatus: "Pending" | "Upcoming" | "Past"
+  selectedBooking: Booking
+}
 
-// Venue Map Content
-const VenueMapContent = ({ venue = null }) => {
-  const defaultVenue = {
+const BookingDetails: React.FC<BookingDetailsProps> = ({ activeStatus, selectedBooking }) => {
+  // Sample services
+  const services = [
+    { id: 1, name: "Catering Services", price: "PHP 560,000" },
+    { id: 2, name: "Catering Services", price: "PHP 560,000" },
+    { id: 3, name: "Catering Services", price: "PHP 560,000" },
+  ]
+
+  // Sample timeline
+  const timeline = [
+    { id: 1, time: "7:00 AM - 8:00 AM", activity: "Ingress" },
+    { id: 2, time: "8:00 AM - 10:00 AM", activity: "Registration and Tabing" },
+    { id: 3, time: "10:00 AM - 11:00 AM", activity: "Processional Lineup" },
+    { id: 4, time: "11:00 AM - 12:00 PM", activity: "Processional March" },
+    { id: 5, time: "12:00 PM - 12:45 PM", activity: "Opening Program" },
+    { id: 6, time: "12:45 PM - 1:00 PM", activity: "Keynote Speech" },
+    { id: 7, time: "1:00 PM - 3:00 PM", activity: "Awarding of Honors" },
+  ]
+
+  // Sample venue details
+  const venueDetails = {
     name: "Blessed Pier Giorgio Frassati Building Auditorium",
-    floor: "21st Floor",
-    zipCode: "1011",
-    address: "España Blvd., Sampaloc, Manila, Metro Manila",
+    floor: "21st Floor, Blessed Pier Giorgio Frassati Building",
+    zipCode: "101",
+    street: "España Blvd, Sampaloc, Manila, Metro Manila",
     country: "Philippines",
-  };
+  }
 
-  const venueToRender = venue || defaultVenue;
+  // Convert number of guests from "1,234 Guests" to just number
+  const guestsNumber = selectedBooking.guests.split(" ")[0]
 
-  // Coordinates for the Frassati Building (replace with actual coordinates if different)
-  const frassatiCoords = {
-    lat: 14.6091, // Latitude for Sampaloc, Manila
-    lng: 120.9898, // Longitude for Sampaloc, Manila
-  };
-
-  const mapContainerRef = useRef(null);
-
-  useEffect(() => {
-    // Dynamically load Google Maps API
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=INSERT_YOUR_API_KEY&callback=initMap&v=weekly`;
-    script.defer = true;
-
-    // Initialize map once the script is loaded
-    script.onload = () => {
-      window.initMap = () => {
-        if (mapContainerRef.current) {
-          const map = new window.google.maps.Map(mapContainerRef.current, {
-            zoom: 16,
-            center: frassatiCoords,
-          });
-
-          new window.google.maps.Marker({
-            position: frassatiCoords,
-            map,
-            title: "Frassati Building Giorgio Frassati Sampaloc Manila",
-          });
-        }
-      };
-    };
-
-    // Append the script to the document head
-    document.head.appendChild(script);
-
-    // Clean up the script when the component is unmounted
-    return () => {
-      const existingScript = document.querySelector(`script[src="https://maps.googleapis.com/maps/api/js?key=INSERT_YOUR_API_KEY&callback=initMap&v=weekly"]`);
-      if (existingScript) {
-        document.head.removeChild(existingScript);
-      }
-    };
-  }, []); // Empty dependency array ensures this only runs once
-
-  return (
-    <div className="border border-gray-900 rounded-md overflow-hidden w-full max-w-4xl mx-auto">
-      {/* Map Container - Interactive Google Map */}
-      <div
-        ref={mapContainerRef}
-        style={{ height: '400px', width: '100%' }}
-      ></div>
-
+  // Conditionally render content based on activeStatus
+  const renderContent = () => {
+    // Services tab content is the same for all statuses
+    const servicesContent = (
       <div className="p-4">
-        <h2 className="text-lg font-semibold mb-4">{venueToRender.name}</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-blue-600 font-medium text-sm">Floor</p>
-            <p className="text-gray-700">{venueToRender.floor}</p>
+        <p className="text-gray-600 mb-4">List of requested services by the customer</p>
+        {services.map((service) => (
+          <div key={service.id} className="flex justify-between items-center mb-4 border-b pb-4">
+            <div className="flex items-center">
+              <div className="bg-gray-100 p-2 rounded-full mr-3">
+                <User size={20} className="text-gray-500" />
+              </div>
+              <span>{service.name}</span>
+            </div>
+            <div>
+              <p className="text-blue-600 font-medium">{service.price}</p>
+              <p className="text-gray-500 text-sm">Included</p>
+            </div>
           </div>
-          <div>
-            <p className="text-blue-600 font-medium text-sm">ZIP Code</p>
-            <p className="text-gray-700">{venueToRender.zipCode}</p>
+        ))}
+      </div>
+    )
+
+    // Venue tab content
+    const venueContent = (
+      <div className="p-4">
+        <div className="bg-gray-100 rounded-lg w-full h-48 relative mb-6">
+          {/* Map placeholder */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <MapPin className="mx-auto text-red-500 mb-2" size={32} />
+            </div>
           </div>
-          <div>
-            <p className="text-blue-600 font-medium text-sm">Address</p>
-            <p className="text-gray-700">{venueToRender.address}</p>
+        </div>
+
+        <div className="mt-4">
+          <h3 className="text-lg font-bold text-gray-800 mb-2">{venueDetails.name}</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-gray-500 text-sm">Floor, Building</p>
+              <p className="font-medium">{venueDetails.floor}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">ZIP Code</p>
+              <p className="font-medium">{venueDetails.zipCode}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-blue-600 font-medium text-sm">Country</p>
-            <p className="text-gray-700">{venueToRender.country}</p>
+          <div className="mt-4">
+            <p className="text-gray-500 text-sm">Street Address, District, City, Province/State</p>
+            <p className="font-medium">{venueDetails.street}</p>
+          </div>
+          <div className="mt-4">
+            <p className="text-gray-500 text-sm">Country</p>
+            <p className="font-medium">{venueDetails.country}</p>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    )
 
-// Timeline Content
-const TimelineContent = ({ timeline = [], isPending = false }) => {
-  const defaultTimeline = [
-    { time: "7:00 AM - 8:00 AM", activity: "Ingress" },
-    { time: "8:00 AM - 10:00 AM", activity: "Registration and Robing" },
-    { time: "10:00 AM - 11:00 AM", activity: "Processional Lineup" },
-    { time: "11:00 AM - 12:00 PM", activity: "Processional March" },
-    { time: "12:00 PM - 12:45 PM", activity: "Opening Program" },
-    { time: "12:45 PM - 1:00 PM", activity: "Keynote Speech" },
-    { time: "1:00 PM - 3:00 PM", activity: "Awarding of Honors" },
-  ];
+    // Timeline tab content varies by status
+    const pendingTimelineContent = (
+      <div className="p-4 flex flex-col items-center justify-center h-48">
+        <div className="bg-yellow-100 p-4 rounded-full mb-4">
+          <Clock className="text-yellow-500" size={24} />
+        </div>
+        <p className="text-base text-center">
+          Your proposal is still under review. Once the organizer accepts it, the event timeline will appear here.
+        </p>
+      </div>
+    )
 
-  const timelineToRender = timeline.length > 0 ? timeline : defaultTimeline;
+    const upcomingTimelineContent = (
+      <div className="p-4 flex flex-col items-center justify-center h-48">
+        <div className="bg-blue-100 p-4 rounded-full mb-4">
+          <Clock className="text-blue-500" size={24} />
+        </div>
+        <p className="text-base text-center">
+          Your proposal is now accepted! Once the organizer sets the event timeline, it will appear here.
+        </p>
+      </div>
+    )
+
+    const pastTimelineContent = (
+      <div className="p-4">
+        {timeline.map((item) => (
+          <div key={item.id} className="flex mb-2">
+            <div className="w-1/3 text-blue-600 font-medium">{item.time}</div>
+            <div className="w-2/3 bg-blue-50 p-2 rounded">{item.activity}</div>
+          </div>
+        ))}
+      </div>
+    )
+
+    // Return the appropriate timeline content based on status
+    const timelineContent =
+      activeStatus === "Pending"
+        ? pendingTimelineContent
+        : activeStatus === "Upcoming"
+          ? upcomingTimelineContent
+          : pastTimelineContent
+
+    return {
+      servicesContent,
+      venueContent,
+      timelineContent,
+    }
+  }
+
+  const { servicesContent, venueContent, timelineContent } = renderContent()
+
+  // State for active tab
+  const [activeTab, setActiveTab] = React.useState<"Services" | "Venue Map" | "Timeline">("Services")
 
   return (
-    <div className="border border-gray-700 rounded-md p-4 w-full max-w-4xl mx-auto">
-      {isPending ? (
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white mb-6">
-            <Clock className="h-6 w-6" />
+    <div className="bg-white min-h-screen w-full">
+      <div className="flex flex-col gap-5 mx-4">
+        {/* Event Name and Description Box */}
+        <div className="border border-gray-300 rounded-md p-4">
+          <div className="mb-2">
+            <h2 className="text-blue-600 font-bold text-xl">{selectedBooking.title}</h2>
+            <p className="text-gray-500 text-sm">Concert</p>
           </div>
-          <p className="text-center text-gray-700 text-lg">
-            Your proposal is now accepted! Once the<br />
-            organizer sets the event timeline, it will appear<br />
-            here.
-          </p>
-        </div>
-      ) : (
-        <div>
-          {timelineToRender.map((item, index) => (
-            <div key={index} className="flex mb-4">
-              {/* Time Container */}
-              <div className="w-40 text-blue-600 font-bold py-2">{item.time}</div>
+          <div className="mb-4">
+            <p className="text-gray-600 text-sm">
+              This is a placeholder for the description of the event, this one's for the boys with the booming system
+            </p>
+          </div>
 
-              {/* Lighter Gray Activity Container */}
-              <div className="flex-1 bg-gray-300 rounded-md py-3 px-4 text-gray-900">
-                {item.activity}
-              </div>
+          {/* Event Details Box */}
+          <div className="p-4 grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-gray-500 text-xs">Date</p>
+              <p className="font-medium text-sm">
+                {selectedBooking.date} ({selectedBooking.day})
+              </p>
             </div>
+            <div>
+              <p className="text-gray-500 text-xs">Organizer</p>
+              <p className="font-medium text-sm">{selectedBooking.customer}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-xs">Time</p>
+              <p className="font-medium text-sm">
+                {selectedBooking.startTime} - {selectedBooking.endTime}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-xs">Guests</p>
+              <p className="font-medium text-sm">{guestsNumber}</p>
+            </div>
+            <div className="col-span-2">
+              <p className="text-gray-500 text-xs">Location</p>
+              <p className="font-medium text-sm">{selectedBooking.location}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs Box */}
+        <div className="border-b border-gray-300 flex">
+          {["Services", "Venue Map", "Timeline"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as "Services" | "Venue Map" | "Timeline")}
+              className={`flex-1 py-2 border-none bg-transparent cursor-pointer ${
+                activeTab === tab ? "border-b-2 border-blue-500 font-semibold" : "text-gray-600"
+              }`}
+            >
+              {tab}
+            </button>
           ))}
         </div>
-      )}
-    </div>
-  );
-};
 
-// Event Details Component
-const EventDetails = ({
-  eventName = "PLACEHOLDER EVENT NAME",
-  description = "This is a placeholder for the description of the event.",
-  date = "Sep 11, 2021 (Wednesday)",
-  time = "5:30PM - 10:00PM",
-  location = "Location Name",
-  organizer = "Organizer Name",
-  guests = 1234,
-  vendors = 16,
-}) => {
-  const [activeTab, setActiveTab] = useState("services");
-  const [timelinePending, setTimelinePending] = useState(false);
-
-  return (
-    <div className="flex flex-col gap-6 p-8 bg-gray-100">
-      {/* Event Overview */}
-      <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold text-blue-600">{eventName}</h2>
-        <p className="text-gray-600 italic">Concert</p>
-        <p className="text-gray-700 mt-2">{description}</p>
-
-        <div className="grid grid-cols-2 gap-4 mt-4 text-gray-800">
-          <p>
-            <strong>Date:</strong> {date}
-          </p>
-          <p>
-            <strong>Organizer:</strong> {organizer}
-          </p>
-          <p>
-            <strong>Time:</strong> {time}
-          </p>
-          <p>
-            <strong>Guests:</strong> {guests}
-          </p>
-          <p className="col-span-2">
-            <strong>Location:</strong> {location}
-          </p>
+        {/* Tab Content Box */}
+        <div className="border border-gray-300 rounded-md">
+          {activeTab === "Services" && servicesContent}
+          {activeTab === "Venue Map" && venueContent}
+          {activeTab === "Timeline" && timelineContent}
         </div>
       </div>
-
-      {/* Navigation Tabs */}
-      <div className="flex border-b border-gray-300 w-full max-w-4xl mx-auto">
-        {["services", "venue", "timeline"].map((tab) => (
-          <button
-            key={tab}
-            className={`flex-1 py-3 ${
-              activeTab === tab
-                ? "font-semibold text-blue-600 border-b-2 border-blue-600"
-                : "text-gray-500 hover:text-gray-800"
-            }`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === "services" && <ServicesContent />}
-      {activeTab === "venue" && <VenueMapContent />}
-      {activeTab === "timeline" && <TimelineContent isPending={timelinePending} />}
-
-      {/* Toggle Button for Timeline Pending Demo */}
-      {activeTab === "timeline" && (
-        <button
-          onClick={() => setTimelinePending(!timelinePending)}
-          className="self-start mt-2 px-3 py-1 bg-blue-100 text-blue-600 rounded text-sm"
-        >
-          Toggle Timeline Status (Demo)
-        </button>
-      )}
     </div>
-  );
-};
+  )
+}
 
-export default EventDetails;
+export default BookingDetails
