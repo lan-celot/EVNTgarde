@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import AttachedFiles from "./AttachedFiles";
 import BudgetBreakdown from "./BudgetBreakdown";
 import EventOverview from "./EventOverview";
@@ -14,6 +15,17 @@ const BookingDetails: React.FC<DetailsProps> = ({
   activeStatus,
   selectedBooking,
 }) => {
+  // Get user type from localStorage
+  const [userRole, setUserRole] = useState<'organizer' | 'individual' | 'vendor'>('individual');
+
+  useEffect(() => {
+    // Read user type from localStorage
+    const storedUserType = localStorage.getItem("userType");
+    if (storedUserType === 'organizer' || storedUserType === 'individual' || storedUserType === 'vendor') {
+      setUserRole(storedUserType as 'organizer' | 'individual' | 'vendor');
+    }
+  }, []);
+  
   return (
     <div
       className="flex flex-col mx-auto font-poppins"
@@ -44,6 +56,7 @@ const BookingDetails: React.FC<DetailsProps> = ({
         <EventOverview
           activeStatus={activeStatus}
           selectedBooking={selectedBooking}
+          userRole={userRole}
         />
 
         {/* Middle Column (Attached Files & Budget) */}
