@@ -4,9 +4,16 @@ import { Facebook, Instagram, Linkedin, Globe } from "lucide-react";
 interface StatusProps {
   activeStatus?: string;
   selectedBooking?: any;
+  userRole?: 'organizer' | 'individual' | 'vendor';
   organizer?: {
     name?: string;
     role?: string;
+    email?: string;
+    phone?: string;
+    avatar?: string;
+  };
+  customer?: {
+    name?: string;
     email?: string;
     phone?: string;
     avatar?: string;
@@ -19,12 +26,16 @@ interface StatusProps {
   };
   onMarkCompleted?: () => void;
   onShareExperience?: () => void;
+  onAccept?: () => void;
+  onReject?: () => void;
 }
 
 const Status: React.FC<StatusProps> = ({
   activeStatus,
   selectedBooking,
+  userRole,
   organizer,
+  customer,
   socialLinks = {
     facebook: "@linktofacebook",
     instagram: "@linktoinstagram",
@@ -33,6 +44,8 @@ const Status: React.FC<StatusProps> = ({
   },
   onMarkCompleted,
   onShareExperience,
+  onAccept,
+  onReject,
 }) => {
   const dates = {
     requestDate: "Aug 1, 2025",
@@ -51,120 +64,176 @@ const Status: React.FC<StatusProps> = ({
         : "completed"
     : "awaiting";
 
-  const renderOrganizerInfo = () => {
-    return (
-      <div className="border border-gray-300 rounded-md p-4 bg-white">
-        <div className="flex items-center gap-4 mb-4">
-          {organizer?.avatar ? (
-            <div className="w-16 h-16 rounded-full overflow-hidden">
-              <img
-                src={organizer.avatar || "/placeholder.svg"}
-                alt={organizer?.name || "Organizer"}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ) : (
-            <div className="w-16 h-16 rounded-full bg-blue-200"></div>
-          )}
-          <div>
-            <h1 className="text-2xl font-bold">
-              {organizer?.name || "Organizer Name"}
-            </h1>
-            <p className="text-gray-500">{organizer?.role || "Organizer"}</p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold">Email</h3>
-            <p className="text-gray-500">
-              {organizer?.email || "santo.tomas@gmail.com"}
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold">Phone</h3>
-            <p className="text-gray-500">
-              {organizer?.phone || "0919-683-2396"}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   // Render the status section based on current status
   const renderStatusContent = () => {
+    // If userRole is organizer, show customer info instead of organizer info
+    const personToShow = userRole === 'organizer' ? customer : organizer;
+    const roleLabel = userRole === 'organizer' ? 'Customer' : 'Organizer';
+    
     switch (displayStatus) {
       case "awaiting":
         return (
           <>
-            {renderOrganizerInfo()}
-            <div className="border border-gray-300 rounded-md p-4 bg-gray-50">
-              <h2 className="text-3xl font-bold mb-2">Awaiting Response</h2>
-              <p className="text-gray-500">
-                You have booked this organizer, please wait for the organizer to
-                respond to your event request.
-              </p>
-            </div>
+            <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
+              <div className="p-6">
+                <div className="flex items-center gap-4 mb-6">
+                  {personToShow?.avatar ? (
+                    <div className="w-16 h-16 rounded-full overflow-hidden">
+                      <img
+                        src={personToShow.avatar || "/placeholder.svg"}
+                        alt={personToShow?.name || roleLabel}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-blue-200"></div>
+                  )}
+                  <div>
+                    <h1 className="text-xl font-bold">
+                      {personToShow?.name || `${roleLabel} Name`}
+                    </h1>
+                    <p className="text-gray-500">{userRole === 'organizer' ? 'Customer' : (personToShow as any)?.role || roleLabel}</p>
+                  </div>
+                </div>
 
-            <div className="border border-gray-300 rounded-md p-4 bg-white">
-              <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Facebook className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-500">{socialLinks.facebook}</span>
+                <div className="space-y-6 mb-8">
+                  <div>
+                    <h3 className="font-medium">Email</h3>
+                    <p className="text-gray-500">
+                      {personToShow?.email || "santo.tomas@gmail.com"}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Phone</h3>
+                    <p className="text-gray-500">
+                      {personToShow?.phone || "0919-683-2396"}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Instagram className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-500">{socialLinks.instagram}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Linkedin className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-500">{socialLinks.linkedin}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Globe className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-500">{socialLinks.website}</span>
+
+                <hr className="my-6 border-gray-200" />
+
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold">Get in Touch</h2>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Facebook className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-500">{socialLinks.facebook}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Instagram className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-500">{socialLinks.instagram}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Linkedin className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-500">{socialLinks.linkedin}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Globe className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-500">{socialLinks.website}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              {userRole === 'organizer' && (
+                <div className="border-t border-gray-300 mt-2">
+                  <div className="flex">
+                    <button
+                      className="flex-1 py-4 px-4 font-medium border-r border-gray-300 text-black hover:bg-gray-50"
+                      onClick={onReject}
+                    >
+                      Reject
+                    </button>
+                    <button
+                      className="flex-1 bg-blue-600 py-4 px-4 text-white font-medium hover:bg-blue-700"
+                      onClick={onAccept}
+                    >
+                      Accept
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         );
       case "accepted":
         return (
           <>
-            {renderOrganizerInfo()}
-            <div className="border border-gray-300 rounded-md overflow-hidden">
-              <div className="bg-yellow-400 p-6 text-white">
-                <h2 className="text-3xl font-bold mb-2">Accepted</h2>
-                <p>
-                  The event has been accepted, and all the payments for the
-                  vendor <strong>have been settled.</strong>
-                </p>
+            <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
+              <div className="p-6">
+                <div className="flex items-center gap-4 mb-6">
+                  {personToShow?.avatar ? (
+                    <div className="w-16 h-16 rounded-full overflow-hidden">
+                      <img
+                        src={personToShow.avatar || "/placeholder.svg"}
+                        alt={personToShow?.name || roleLabel}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-blue-200"></div>
+                  )}
+                  <div>
+                    <h1 className="text-xl font-bold">
+                      {personToShow?.name || `${roleLabel} Name`}
+                    </h1>
+                    <p className="text-gray-500">{userRole === 'organizer' ? 'Customer' : (personToShow as any)?.role || roleLabel}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6 mb-8">
+                  <div>
+                    <h3 className="font-medium">Email</h3>
+                    <p className="text-gray-500">
+                      {personToShow?.email || "santo.tomas@gmail.com"}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Phone</h3>
+                    <p className="text-gray-500">
+                      {personToShow?.phone || "0919-683-2396"}
+                    </p>
+                  </div>
+                </div>
+
+                <hr className="my-6 border-gray-200" />
+
+                <div className="space-y-4">
+                  <div className="bg-yellow-400 p-4 text-white rounded-md">
+                    <h2 className="text-xl font-bold mb-1">Accepted</h2>
+                    <p>
+                      The event has been accepted, and all the payments for the
+                      vendor <strong>have been settled.</strong>
+                    </p>
+                  </div>
+                
+                  <div>
+                    <h3 className="font-medium">Request Date</h3>
+                    <p className="text-gray-500">{dates.requestDate}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Date Accepted</h3>
+                    <p className="text-gray-500">{dates.acceptedDate}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Payment Due Date</h3>
+                    <p className="text-gray-500">{dates.paymentDueDate}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Date Paid</h3>
+                    <p className="text-gray-500">{dates.paidDate}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Date Completed</h3>
+                    <p className="text-gray-500">-</p>
+                  </div>
+                </div>
               </div>
-              <div className="p-4 space-y-4 bg-white">
-                <div>
-                  <h3 className="text-lg font-semibold">Request Date</h3>
-                  <p className="text-gray-500">{dates.requestDate}</p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Date Accepted</h3>
-                  <p className="text-gray-500">{dates.acceptedDate}</p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Payment Due Date</h3>
-                  <p className="text-gray-500">{dates.paymentDueDate}</p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Date Paid</h3>
-                  <p className="text-gray-500">{dates.paidDate}</p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Date Completed</h3>
-                  <p className="text-gray-500">-</p>
-                </div>
+              
+              <div className="border-t border-gray-300 mt-2">
                 <button
-                  className="w-full border border-gray-300 rounded-md py-3 px-4 text-black font-medium hover:bg-gray-300"
+                  className="w-full bg-blue-600 py-4 px-4 text-white font-medium hover:bg-blue-700"
                   onClick={onMarkCompleted}
                 >
                   Mark Event as Completed
@@ -176,34 +245,76 @@ const Status: React.FC<StatusProps> = ({
       case "completed":
         return (
           <>
-            {renderOrganizerInfo()}
-            <div className="border border-gray-300 rounded-md overflow-hidden">
-              <div className="bg-green-700 p-6 text-white">
-                <h2 className="text-3xl font-bold mb-2">Completed</h2>
-                <p>
-                  The event has concluded, and all the payments have been
-                  received
-                </p>
+            <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
+              <div className="p-6">
+                <div className="flex items-center gap-4 mb-6">
+                  {personToShow?.avatar ? (
+                    <div className="w-16 h-16 rounded-full overflow-hidden">
+                      <img
+                        src={personToShow.avatar || "/placeholder.svg"}
+                        alt={personToShow?.name || roleLabel}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-blue-200"></div>
+                  )}
+                  <div>
+                    <h1 className="text-xl font-bold">
+                      {personToShow?.name || `${roleLabel} Name`}
+                    </h1>
+                    <p className="text-gray-500">{userRole === 'organizer' ? 'Customer' : (personToShow as any)?.role || roleLabel}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6 mb-8">
+                  <div>
+                    <h3 className="font-medium">Email</h3>
+                    <p className="text-gray-500">
+                      {personToShow?.email || "santo.tomas@gmail.com"}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Phone</h3>
+                    <p className="text-gray-500">
+                      {personToShow?.phone || "0919-683-2396"}
+                    </p>
+                  </div>
+                </div>
+
+                <hr className="my-6 border-gray-200" />
+
+                <div className="space-y-4">
+                  <div className="bg-green-700 p-4 text-white rounded-md">
+                    <h2 className="text-xl font-bold mb-1">Completed</h2>
+                    <p>
+                      The event has concluded, and all the payments have been
+                      received
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium">Request Date</h3>
+                    <p className="text-gray-500">{dates.requestDate}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Date Accepted</h3>
+                    <p className="text-gray-500">{dates.acceptedDate}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Date Completed</h3>
+                    <p className="text-gray-500">{dates.completedDate}</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Payment Date</h3>
+                    <p className="text-gray-500">{dates.paymentDate}</p>
+                  </div>
+                </div>
               </div>
-              <div className="p-4 space-y-4 bg-white">
-                <div>
-                  <h3 className="text-lg font-semibold">Request Date</h3>
-                  <p className="text-gray-500">{dates.requestDate}</p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Date Accepted</h3>
-                  <p className="text-gray-500">{dates.acceptedDate}</p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Date Completed</h3>
-                  <p className="text-gray-500">{dates.completedDate}</p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Payment Date</h3>
-                  <p className="text-gray-500">{dates.paymentDate}</p>
-                </div>
+              
+              <div className="border-t border-gray-300 mt-2">
                 <button
-                  className="w-full bg-blue-600 rounded-md py-3 px-4 text-white font-medium hover:bg-blue-800"
+                  className="w-full bg-blue-600 py-4 px-4 text-white font-medium hover:bg-blue-700"
                   onClick={onShareExperience}
                 >
                   Share Experience

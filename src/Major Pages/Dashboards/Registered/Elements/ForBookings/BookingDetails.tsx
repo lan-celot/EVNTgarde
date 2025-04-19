@@ -66,7 +66,10 @@ const BookingDetails: React.FC<DetailsProps> = ({
             <AttachedFiles />
 
             {/* Budget Breakdown Box */}
-            <BudgetBreakdown />
+            <BudgetBreakdown 
+              userRole={userRole} 
+              activeStatus={activeStatus}
+            />
           </div>
         </div>
 
@@ -75,6 +78,22 @@ const BookingDetails: React.FC<DetailsProps> = ({
           <Status
             activeStatus={activeStatus}
             selectedBooking={selectedBooking}
+            userRole={userRole}
+            customer={{
+              name: selectedBooking?.customer || "Customer Name",
+              email: "customer@example.com",
+              phone: "123-456-7890"
+            }}
+            onAccept={() => {
+              // Handle accept action
+              console.log("Booking accepted:", selectedBooking?.id);
+              // Add your accept booking logic here
+            }}
+            onReject={() => {
+              // Handle reject action
+              console.log("Booking rejected:", selectedBooking?.id);
+              // Add your reject booking logic here
+            }}
           />
         </div>
       </div>

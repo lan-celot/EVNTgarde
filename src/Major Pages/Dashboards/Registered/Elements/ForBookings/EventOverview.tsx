@@ -74,6 +74,11 @@ const formatTo12Hour = (time24h: string): string => {
   return `${hour12}:${minutes} ${suffix}`;
 };
 
+// Add a function to check if a status is "upcoming" (case-insensitive)
+const isUpcomingStatus = (status: string): boolean => {
+  return status.toLowerCase() === "upcoming";
+};
+
 const BookingDetails: React.FC<BookingDetailsProps> = ({
   activeStatus,
   selectedBooking,
@@ -184,7 +189,6 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({
           
           // Get the new startTime and endTime values for validation
           const newStartTime = field === 'startTime' ? value : activity.startTime;
-          const newEndTime = field === 'endTime' ? value : activity.endTime;
           
           // If end time is earlier than start time, don't update
           if (field === 'endTime' && !validateTime(newStartTime, value)) {
@@ -361,13 +365,22 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({
     // Timeline tab content varies by status
     const pendingTimelineContent = (
       <div className="p-4 flex flex-col items-center justify-center h-48">
-        <div className="bg-yellow-100 p-4 rounded-full mb-4">
-          <Clock className="text-yellow-500" size={24} />
+        <div className="bg-blue-100 p-4 rounded-full mb-4">
+          <Clock className="text-blue-500" size={24} />
         </div>
-        <p className="text-base text-center">
-          Your proposal is still under review. Once the organizer accepts it,
-          the event timeline will appear here.
-        </p>
+        {userRole === 'organizer' ? (
+          <p className="text-base text-center text-blue-600">
+            The event proposal is still awaiting customer's acceptance. Once they confirm, you can create an event timeline here.
+          </p>
+        ) : userRole === 'individual' ? (
+          <p className="text-base text-center">
+            Your proposal is still under review. Once you accept it, the organizer can create an event timeline.
+          </p>
+        ) : (
+          <p className="text-base text-center">
+            This proposal is still under review. Once accepted, a timeline will be available.
+          </p>
+        )}
       </div>
     );
 
@@ -402,20 +415,22 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({
             <div className="bg-blue-100 p-4 rounded-full mb-4">
               <Clock className="text-blue-500" size={24} />
             </div>
-            <p className="text-base text-center mb-4">
-              Your proposal is now accepted! Create an event timeline now.
-            </p>
-            {canEditTimeline && (
-              <button
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                onClick={() => setShowTimelineModal(true)}
-              >
-                Create Event Timeline
-              </button>
-            )}
-            {!canEditTimeline && (
-              <p className="text-gray-500">
-                Only organizers can create an event timeline.
+            
+            {isUpcomingStatus(activeStatus) && userRole === 'organizer' ? (
+              <>
+                <p className="text-base text-center mb-4">
+                  Your proposal is now accepted! Create an event timeline now.
+                </p>
+                <button
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  onClick={() => setShowTimelineModal(true)}
+                >
+                  Create Event Timeline
+                </button>
+              </>
+            ) : (
+              <p className="text-base text-center mb-4 text-blue-600">
+                The event proposal is still awaiting customer's acceptance. Once they confirm, you can create an event timeline here.
               </p>
             )}
           </div>
@@ -606,9 +621,9 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({
 
     // Return the appropriate timeline content based on status
     const timelineContent =
-      activeStatus === "Pending"
+      activeStatus.toLowerCase() === "pending"
         ? pendingTimelineContent
-        : activeStatus === "Upcoming"
+        : isUpcomingStatus(activeStatus)
           ? upcomingTimelineContent
           : pastTimelineContent;
 
