@@ -20,9 +20,7 @@ const Bookings: React.FC = () => {
     "Pending" | "Upcoming" | "Past" | "Rejected"
   >("Pending");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null); // Track selected booking
-  const handleStatusChange = (
-    status: "Pending" | "Upcoming" | "Past" | "Rejected"
-  ) => {
+  const handleStatusChange = (status: "Pending" | "Upcoming" | "Past" | "Rejected") => {
     setActiveStatus(status);
   };
 
@@ -132,43 +130,44 @@ const Bookings: React.FC = () => {
         location: "Previous Location",
         guests: "678 Guests",
       },
-    ],
-    Rejected: [
-      {
-        id: 10,
-        date: "Mar 20",
-        day: "Wednesday",
-        title: "Rejected Event Example",
-        startTime: "3:00 PM",
-        endTime: "8:00 PM",
-        customer: "Rejected Customer",
-        location: "Rejected Location",
-        guests: "0 Guests",
-      },
-      {
-        id: 11,
-        date: "Mar 18",
-        day: "Monday",
-        title: "Cancelled Conference",
-        startTime: "9:00 AM",
-        endTime: "2:00 PM",
-        customer: "Cancelled Client",
-        location: "Cancelled Venue",
-        guests: "150 Guests",
-      },
-      {
-        id: 12,
-        date: "Mar 19",
-        day: "Tuesday",
-        title: "Rejected Music Festival",
-        startTime: "1:00 PM",
-        endTime: "11:00 PM",
-        customer: "Festival Organizer",
-        location: "Outdoor Park",
-        guests: "2,000 Guests",
-      },
-    ],
-  };
+	],
+	  Rejected: [
+		{
+		  id: 10,
+		  date: "Mar 20",
+		  day: "Wednesday",
+		  title: "Rejected Event Example",
+		  startTime: "3:00 PM",
+		  endTime: "8:00 PM",
+		  customer: "Rejected Customer",
+		  location: "Rejected Location",
+		  guests: "0 Guests",
+		},
+    {
+      id: 11,
+      date: "Mar 18",
+      day: "Monday",
+      title: "Cancelled Conference",
+      startTime: "9:00 AM",
+      endTime: "2:00 PM",
+      customer: "Cancelled Client",
+      location: "Cancelled Venue",
+      guests: "150 Guests",
+    },
+    {
+      id: 12,
+      date: "Mar 19",
+      day: "Tuesday",
+      title: "Rejected Music Festival",
+      startTime: "1:00 PM",
+      endTime: "11:00 PM",
+      customer: "Festival Organizer",
+      location: "Outdoor Park",
+      guests: "2,000 Guests",
+    },
+	  ],
+	};
+    
 
   // Sort the bookings based on the date
   const sortedPendingBookings = [...bookingsData.Pending].sort((a, b) => {
@@ -190,15 +189,15 @@ const Bookings: React.FC = () => {
   );
 
   const displayedBookings =
-    activeStatus === "Pending"
-      ? sortedPendingBookings
-      : activeStatus === "Upcoming"
-        ? sortedUpcomingBookings
-        : activeStatus === "Past"
-          ? sortedPastBookings
-          : activeStatus === "Rejected"
-            ? sortedRejectedBookings
-            : bookingsData[activeStatus];
+  activeStatus === "Pending"
+    ? sortedPendingBookings
+    : activeStatus === "Upcoming"
+      ? sortedUpcomingBookings
+      : activeStatus === "Past"
+        ? sortedPastBookings
+        : activeStatus === "Rejected"
+          ? sortedRejectedBookings
+          : bookingsData[activeStatus];
 
   const onBookingClick = (booking: Booking) => {
     setSelectedBooking(booking); // Set the selected booking
@@ -218,18 +217,16 @@ const Bookings: React.FC = () => {
   }
 
   return (
-    <div className="font-poppins" style={{ marginLeft: "16rem" }}>
+    <div style={{ marginLeft: "16rem" }}>
       <h3 className="text-4xl font-bold ml-6 mt-4 text-[#2D2C3C]">Bookings</h3>
       {/* Status buttons */}
       <div className="flex justify-end mb-6">
         <div className="inline-flex bg-gray-100 rounded-lg p-1">
-          {["Pending", "Upcoming", "Past", "Rejected"].map((status) => (
+          {["Pending", "Upcoming", "Past" , "Rejected"].map((status) => (
             <button
               key={status}
               onClick={() =>
-                handleStatusChange(
-                  status as "Pending" | "Upcoming" | "Past" | "Rejected"
-                )
+                handleStatusChange(status as "Pending" | "Upcoming" | "Past" | "Rejected")
               }
               className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeStatus === status
