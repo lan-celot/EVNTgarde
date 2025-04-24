@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import AttachedFiles from "./AttachedFiles";
 import BudgetBreakdown from "./BudgetBreakdown";
 import EventOverview from "./EventOverview";
@@ -14,6 +15,17 @@ const BookingDetails: React.FC<DetailsProps> = ({
   activeStatus,
   selectedBooking,
 }) => {
+  // Get user type from localStorage
+  const [userRole, setUserRole] = useState<'organizer' | 'individual' | 'vendor'>('individual');
+
+  useEffect(() => {
+    // Read user type from localStorage
+    const storedUserType = localStorage.getItem("userType");
+    if (storedUserType === 'organizer' || storedUserType === 'individual' || storedUserType === 'vendor') {
+      setUserRole(storedUserType as 'organizer' | 'individual' | 'vendor');
+    }
+  }, []);
+  
   return (
     <div
       className="flex flex-col mx-auto font-poppins"
@@ -44,6 +56,7 @@ const BookingDetails: React.FC<DetailsProps> = ({
         <EventOverview
           activeStatus={activeStatus}
           selectedBooking={selectedBooking}
+          userRole={userRole}
         />
 
         {/* Middle Column (Attached Files & Budget) */}
@@ -53,7 +66,10 @@ const BookingDetails: React.FC<DetailsProps> = ({
             <AttachedFiles />
 
             {/* Budget Breakdown Box */}
-            <BudgetBreakdown />
+            <BudgetBreakdown 
+              userRole={userRole} 
+              activeStatus={activeStatus}
+            />
           </div>
         </div>
 
@@ -62,6 +78,22 @@ const BookingDetails: React.FC<DetailsProps> = ({
           <Status
             activeStatus={activeStatus}
             selectedBooking={selectedBooking}
+            userRole={userRole}
+            customer={{
+              name: selectedBooking?.customer || "Customer Name",
+              email: "customer@example.com",
+              phone: "123-456-7890"
+            }}
+            onAccept={() => {
+              // Handle accept action
+              console.log("Booking accepted:", selectedBooking?.id);
+              // Add your accept booking logic here
+            }}
+            onReject={() => {
+              // Handle reject action
+              console.log("Booking rejected:", selectedBooking?.id);
+              // Add your reject booking logic here
+            }}
           />
         </div>
       </div>
