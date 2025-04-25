@@ -1,35 +1,35 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { BlockDatesModal } from "./block-dates-modal";
-import { EditDatesModal } from "./edit-dates-modal";
+import { useState, useEffect } from "react"
+import { BlockDatesModal } from "./block-dates-modal"
+import { EditDatesModal } from "./edit-dates-modal"
 
 // Update the CalendarDay interface to include a "isTaken" property
 interface CalendarDay {
-  date: number;
-  isCurrentMonth: boolean;
-  isToday: boolean;
-  hasEvent: boolean;
-  isBlocked?: boolean;
-  isTaken?: boolean;
+  date: number
+  isCurrentMonth: boolean
+  isToday: boolean
+  hasEvent: boolean
+  isBlocked?: boolean
+  isTaken?: boolean
 }
 
 // Add a takenDates prop to the CalendarCardProps interface
 interface CalendarCardProps {
-  initialMonth?: string;
-  initialYear?: number;
-  onEditDates?: () => void;
-  takenDates?: string[];
+  initialMonth?: string
+  initialYear?: number
+  onEditDates?: () => void
+  takenDates?: string[]
 }
 
 // Helper function to get the number of days in a month
 function getDaysInMonth(month: number, year: number): number {
-  return new Date(year, month + 1, 0).getDate();
+  return new Date(year, month + 1, 0).getDate()
 }
 
 // Helper function to get the day of week for the first day of the month (0 = Sunday, 6 = Saturday)
 function getFirstDayOfMonth(month: number, year: number): number {
-  return new Date(year, month, 1).getDay();
+  return new Date(year, month, 1).getDay()
 }
 
 // Map month number to month name
@@ -46,7 +46,7 @@ const monthNames = [
   "October",
   "November",
   "December",
-];
+]
 
 // Update the CalendarCard function to accept and use takenDates
 export function CalendarCard({
@@ -56,76 +56,67 @@ export function CalendarCard({
   takenDates = [], // Default to empty array
 }: CalendarCardProps) {
   // Convert initial month name to month index (0-11)
-  const initialMonthIndex = monthNames.findIndex((m) => m === initialMonth);
+  const initialMonthIndex = monthNames.findIndex((m) => m === initialMonth)
 
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(
-    initialMonthIndex !== -1 ? initialMonthIndex : 3
-  ); // Default to April (3) if not found
-  const [currentYear, setCurrentYear] = useState(initialYear);
-  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [blockedDates, setBlockedDates] = useState<string[]>([]);
-  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(initialMonthIndex !== -1 ? initialMonthIndex : 3) // Default to April (3) if not found
+  const [currentYear, setCurrentYear] = useState(initialYear)
+  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [blockedDates, setBlockedDates] = useState<string[]>([])
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([])
 
   // Update the useEffect to pass takenDates to generateCalendarDays
   useEffect(() => {
-    setCalendarDays(
-      generateCalendarDays(
-        currentMonthIndex,
-        currentYear,
-        blockedDates,
-        takenDates
-      )
-    );
-  }, [currentMonthIndex, currentYear, blockedDates, takenDates]);
+    setCalendarDays(generateCalendarDays(currentMonthIndex, currentYear, blockedDates, takenDates))
+  }, [currentMonthIndex, currentYear, blockedDates, takenDates])
 
   const handlePrevMonth = () => {
     if (currentMonthIndex === 0) {
       // If January, go to December of previous year
-      setCurrentMonthIndex(11);
-      setCurrentYear(currentYear - 1);
+      setCurrentMonthIndex(11)
+      setCurrentYear(currentYear - 1)
     } else {
       // Otherwise, go to previous month
-      setCurrentMonthIndex(currentMonthIndex - 1);
+      setCurrentMonthIndex(currentMonthIndex - 1)
     }
-  };
+  }
 
   const handleNextMonth = () => {
     if (currentMonthIndex === 11) {
       // If December, go to January of next year
-      setCurrentMonthIndex(0);
-      setCurrentYear(currentYear + 1);
+      setCurrentMonthIndex(0)
+      setCurrentYear(currentYear + 1)
     } else {
       // Otherwise, go to next month
-      setCurrentMonthIndex(currentMonthIndex + 1);
+      setCurrentMonthIndex(currentMonthIndex + 1)
     }
-  };
+  }
 
   const handleBlockDates = () => {
-    setIsBlockModalOpen(true);
-  };
+    setIsBlockModalOpen(true)
+  }
 
   const handleEditDates = () => {
-    setIsEditModalOpen(true);
-  };
+    setIsEditModalOpen(true)
+  }
 
   const handleCloseBlockModal = () => {
-    setIsBlockModalOpen(false);
-  };
+    setIsBlockModalOpen(false)
+  }
 
   const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
-  };
+    setIsEditModalOpen(false)
+  }
 
   const handleConfirmDates = (dates: string[]) => {
-    setBlockedDates(dates);
-    setIsBlockModalOpen(false);
-  };
+    setBlockedDates(dates)
+    setIsBlockModalOpen(false)
+  }
 
   const handleUpdateDates = (dates: string[]) => {
-    setBlockedDates(dates);
-    setIsEditModalOpen(false);
-  };
+    setBlockedDates(dates)
+    setIsEditModalOpen(false)
+  }
 
   return (
     <>
@@ -135,18 +126,10 @@ export function CalendarCard({
             {monthNames[currentMonthIndex]} {currentYear}
           </div>
           <div className="flex">
-            <button
-              className="p-1 hover:opacity-80"
-              onClick={handlePrevMonth}
-              style={{ color: "#3061AD" }}
-            >
+            <button className="p-1 hover:opacity-80" onClick={handlePrevMonth} style={{ color: "#3061AD" }}>
               ←
             </button>
-            <button
-              className="p-1 hover:opacity-80"
-              onClick={handleNextMonth}
-              style={{ color: "#3061AD" }}
-            >
+            <button className="p-1 hover:opacity-80" onClick={handleNextMonth} style={{ color: "#3061AD" }}>
               →
             </button>
           </div>
@@ -225,7 +208,7 @@ export function CalendarCard({
         takenDates={takenDates}
       />
     </>
-  );
+  )
 }
 
 // Update the generateCalendarDays function to handle takenDates
@@ -233,23 +216,23 @@ function generateCalendarDays(
   monthIndex: number,
   year: number,
   blockedDates: string[],
-  takenDates: string[] = []
+  takenDates: string[] = [],
 ): CalendarDay[] {
-  const days: CalendarDay[] = [];
-  const daysInMonth = getDaysInMonth(monthIndex, year);
-  const firstDayOfMonth = getFirstDayOfMonth(monthIndex, year);
-  const currentDate = new Date();
-  const currentDay = currentDate.getDate();
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
-  const monthName = monthNames[monthIndex];
+  const days: CalendarDay[] = []
+  const daysInMonth = getDaysInMonth(monthIndex, year)
+  const firstDayOfMonth = getFirstDayOfMonth(monthIndex, year)
+  const currentDate = new Date()
+  const currentDay = currentDate.getDate()
+  const currentMonth = currentDate.getMonth()
+  const currentYear = currentDate.getFullYear()
+  const monthName = monthNames[monthIndex]
 
   // Add empty cells for days before the 1st of the month
   for (let i = 0; i < firstDayOfMonth; i++) {
-    const prevMonthIndex = monthIndex === 0 ? 11 : monthIndex - 1;
-    const prevMonthYear = monthIndex === 0 ? year - 1 : year;
-    const daysInPrevMonth = getDaysInMonth(prevMonthIndex, prevMonthYear);
-    const prevMonthDay = daysInPrevMonth - firstDayOfMonth + i + 1;
+    const prevMonthIndex = monthIndex === 0 ? 11 : monthIndex - 1
+    const prevMonthYear = monthIndex === 0 ? year - 1 : year
+    const daysInPrevMonth = getDaysInMonth(prevMonthIndex, prevMonthYear)
+    const prevMonthDay = daysInPrevMonth - firstDayOfMonth + i + 1
 
     days.push({
       date: prevMonthDay,
@@ -258,16 +241,15 @@ function generateCalendarDays(
       hasEvent: false,
       isBlocked: false,
       isTaken: false,
-    });
+    })
   }
 
   // Add the actual days of the current month
   for (let day = 1; day <= daysInMonth; day++) {
-    const isToday =
-      day === currentDay && monthIndex === currentMonth && year === currentYear;
-    const dateString = `${monthName} ${day}, ${year}`;
-    const isBlocked = blockedDates.includes(dateString);
-    const isTaken = takenDates.includes(dateString);
+    const isToday = day === currentDay && monthIndex === currentMonth && year === currentYear
+    const dateString = `${monthName} ${day}, ${year}`
+    const isBlocked = blockedDates.includes(dateString)
+    const isTaken = takenDates.includes(dateString)
 
     days.push({
       date: day,
@@ -276,16 +258,16 @@ function generateCalendarDays(
       hasEvent: false, // You can implement event detection logic here
       isBlocked,
       isTaken,
-    });
+    })
   }
 
   // Add empty cells for days after the last day of the month
-  const totalCells = 42; // 6 rows of 7 days
-  const remainingCells = totalCells - days.length;
+  const totalCells = 42 // 6 rows of 7 days
+  const remainingCells = totalCells - days.length
 
   if (remainingCells > 0 && remainingCells < 7) {
-    const nextMonthIndex = monthIndex === 11 ? 0 : monthIndex + 1;
-    const nextMonthYear = monthIndex === 11 ? year + 1 : year;
+    const nextMonthIndex = monthIndex === 11 ? 0 : monthIndex + 1
+    const nextMonthYear = monthIndex === 11 ? year + 1 : year
 
     for (let day = 1; day <= remainingCells; day++) {
       days.push({
@@ -295,9 +277,9 @@ function generateCalendarDays(
         hasEvent: false,
         isBlocked: false,
         isTaken: false,
-      });
+      })
     }
   }
 
-  return days;
+  return days
 }
