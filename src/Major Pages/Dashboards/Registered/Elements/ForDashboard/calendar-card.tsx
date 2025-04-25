@@ -195,6 +195,7 @@ export function CalendarCard({
         initialMonth={currentMonthIndex}
         initialYear={currentYear}
         blockedDates={blockedDates}
+        takenDates={takenDates}
       />
 
       <EditDatesModal
@@ -204,6 +205,7 @@ export function CalendarCard({
         initialMonth={currentMonthIndex}
         initialYear={currentYear}
         blockedDates={blockedDates}
+        takenDates={takenDates}
       />
     </>
   )

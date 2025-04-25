@@ -154,21 +154,20 @@ export function BlockDatesModal({
     const isTaken = takenDates.includes(dateString)
 
     // Apply appropriate background color
-    let bgColor = ""
     let style = {}
 
     if (isAlreadyBlocked) {
-      bgColor = "bg-gray-200" // Gray for already blocked dates
+      style = { backgroundColor: "#CACACA" } // Updated gray for blocked dates
     } else if (isNewlySelected) {
-      bgColor = "bg-yellow-200" // Yellow for newly selected dates
+      style = { backgroundColor: "#FFE990" } // Updated yellow for newly selected dates
     } else if (isTaken) {
-      style = { backgroundColor: "#D9E4F5" } // Light blue for taken dates
+      style = { backgroundColor: "#B4CAEB80" } // Light blue with transparency for taken dates
     }
 
     days.push(
       <div
         key={day}
-        className={`h-10 w-10 flex items-center justify-center cursor-pointer ${bgColor} hover:bg-gray-100`}
+        className={`h-10 w-10 flex items-center justify-center cursor-pointer hover:bg-gray-100`}
         onClick={() => handleDateClick(day)}
         style={style}
       >
@@ -247,6 +246,22 @@ export function BlockDatesModal({
             </div>
 
             <div className="grid grid-cols-7 gap-1">{days}</div>
+
+            {/* Legend */}
+            <div className="mt-4 flex flex-wrap gap-4">
+              <div className="flex items-center">
+                <div className="w-4 h-4 mr-2" style={{ backgroundColor: "#B4CAEB80" }}></div>
+                <span className="text-xs text-gray-600">Taken</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 mr-2" style={{ backgroundColor: "#CACACA" }}></div>
+                <span className="text-xs text-gray-600">Blocked</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 mr-2" style={{ backgroundColor: "#FFE990" }}></div>
+                <span className="text-xs text-gray-600">Selected</span>
+              </div>
+            </div>
           </div>
 
           {/* Selection Section */}
