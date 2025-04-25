@@ -1,7 +1,10 @@
 import { Star } from "lucide-react"
-import { CalendarCard } from "./calendar-card.tsx"
+import { CalendarCard } from "./calendar-card"
 
 export default function Dashboard() {
+  // Sample taken dates for demonstration
+  const takenDates = ["April 10, 2025", "April 11, 2025", "April 15, 2025", "April 16, 2025", "April 22, 2025"]
+
   return (
     <div className="w-full">
       {/* Main Content */}
@@ -11,8 +14,11 @@ export default function Dashboard() {
 
           {/* Tabs */}
           <div className="flex border-b mb-6">
-            <div className="mr-6 border-b-2 border-blue-600 pb-2 font-medium flex items-center">
-              <span className="text-blue-600 mr-1">•</span> Activity Overview
+            <div className="mr-6 border-b-2 pb-2 font-medium flex items-center" style={{ borderColor: "#3061AD" }}>
+              <span style={{ color: "#3061AD" }} className="mr-1">
+                •
+              </span>{" "}
+              Activity Overview
             </div>
             <div className="mr-6 pb-2 text-gray-500">My Services</div>
             <div className="pb-2 text-gray-500">Explore</div>
@@ -66,18 +72,17 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Upcoming Events Section */}
+          {/* Calendar and Events Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Calendar */}
-            <CalendarCard initialMonth="April" initialYear={2025} />
+            <CalendarCard initialMonth="April" initialYear={2025} takenDates={takenDates} />
 
             {/* Events List */}
             <div className="md:col-span-2">
-              <h2 className="text-xl font-semibold mb-4">Upcoming Events</h2>
               {[1, 2].map((item) => (
                 <div key={item} className="bg-white rounded-md shadow-sm p-4 mb-4">
                   <div className="text-sm text-gray-500 mb-1">Mar 26</div>
-                  <h3 className="font-semibold text-blue-600 mb-2">
+                  <h3 className="font-semibold mb-2" style={{ color: "#3061AD" }}>
                     Super Duper Long Event Place Holder As In Super Long
                   </h3>
 

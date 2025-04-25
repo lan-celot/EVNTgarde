@@ -1,21 +1,25 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { BlockDatesModal } from "./block-dates-modal.tsx"
-import { EditDatesModal } from "./edit-dates-modal.tsx"
+import { BlockDatesModal } from "./block-dates-modal"
+import { EditDatesModal } from "./edit-dates-modal"
 
+// Update the CalendarDay interface to include a "isTaken" property
 interface CalendarDay {
   date: number
   isCurrentMonth: boolean
   isToday: boolean
   hasEvent: boolean
   isBlocked?: boolean
+  isTaken?: boolean
 }
 
+// Add a takenDates prop to the CalendarCardProps interface
 interface CalendarCardProps {
   initialMonth?: string
   initialYear?: number
   onEditDates?: () => void
+  takenDates?: string[]
 }
 
 // Helper function to get the number of days in a month
@@ -44,10 +48,12 @@ const monthNames = [
   "December",
 ]
 
+// Update the CalendarCard function to accept and use takenDates
 export function CalendarCard({
   initialMonth = "April",
   initialYear = 2025,
   onEditDates = () => console.log("Edit dates clicked"),
+  takenDates = [], // Default to empty array
 }: CalendarCardProps) {
   // Convert initial month name to month index (0-11)
   const initialMonthIndex = monthNames.findIndex((m) => m === initialMonth)
@@ -59,10 +65,10 @@ export function CalendarCard({
   const [blockedDates, setBlockedDates] = useState<string[]>([])
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([])
 
-  // Generate calendar days based on current month and year
+  // Update the useEffect to pass takenDates to generateCalendarDays
   useEffect(() => {
-    setCalendarDays(generateCalendarDays(currentMonthIndex, currentYear, blockedDates))
-  }, [currentMonthIndex, currentYear, blockedDates])
+    setCalendarDays(generateCalendarDays(currentMonthIndex, currentYear, blockedDates, takenDates))
+  }, [currentMonthIndex, currentYear, blockedDates, takenDates])
 
   const handlePrevMonth = () => {
     if (currentMonthIndex === 0) {
@@ -120,10 +126,10 @@ export function CalendarCard({
             {monthNames[currentMonthIndex]} {currentYear}
           </div>
           <div className="flex">
-            <button className="p-1 hover:text-blue-600" onClick={handlePrevMonth}>
+            <button className="p-1 hover:opacity-80" onClick={handlePrevMonth} style={{ color: "#3061AD" }}>
               ←
             </button>
-            <button className="p-1 hover:text-blue-600" onClick={handleNextMonth}>
+            <button className="p-1 hover:opacity-80" onClick={handleNextMonth} style={{ color: "#3061AD" }}>
               →
             </button>
           </div>
@@ -139,17 +145,26 @@ export function CalendarCard({
           <div className="text-gray-500">SAT</div>
         </div>
 
+        {/* Update the calendar day rendering to apply the taken date color */}
         <div className="grid grid-cols-7 gap-1 text-sm">
           {calendarDays.map((day, index) => (
             <div
               key={index}
               className={`
                 aspect-square flex items-center justify-center
-                ${day.isToday ? "bg-blue-600 text-white" : ""}
                 ${day.isCurrentMonth ? "" : "text-gray-300"}
                 ${day.hasEvent ? "font-bold" : ""}
-                ${day.isBlocked ? "bg-gray-200" : ""}
+                ${day.isToday ? "text-white" : ""}
               `}
+              style={
+                day.isToday
+                  ? { backgroundColor: "#3061AD" }
+                  : day.isTaken
+                    ? { backgroundColor: "#B4CAEB80" }
+                    : day.isBlocked
+                      ? { backgroundColor: "#CACACA" }
+                      : {}
+              }
             >
               {day.date}
             </div>
@@ -157,7 +172,11 @@ export function CalendarCard({
         </div>
 
         <div className="mt-4 flex flex-col gap-2">
-          <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md text-sm w-full" onClick={handleBlockDates}>
+          <button
+            className="text-white px-4 py-2.5 rounded-md text-sm w-full hover:opacity-90"
+            onClick={handleBlockDates}
+            style={{ backgroundColor: "#3061AD" }}
+          >
             Block Dates
           </button>
           <button
@@ -190,8 +209,13 @@ export function CalendarCard({
   )
 }
 
-// Helper function to generate calendar days
-function generateCalendarDays(monthIndex: number, year: number, blockedDates: string[]): CalendarDay[] {
+// Update the generateCalendarDays function to handle takenDates
+function generateCalendarDays(
+  monthIndex: number,
+  year: number,
+  blockedDates: string[],
+  takenDates: string[] = [],
+): CalendarDay[] {
   const days: CalendarDay[] = []
   const daysInMonth = getDaysInMonth(monthIndex, year)
   const firstDayOfMonth = getFirstDayOfMonth(monthIndex, year)
@@ -214,6 +238,7 @@ function generateCalendarDays(monthIndex: number, year: number, blockedDates: st
       isToday: false,
       hasEvent: false,
       isBlocked: false,
+      isTaken: false,
     })
   }
 
@@ -222,6 +247,7 @@ function generateCalendarDays(monthIndex: number, year: number, blockedDates: st
     const isToday = day === currentDay && monthIndex === currentMonth && year === currentYear
     const dateString = `${monthName} ${day}, ${year}`
     const isBlocked = blockedDates.includes(dateString)
+    const isTaken = takenDates.includes(dateString)
 
     days.push({
       date: day,
@@ -229,6 +255,7 @@ function generateCalendarDays(monthIndex: number, year: number, blockedDates: st
       isToday,
       hasEvent: false, // You can implement event detection logic here
       isBlocked,
+      isTaken,
     })
   }
 
@@ -247,6 +274,7 @@ function generateCalendarDays(monthIndex: number, year: number, blockedDates: st
         isToday: false,
         hasEvent: false,
         isBlocked: false,
+        isTaken: false,
       })
     }
   }

@@ -10,6 +10,7 @@ interface BlockDatesModalProps {
   initialMonth?: number // Month index (0-11)
   initialYear?: number
   blockedDates: string[] // Already blocked dates
+  takenDates?: string[] // Already taken dates
 }
 
 // Helper function to get the number of days in a month
@@ -45,6 +46,7 @@ export function BlockDatesModal({
   initialMonth = 3, // Default to April (index 3)
   initialYear = 2025,
   blockedDates = [],
+  takenDates = [],
 }: BlockDatesModalProps) {
   const [newlySelectedDates, setNewlySelectedDates] = useState<string[]>([])
   const [currentMonthIndex, setCurrentMonthIndex] = useState(initialMonth)
@@ -82,8 +84,8 @@ export function BlockDatesModal({
   const handleDateClick = (day: number) => {
     const dateString = `${monthNames[currentMonthIndex]} ${day}, ${currentYear}`
 
-    // Skip if date is already blocked
-    if (blockedDates.includes(dateString)) {
+    // Skip if date is already blocked or taken
+    if (blockedDates.includes(dateString) || takenDates.includes(dateString)) {
       return
     }
 
@@ -149,13 +151,18 @@ export function BlockDatesModal({
     const dateString = `${monthNames[currentMonthIndex]} ${day}, ${currentYear}`
     const isAlreadyBlocked = blockedDates.includes(dateString)
     const isNewlySelected = newlySelectedDates.includes(dateString)
+    const isTaken = takenDates.includes(dateString)
 
     // Apply appropriate background color
     let bgColor = ""
+    let style = {}
+
     if (isAlreadyBlocked) {
       bgColor = "bg-gray-200" // Gray for already blocked dates
     } else if (isNewlySelected) {
       bgColor = "bg-yellow-200" // Yellow for newly selected dates
+    } else if (isTaken) {
+      style = { backgroundColor: "#D9E4F5" } // Light blue for taken dates
     }
 
     days.push(
@@ -163,6 +170,7 @@ export function BlockDatesModal({
         key={day}
         className={`h-10 w-10 flex items-center justify-center cursor-pointer ${bgColor} hover:bg-gray-100`}
         onClick={() => handleDateClick(day)}
+        style={style}
       >
         {day}
       </div>,
@@ -181,8 +189,13 @@ export function BlockDatesModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{ backgroundColor: "rgba(0, 0, 0, 0.25)" }}
+      onClick={onClose}
     >
-      <div className="bg-white rounded-lg border-2 border-blue-600 p-6 max-w-4xl w-full mx-4">
+      <div
+        className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4"
+        style={{ border: "2px solid #3061AD" }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-end">
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X className="h-6 w-6" />
@@ -200,7 +213,7 @@ export function BlockDatesModal({
               </div>
 
               <div className="flex">
-                <button onClick={handlePrevMonth} className="p-1 text-blue-600 hover:text-blue-800">
+                <button onClick={handlePrevMonth} style={{ color: "#3061AD" }} className="p-1 hover:opacity-80">
                   <span className="sr-only">Previous month</span>
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                     <path
@@ -210,7 +223,7 @@ export function BlockDatesModal({
                     />
                   </svg>
                 </button>
-                <button onClick={handleNextMonth} className="p-1 text-blue-600 hover:text-blue-800">
+                <button onClick={handleNextMonth} style={{ color: "#3061AD" }} className="p-1 hover:opacity-80">
                   <span className="sr-only">Next month</span>
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                     <path
@@ -285,7 +298,8 @@ export function BlockDatesModal({
         <div className="mt-6">
           <button
             onClick={handleConfirm}
-            className="w-full md:w-auto bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700"
+            className="w-full md:w-auto text-white py-3 px-6 rounded-lg hover:opacity-90"
+            style={{ backgroundColor: "#3061AD" }}
           >
             Confirm Dates
           </button>
