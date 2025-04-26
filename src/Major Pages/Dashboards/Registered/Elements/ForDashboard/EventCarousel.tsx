@@ -46,7 +46,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManage }) => {
       <div className="relative">
         {/* Left button */}
         <button
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10 sm:hidden"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
           onClick={() => scroll("left")}
         >
           &lt;
@@ -70,7 +70,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManage }) => {
 
         {/* Right button */}
         <button
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10 sm:hidden"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
           onClick={() => scroll("right")}
         >
           &gt;
@@ -98,7 +98,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManage }) => {
       <div className="relative">
         {/* Left button for Service Inclusion */}
         <button
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10 sm:hidden"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
           onClick={() => scroll("left")}
         >
           &lt;
@@ -122,7 +122,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManage }) => {
 
         {/* Right button for Service Inclusion */}
         <button
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10 sm:hidden"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
           onClick={() => scroll("right")}
         >
           &gt;
