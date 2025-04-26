@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import EventCard from "./EventCards";
 
 // Mock data for events and only up to 3 for now to avoid cluttering the UI
-// need to add the carousel effect for the cards first before adding more data
+// need to add the carousel effect for the cards first before adding more mock data
 const mockEvents = [
   { title: "Wedding Planning", price: "Php 88,999" },
   { title: "Birthday Planning", price: "Php 88,999" },
@@ -10,16 +10,18 @@ const mockEvents = [
 ];
 
 const mockServiceInclusions = [
-  { title: "Catering Service", price: "Php 20,000" },
-  { title: "Photography Service", price: "Php 15,000" },
-  { title: "Decoration Service", price: "Php 12,000" },
+  { title: "Catering Service", price: "Php 88,999" },
+  { title: "Photography Service", price: "Php 88,999" },
+  { title: "Decoration Service", price: "Php 88,999" },
 ];
 
 interface EventCarouselProps {
-  onManage: () => void;
+  onManageEvents: () => void;
+  onManageServices: () => void;
 }
 
-const EventCarousel: React.FC<EventCarouselProps> = ({ onManage }) => {
+
+const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageServices }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
@@ -38,7 +40,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManage }) => {
     <div className="space-y-4 relative">
       {/* Event Management Section */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold cursor-pointer" onClick={onManage}>
+        <h2 className="text-xl font-bold cursor-pointer" onClick={onManageEvents}>
           Event Management &gt;
         </h2>
       </div>
@@ -90,7 +92,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManage }) => {
 
       {/* Service Inclusion Section */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold cursor-pointer" onClick={onManage}>
+        <h2 className="text-xl font-bold cursor-pointer" onClick={onManageServices}>
           Service Inclusion &gt;
         </h2>
       </div>
