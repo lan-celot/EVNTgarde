@@ -1,18 +1,28 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import EventCard from "./EventCards";
 
-// Mock data for events and only up to 3 for now to avoid cluttering the UI
-// need to add the carousel effect for the cards first before adding more mock data
 const mockEvents = [
   { title: "Wedding Planning", price: "Php 88,999" },
   { title: "Birthday Planning", price: "Php 88,999" },
   { title: "Social Event Planning", price: "Php 88,999" },
+  { title: "Corporate Event Planning", price: "Php 99,999" },
+  { title: "Charity Gala", price: "Php 120,000" },
+  { title: "Debut Planning", price: "Php 120,000" },
+  { title: "Social Event Planning", price: "Php 88,999" },
+  { title: "Corporate Event Planning", price: "Php 99,999" },
+  { title: "Test", price: "Php 99,999" },
 ];
 
 const mockServiceInclusions = [
   { title: "Catering Service", price: "Php 88,999" },
   { title: "Photography Service", price: "Php 88,999" },
   { title: "Decoration Service", price: "Php 88,999" },
+  { title: "Lighting Service", price: "Php 88,999" },
+  { title: "Venue Rental", price: "Php 88,999" },
+  { title: "Entertainment Service", price: "Php 88,999" },
+  { title: "Photography Service", price: "Php 88,999" },
+  { title: "Decoration Service", price: "Php 88,999" },
+  { title: "Test", price: "Php 88,999" },
 ];
 
 interface EventCarouselProps {
@@ -20,125 +30,143 @@ interface EventCarouselProps {
   onManageServices: () => void;
 }
 
-
 const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageServices }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [eventPage, setEventPage] = useState(0);
+  const [servicePage, setServicePage] = useState(0);
 
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollAmount = 300;
+  const cardsPerPage = 3;
 
-      scrollRef.current.scrollTo({
-        left: direction === "left" ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
-        behavior: "smooth",
-      });
+  const eventPages = Math.ceil(mockEvents.length / cardsPerPage);
+  const servicePages = Math.ceil(mockServiceInclusions.length / cardsPerPage);
+
+  const nextEvent = () => {
+    if (eventPage < eventPages - 1) {
+      setEventPage(eventPage + 1);
+    }
+  };
+
+  const prevEvent = () => {
+    if (eventPage > 0) {
+      setEventPage(eventPage - 1);
+    }
+  };
+
+  const nextService = () => {
+    if (servicePage < servicePages - 1) {
+      setServicePage(servicePage + 1);
+    }
+  };
+
+  const prevService = () => {
+    if (servicePage > 0) {
+      setServicePage(servicePage - 1);
     }
   };
 
   return (
-    <div className="space-y-4 relative">
+    <div className="space-y-8">
       {/* Event Management Section */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold cursor-pointer" onClick={onManageEvents}>
-          Event Management &gt;
-        </h2>
-      </div>
+      <div>
+        <div className="flex justify-between items-center mb-4">
+          <h2
+            className="text-xl font-bold cursor-pointer"
+            onClick={onManageEvents}
+          >
+            Event Management &gt;
+          </h2>
+        </div>
 
-      <div className="relative">
-        {/* Left button */}
-        <button
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
-          onClick={() => scroll("left")}
-        >
-          &lt;
-        </button>
+        <div className="flex items-center justify-center gap-4">
+          <button
+            onClick={prevEvent}
+            className="bg-white p-2 rounded-full shadow-md hover:bg-gray-200"
+          >
+            &lt;
+          </button>
 
-        {/* Scrollable cards */}
-        <div
-          ref={scrollRef}
-          className="flex space-x-4 overflow-x-auto scrollbar-hide"
-          style={{ justifyContent: mockEvents.length <= 3 ? "center" : "flex-start" }}
-        >
-          {mockEvents.map((event, index) => (
-            <EventCard
-              key={index}
-              title={event.title}
-              price={event.price}
-              onView={() => alert(`Viewing ${event.title}`)}
+          {mockEvents
+            .slice(eventPage * cardsPerPage, (eventPage + 1) * cardsPerPage)
+            .map((event, index) => (
+              <div key={index} className="w-[75vw] sm:w-[300px] md:w-[340px] lg:w-[380px]">
+                <EventCard
+                  title={event.title}
+                  price={event.price}
+                  onView={() => alert(`Viewing ${event.title}`)}
+                />
+              </div>
+          ))}
+
+          <button
+            onClick={nextEvent}
+            className="bg-white p-2 rounded-full shadow-md hover:bg-gray-200"
+          >
+            &gt;
+          </button>
+        </div>
+
+        {/* Pagination Dots */}
+        <div className="flex justify-center space-x-2 pt-4">
+          {Array.from({ length: eventPages }).map((_, idx) => (
+            <span
+              key={idx}
+              className={`h-2 w-2 rounded-full ${
+                idx === eventPage ? "bg-blue-600" : "bg-gray-300"
+              }`}
             />
           ))}
         </div>
-
-        {/* Right button */}
-        <button
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
-          onClick={() => scroll("right")}
-        >
-          &gt;
-        </button>
       </div>
-
-      {/* Pagination dots */}
-      <div className="flex justify-center space-x-2 pt-2">
-        {[0, 1, 2].map((_, i) => (
-          <span
-            key={i}
-            className={`h-2 w-2 rounded-full ${i === 1 ? "bg-blue-600" : "bg-gray-300"}`}
-          />
-        ))}
-      </div>
-
 
       {/* Service Inclusion Section */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold cursor-pointer" onClick={onManageServices}>
-          Service Inclusion &gt;
-        </h2>
-      </div>
+      <div>
+        <div className="flex justify-between items-center mb-4">
+          <h2
+            className="text-xl font-bold cursor-pointer"
+            onClick={onManageServices}
+          >
+            Service Inclusion &gt;
+          </h2>
+        </div>
 
-      <div className="relative">
-        {/* Left button for Service Inclusion */}
-        <button
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
-          onClick={() => scroll("left")}
-        >
-          &lt;
-        </button>
+        <div className="flex items-center justify-center gap-4">
+          <button
+            onClick={prevService}
+            className="bg-white p-2 rounded-full shadow-md hover:bg-gray-200"
+          >
+            &lt;
+          </button>
 
-        {/* Scrollable cards for Service Inclusion */}
-        <div
-          ref={scrollRef}
-          className="flex space-x-4 overflow-x-auto scrollbar-hide"
-          style={{ justifyContent: mockServiceInclusions.length <= 3 ? "center" : "flex-start" }}
-        >
-          {mockServiceInclusions.map((service, index) => (
-            <EventCard
-              key={index}
-              title={service.title}
-              price={service.price}
-              onView={() => alert(`Viewing ${service.title}`)}
+          {mockServiceInclusions
+            .slice(servicePage * cardsPerPage, (servicePage + 1) * cardsPerPage)
+            .map((service, index) => (
+              <div key={index} className="w-full sm:w-[300px] md:w-[340px] lg:w-[380px]">
+                <EventCard
+                  title={service.title}
+                  price={service.price}
+                  onView={() => alert(`Viewing ${service.title}`)}
+                />
+              </div>
+          ))}
+
+          <button
+            onClick={nextService}
+            className="bg-white p-2 rounded-full shadow-md hover:bg-gray-200"
+          >
+            &gt;
+          </button>
+        </div>
+
+        {/* Pagination Dots */}
+        <div className="flex justify-center space-x-2 pt-4">
+          {Array.from({ length: servicePages }).map((_, idx) => (
+            <span
+              key={idx}
+              className={`h-2 w-2 rounded-full ${
+                idx === servicePage ? "bg-blue-600" : "bg-gray-300"
+              }`}
             />
           ))}
         </div>
-
-        {/* Right button for Service Inclusion */}
-        <button
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
-          onClick={() => scroll("right")}
-        >
-          &gt;
-        </button>
-      </div>
-
-      {/* Pagination dots for Service Inclusion */}
-      <div className="flex justify-center space-x-2 pt-2">
-        {[0, 1, 2].map((_, i) => (
-          <span
-            key={i}
-            className={`h-2 w-2 rounded-full ${i === 1 ? "bg-blue-600" : "bg-gray-300"}`}
-          />
-        ))}
       </div>
     </div>
   );
