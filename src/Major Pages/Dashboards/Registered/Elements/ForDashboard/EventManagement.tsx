@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Card from "./EventCards";
+import EventModal from "./EventModal";
+
+
 
 const allEvents = [
   { title: "Wedding Planning", price: "Php 88,999" },
@@ -19,11 +22,26 @@ interface Props {
   onAdd: () => void;
 }
 
-const EventManagement: React.FC<Props> = ({ onBack, onAdd }) => (
-  <div className="p-6 space-y-6">
-    <div className="flex justify-between items-center">
-      <button
-        onClick={onBack}
+const EventManagement: React.FC<Props> = ({ onBack, onAdd }) => {
+
+  const [selectedEvent, setSelectedEvent] = useState<{ title: string; price: string } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleView = (event: { title: string; price: string }) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <button
+          onClick={onBack}
         className="text-blue-600 font-medium hover:underline"
       >
         &larr; Back
@@ -42,13 +60,19 @@ const EventManagement: React.FC<Props> = ({ onBack, onAdd }) => (
           key={idx}
           title={event.title}
           price={event.price}
-          onView={() => {
-            /* maybe open details modal? */
-          }}
+          onView={() => handleView(event)}
         />
       ))}
     </div>
+
+     {/* Event details modal */}
+     <EventModal 
+        isOpen={isModalOpen}
+        event={selectedEvent || { title: "", price: "" }}
+        onClose={handleCloseModal}
+      />
   </div>
-);
+  );
+};
 
 export default EventManagement;
