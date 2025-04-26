@@ -1,5 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import EventCard from "./EventCards";
+import EventModal from "./EventModal";
 
 // Mock data for events and only up to 3 for now to avoid cluttering the UI
 // need to add the carousel effect for the cards first before adding more mock data
@@ -20,21 +21,47 @@ interface EventCarouselProps {
   onManageServices: () => void;
 }
 
-
 const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageServices }) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const eventsScrollRef = useRef<HTMLDivElement>(null);
+  const servicesScrollRef = useRef<HTMLDivElement>(null);
+  const [selectedItem, setSelectedItem] = useState<{ title: string; price: string }>({ title: "", price: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const scroll = (direction: "left" | "right") => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
+  const scrollEvents = (direction: "left" | "right") => {
+    if (eventsScrollRef.current) {
+      const { scrollLeft } = eventsScrollRef.current;
       const scrollAmount = 300;
 
-      scrollRef.current.scrollTo({
+      eventsScrollRef.current.scrollTo({
         left: direction === "left" ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
         behavior: "smooth",
       });
     }
   };
+
+  const scrollServices = (direction: "left" | "right") => {
+    if (servicesScrollRef.current) {
+      const { scrollLeft } = servicesScrollRef.current;
+      const scrollAmount = 300;
+
+      servicesScrollRef.current.scrollTo({
+        left: direction === "left" ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleView = (item: { title: string; price: string }) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // Add console logging for debugging
+  console.log("Modal state:", { isOpen: isModalOpen, selectedItem });
 
   return (
     <div className="space-y-4 relative">
@@ -49,14 +76,14 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageS
         {/* Left button */}
         <button
           className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
-          onClick={() => scroll("left")}
+          onClick={() => scrollEvents("left")}
         >
           &lt;
         </button>
 
         {/* Scrollable cards */}
         <div
-          ref={scrollRef}
+          ref={eventsScrollRef}
           className="flex space-x-4 overflow-x-auto scrollbar-hide"
           style={{ justifyContent: mockEvents.length <= 3 ? "center" : "flex-start" }}
         >
@@ -65,7 +92,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageS
               key={index}
               title={event.title}
               price={event.price}
-              onView={() => alert(`Viewing ${event.title}`)}
+              onView={() => handleView(event)}
             />
           ))}
         </div>
@@ -73,7 +100,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageS
         {/* Right button */}
         <button
           className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
-          onClick={() => scroll("right")}
+          onClick={() => scrollEvents("right")}
         >
           &gt;
         </button>
@@ -101,14 +128,14 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageS
         {/* Left button for Service Inclusion */}
         <button
           className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
-          onClick={() => scroll("left")}
+          onClick={() => scrollServices("left")}
         >
           &lt;
         </button>
 
         {/* Scrollable cards for Service Inclusion */}
         <div
-          ref={scrollRef}
+          ref={servicesScrollRef}
           className="flex space-x-4 overflow-x-auto scrollbar-hide"
           style={{ justifyContent: mockServiceInclusions.length <= 3 ? "center" : "flex-start" }}
         >
@@ -117,7 +144,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageS
               key={index}
               title={service.title}
               price={service.price}
-              onView={() => alert(`Viewing ${service.title}`)}
+              onView={() => handleView(service)}
             />
           ))}
         </div>
@@ -125,7 +152,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageS
         {/* Right button for Service Inclusion */}
         <button
           className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10"
-          onClick={() => scroll("right")}
+          onClick={() => scrollServices("right")}
         >
           &gt;
         </button>
@@ -140,6 +167,13 @@ const EventCarousel: React.FC<EventCarouselProps> = ({ onManageEvents, onManageS
           />
         ))}
       </div>
+
+      {/* Event Modal */}
+      <EventModal 
+        isOpen={isModalOpen}
+        event={selectedItem}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
