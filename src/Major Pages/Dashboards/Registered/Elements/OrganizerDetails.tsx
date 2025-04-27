@@ -1,11 +1,32 @@
-import { useParams } from "react-router-dom";
-import { Star, Search, Share2 } from "lucide-react";
-import { useEffect } from "react";
-import { useState } from "react";
-import OrganizerLogo from "../../../../assets/OrganizerLogo.png";
-import BookingModal from "./BookingModal";
+import { useParams } from "react-router-dom"
+import { Star, Search, Share2 } from "lucide-react"
+import { useEffect } from "react"
+import { useState } from "react"
+import OrganizerLogo from "../../../../assets/OrganizerLogo.png"
+import BookingModal from "./BookingModal"
+import { mockOrganizers } from "../../../../functions/mockData"
+
+// mockOrganizers to OrganizerDetails format
+const organizersFromMock = mockOrganizers.map((org) => ({
+  id: org.organizerId,
+  name: org.organizationName,
+  category: org.industry || "Event Organizer",
+  location: org.address
+    ? `${org.address.address}, ${org.address.city}, ${org.address.state} ${org.address.zipCode}`
+    : "Unknown Location",
+  timeSlot: org.timeSlot && org.timeSlot.length ? org.timeSlot.join(", ") : "Flexible Hours",
+  price: org.price,
+  ratings: org.rating || 0,
+  image: org.image || "/images/vendor.jpg",
+  isFavorite: false,
+  details: ["Professional event planning", "Customized services", "Experienced staff"],
+  description:
+    org.description ||
+    `${org.organizationName} is a professional event organizing company specializing in creating memorable experiences for clients.`,
+}))
 
 const organizers = [
+  ...organizersFromMock, // add the converted mockOrganizers
   {
     id: 11,
     name: "Silver Wedding Package",
@@ -16,11 +37,7 @@ const organizers = [
     ratings: 15,
     image: "/images/vendor.jpg",
     isFavorite: false,
-    details: [
-      "Professional wedding planning",
-      "Customized decor and setup",
-      "Luxury bridal suite access",
-    ],
+    details: ["Professional wedding planning", "Customized decor and setup", "Luxury bridal suite access"],
     description:
       "The Silver Wedding Package offers a premium experience with full-day services, ensuring every detail is handled perfectly. Ideal for couples looking for an elegant yet budget-friendly wedding experience.",
   },
@@ -34,11 +51,7 @@ const organizers = [
     ratings: 20,
     image: "/images/vendor.jpg",
     isFavorite: false,
-    details: [
-      "Exclusive venue access",
-      "Catering and refreshments",
-      "Professional event coordination",
-    ],
+    details: ["Exclusive venue access", "Catering and refreshments", "Professional event coordination"],
     description:
       "Our Corporate VIP Package is designed for high-profile business events, offering top-notch services to ensure a seamless and professional experience.",
   },
@@ -52,11 +65,7 @@ const organizers = [
     ratings: 10,
     image: "/images/vendor.jpg",
     isFavorite: false,
-    details: [
-      "Themed decorations",
-      "Fun activities for kids",
-      "Custom cake options",
-    ],
+    details: ["Themed decorations", "Fun activities for kids", "Custom cake options"],
     description:
       "Perfect for all ages, the Birthday Bash Package offers exciting entertainment and beautiful decorations to create unforgettable birthday memories.",
   },
@@ -70,11 +79,7 @@ const organizers = [
     ratings: 35,
     image: "/images/vendor.jpg",
     isFavorite: false,
-    details: [
-      "Luxury beachside venue",
-      "Exclusive wedding planner",
-      "5-star catering services",
-    ],
+    details: ["Luxury beachside venue", "Exclusive wedding planner", "5-star catering services"],
     description:
       "The Platinum Wedding Package provides the ultimate dream wedding experience, with a breathtaking location and world-class services.",
   },
@@ -88,11 +93,7 @@ const organizers = [
     ratings: 25,
     image: "/images/vendor.jpg",
     isFavorite: false,
-    details: [
-      "Outdoor adventure activities",
-      "Leadership workshops",
-      "Custom team challenges",
-    ],
+    details: ["Outdoor adventure activities", "Leadership workshops", "Custom team challenges"],
     description:
       "Boost your team's morale and productivity with our engaging Corporate Team Building Package, designed to foster collaboration and leadership.",
   },
@@ -106,15 +107,11 @@ const organizers = [
     ratings: 12,
     image: "/images/vendor.jpg",
     isFavorite: false,
-    details: [
-      "Party hosts and entertainers",
-      "Personalized gift bags",
-      "Music and lighting setup",
-    ],
+    details: ["Party hosts and entertainers", "Personalized gift bags", "Music and lighting setup"],
     description:
       "Celebrate in style with our Birthday Party Package, featuring entertainment, decor, and fun-filled surprises tailored for your special day.",
   },
-];
+]
 
 const reviews = [
   {
@@ -127,24 +124,23 @@ const reviews = [
     rating: 4,
     comment: "Great experience, but there's room for improvement.",
   },
-];
+]
 
 export default function OrganizerDetails() {
-  const { id } = useParams();
-  const [search, setSearch] = useState("");
-  const organizer = organizers.find((org) => org.id === parseInt(id!));
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const { id } = useParams()
+  const [search, setSearch] = useState("")
+
+  // Try to find the organizer by ID, handling both string and number IDs
+  const organizer = organizers.find((org) => org.id === Number(id) || org.id === id)
+
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    window.scrollTo(0, 0)
+  }, [])
 
   if (!organizer) {
-    return (
-      <p className="text-center text-red-500 font-semibold">
-        Organizer not found.
-      </p>
-    );
+    return <p className="text-center text-red-500 font-semibold">Organizer not found. ID: {id}</p>
   }
 
   return (
@@ -155,11 +151,7 @@ export default function OrganizerDetails() {
           {/* Left section - Logo */}
           <div className="flex justify-start">
             <a href="/" className="flex items-center gap-2">
-              <img
-                src={OrganizerLogo}
-                alt="Logo"
-                className="h-8 w-auto object-contain"
-              />
+              <img src={OrganizerLogo || "/placeholder.svg"} alt="Logo" className="h-8 w-auto object-contain" />
             </a>
           </div>
 
@@ -169,9 +161,7 @@ export default function OrganizerDetails() {
               {["Home", "About", "Book"].map((item, index) => (
                 <li key={index}>
                   <a
-                    href={`/customer${
-                      item === "Home" ? "" : `/${item.toLowerCase()}`
-                    }`}
+                    href={`/customer${item === "Home" ? "" : `/${item.toLowerCase()}`}`}
                     className="relative text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-yellow-400 after:transition-all hover:after:w-full"
                   >
                     {item}
@@ -199,17 +189,11 @@ export default function OrganizerDetails() {
 
       <div className="w-full max-w-7xl mx-auto dark:bg-gray-900 py-4 overflow-hidden">
         {/* Full-Width Image */}
-        <img
-          src={organizer.image}
-          alt={organizer.name}
-          className="w-full h-64 object-cover"
-        />
+        <img src={organizer.image || "/placeholder.svg"} alt={organizer.name} className="w-full h-64 object-cover" />
 
         {/* Organizer Name, Buttons, and Icons */}
         <div className="p-6 flex flex-col sm:flex-row justify-between items-center">
-          <h1 className="text-2xl font-bold text-dark dark:text-white">
-            {organizer.name}
-          </h1>
+          <h1 className="text-2xl font-bold text-dark dark:text-white">{organizer.name}</h1>
 
           <div className="flex items-center gap-4">
             <button
@@ -231,40 +215,30 @@ export default function OrganizerDetails() {
 
         {/* About and Reviews */}
         <div className="flex items-center gap-6 px-6">
-          <h2 className="text-lg font-semibold text-dark-800 dark:text-gray-200">
-            About
-          </h2>
+          <h2 className="text-lg font-semibold text-dark-800 dark:text-gray-200">About</h2>
           <h2 className="text-lg font-semibold text-dark-800 dark:text-gray-200 flex items-center">
             Reviews
             <div className="flex items-center ml-2">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="h-5 w-5 text-yellow-400" />
               ))}
-              <span className="ml-2 text-dark-700 dark:text-gray-300 text-sm">
-                4.8
-              </span>
+              <span className="ml-2 text-dark-700 dark:text-gray-300 text-sm">4.8</span>
             </div>
           </h2>
         </div>
 
         {/* Description */}
-        <p className="px-6 py-4 text-dark-700 dark:text-gray-300 leading-relaxed">
-          {organizer.description}
-        </p>
+        <p className="px-6 py-4 text-dark-700 dark:text-gray-300 leading-relaxed">{organizer.description}</p>
 
         {/* Location and Map */}
         <div className="px-6 py-4">
-          <h3 className="text-lg font-semibold text-dark-800 dark:text-gray-200">
-            Location
-          </h3>
+          <h3 className="text-lg font-semibold text-dark-800 dark:text-gray-200">Location</h3>
 
           {/* Flex Container for Location Details and Map */}
           <div className="flex flex-col gap-4">
             {/* Location Details (Above the Map) */}
             <div className="w-full">
-              <p className="text-dark-600 dark:text-gray-400">
-                {organizer.location}
-              </p>
+              <p className="text-dark-600 dark:text-gray-400">{organizer.location}</p>
               <p className="mt-2 text-dark-700 dark:text-gray-300">
                 Find the best route to your event location with ease.
               </p>
@@ -278,43 +252,35 @@ export default function OrganizerDetails() {
         </div>
       </div>
 
+      {/* Rest of the component remains unchanged */}
       {/* Organizer Section */}
       <section className="w-screen max-w-7xl mx-auto py-12 px-4">
         {["Organizers"].map((section, index) => (
           <div key={index} className="mb-12">
-            <h2 className="text-2xl font-semibold mb-6">
-              Past Events by the {section}
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6">Past Events by the {section}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-8 lg:grid-cols-3 gap-8">
               {Array.from({ length: 3 }).map((_, i) => {
-                let title = "";
-                let specialty = "";
-                const date = "NOV 22";
-                const location = "Location";
-                const time = "Full-day Service";
-                let price = "";
+                let title = ""
+                let specialty = ""
+                const date = "NOV 22"
+                const location = "Location"
+                const time = "Full-day Service"
+                let price = ""
 
                 if (section === "Organizers") {
-                  specialty = ["Wedding", "Birthday", "Fellowship"][i];
-                  title = specialty;
-                  price = "PHP 1000";
+                  specialty = ["Wedding", "Birthday", "Fellowship"][i]
+                  title = specialty
+                  price = "PHP 1000"
                 } else {
-                  specialty = ["Florist", "Caterer", "Photographer"][i];
-                  title = specialty;
-                  price = "PHP 500-2000";
+                  specialty = ["Florist", "Caterer", "Photographer"][i]
+                  title = specialty
+                  price = "PHP 500-2000"
                 }
 
                 return (
-                  <div
-                    key={i}
-                    className="bg-light rounded-lg shadow-md overflow-hidden"
-                  >
+                  <div key={i} className="bg-light rounded-lg shadow-md overflow-hidden">
                     <div className="relative">
-                      <img
-                        src="../../src/assets/vendor.jpg"
-                        alt={section}
-                        className="w-full h-50 object-cover"
-                      />{" "}
+                      <img src="../../src/assets/vendor.jpg" alt={section} className="w-full h-50 object-cover" />{" "}
                       <button className="absolute top-2 right-2 text-yellow-500 hover:text-gray-600">
                         <svg
                           className="w-6 h-6 text-dark dark:text-dark-300 hover:text-dark-700 dark:hover:text-dark-400"
@@ -350,13 +316,11 @@ export default function OrganizerDetails() {
                         >
                           <path d="M10 15l-5.878 3.09 1.123-6.545L.583 5.948 6.136 5.411 10 1l3.864 4.411 5.553.537-4.762 4.497 1.123 6.545L10 15z" />
                         </svg>
-                        <span className="text-sm text-dark-600 ml-1">
-                          10 ratings
-                        </span>
+                        <span className="text-sm text-dark-600 ml-1">10 ratings</span>
                       </div>
                     </div>
                   </div>
-                );
+                )
               })}
             </div>
             <div className="mt-8 text-center">
@@ -376,10 +340,7 @@ export default function OrganizerDetails() {
         <h2 className="text-2xl font-semibold mb-6">Reviews</h2>
         <div className="space-y-8">
           {reviews.map((review, index) => (
-            <div
-              key={index}
-              className="w-full dark:bg-gray-900 p-6 rounded-lg shadow-md"
-            >
+            <div key={index} className="w-full dark:bg-gray-900 p-6 rounded-lg shadow-md">
               {/* Title and Date */}
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-dark dark:text-gray-200">
@@ -391,22 +352,15 @@ export default function OrganizerDetails() {
               {/* Rating Stars */}
               <div className="flex items-center mt-2">
                 {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-5 w-5 ${
-                      i < review.rating ? "text-yellow-400" : "text-gray-300"
-                    }`}
-                  />
+                  <Star key={i} className={`h-5 w-5 ${i < review.rating ? "text-yellow-400" : "text-gray-300"}`} />
                 ))}
               </div>
 
               {/* Review Comment */}
               <p className="mt-4 text-dark dark:text-gray-300 leading-relaxed">
-                {review.comment} Lorem ipsum dolor sit amet, consectetur
-                adipiscing elit. Nulla facilisi. Vestibulum dignissim ultricies
-                erat, eu molestie tortor pellentesque eu. Vivamus non bibendum
-                justo, nec fermentum libero. Suspendisse potenti. Sed dictum
-                elit ut lectus suscipit, eget cursus erat iaculis.
+                {review.comment} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Vestibulum
+                dignissim ultricies erat, eu molestie tortor pellentesque eu. Vivamus non bibendum justo, nec fermentum
+                libero. Suspendisse potenti. Sed dictum elit ut lectus suscipit, eget cursus erat iaculis.
               </p>
 
               {/* Tags for Review Qualities */}
@@ -536,5 +490,5 @@ export default function OrganizerDetails() {
         organizerName={organizer.name}
       />
     </>
-  );
+  )
 }
