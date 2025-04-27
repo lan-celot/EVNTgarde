@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
         <div className="p-4 space-y-4">
           {/* Row 1 - Dashboard Header */}
           <div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Dashboard</h1>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">Dashboard</h1>
             {/* Tabs */}
             <div className="flex space-x-4 text-sm text-gray-500 pb-2">
               {tabs.map((tab) => (
