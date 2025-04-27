@@ -1,20 +1,40 @@
-import React, { useState } from "react";
-import EventManagement from "./EventManagement";
-import EventCarousel from "./EventCarousel";
+import type React from "react"
+import { useState } from "react"
+import EventManagement from "./EventManagement"
+import ServiceInclusion from "./ServiceInclusion"
+import EventCarousel from "./EventCarousel"
+import { AddServiceModal } from "./AddServiceModal"
+
+type ManagementView = "none" | "events" | "services"
 
 const EventSection: React.FC = () => {
-  const [isManaging, setIsManaging] = useState(false);
+  const [view, setView] = useState<ManagementView>("none")
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  return isManaging ? (
-    <EventManagement
-      onBack={() => setIsManaging(false)}
-      onAdd={() => {
-        /* open your “Add Event” modal or form here */
-      }}
-    />
-  ) : (
-    <EventCarousel onManage={() => setIsManaging(true)} />
-  );
-};
+  if (view === "events") {
+    return (
+      <>
+        <EventManagement onBack={() => setView("none")} onAdd={() => setIsModalOpen(true)} />
+        {isModalOpen && <AddServiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+      </>
+    )
+  }
 
-export default EventSection;
+  if (view === "services") {
+    return (
+      <>
+        <ServiceInclusion onBack={() => setView("none")} onAdd={() => setIsModalOpen(true)} />
+        {isModalOpen && <AddServiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+      </>
+    )
+  }
+
+  return (
+    <>
+      <EventCarousel onManageEvents={() => setView("events")} onManageServices={() => setView("services")} />
+      {isModalOpen && <AddServiceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
+    </>
+  )
+}
+
+export default EventSection

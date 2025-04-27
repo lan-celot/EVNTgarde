@@ -2,15 +2,15 @@ import React from "react";
 import Card from "./EventCards";
 
 const allEvents = [
-  { title: "Wedding Planning", price: "Php 88,999" },
-  { title: "Birthday Planning", price: "Php 88,999" },
-  { title: "Social Event Planning", price: "Php 88,999" },
+  { title: "Standard Package", price: "Php 88,999" },
+  { title: "Luxury Package", price: "Php 88,999" },
+  { title: "Budget Package", price: "Php 88,999" },
   { title: "Corporate Event Planning", price: "Php 99,999" },
   { title: "Charity Gala", price: "Php 120,000" },
   { title: "Debut Planning", price: "Php 120,000" },
-  { title: "Wedding Planning", price: "Php 88,999" },
-  { title: "Birthday Planning", price: "Php 88,999" },
-  { title: "Social Event Planning", price: "Php 88,999" },
+  { title: "Sample", price: "Php 88,999" },
+  { title: "Sample", price: "Php 88,999" },
+  { title: "Sample", price: "Php 88,999" },
   // ...add more for pagination
 ];
 
