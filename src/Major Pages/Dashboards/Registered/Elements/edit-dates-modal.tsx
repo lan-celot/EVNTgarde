@@ -133,7 +133,6 @@ export function EditDatesModal({
     const dateString = `${monthNames[currentMonthIndex]} ${day}, ${currentYear}`
     const isSelected = selectedDates.includes(dateString)
     const isTaken = takenDates.includes(dateString)
-    const isBlocked = blockedDates.includes(dateString)
 
     // Apply appropriate background color
     let style = {}

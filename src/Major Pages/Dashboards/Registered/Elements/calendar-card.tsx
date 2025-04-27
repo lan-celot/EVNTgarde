@@ -96,8 +96,11 @@ export function CalendarCard({
     setIsBlockModalOpen(true)
   }
 
+  // Update the handleEditDates function to only work when there are blocked dates
   const handleEditDates = () => {
-    setIsEditModalOpen(true)
+    if (blockedDates.length > 0) {
+      setIsEditModalOpen(true)
+    }
   }
 
   const handleCloseBlockModal = () => {
@@ -180,8 +183,13 @@ export function CalendarCard({
             Block Dates
           </button>
           <button
-            className="bg-white text-gray-800 px-4 py-2.5 rounded-md text-sm w-full border border-gray-300"
+            className={`bg-white text-gray-800 px-4 py-2.5 rounded-md text-sm w-full border ${
+              blockedDates.length > 0
+                ? "border-gray-300 hover:bg-gray-50 cursor-pointer"
+                : "border-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
             onClick={handleEditDates}
+            disabled={blockedDates.length === 0}
           >
             Edit Dates
           </button>
@@ -266,9 +274,6 @@ function generateCalendarDays(
   const remainingCells = totalCells - days.length
 
   if (remainingCells > 0 && remainingCells < 7) {
-    const nextMonthIndex = monthIndex === 11 ? 0 : monthIndex + 1
-    const nextMonthYear = monthIndex === 11 ? year + 1 : year
-
     for (let day = 1; day <= remainingCells; day++) {
       days.push({
         date: day,
