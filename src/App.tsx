@@ -33,6 +33,9 @@ import UserManagement from "./Major Pages/Dashboards/Registered/UserManagement";
 import Track from "./Major Pages/Dashboards/Registered/Track";
 import ProfileSettings from "./Major Pages/Dashboards/Registered/ProfileSettings";
 
+// Misc Pages
+import OrganizerDetails from "./Major Pages/Dashboards/Registered/Elements/OrganizerDetails";
+
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
@@ -151,6 +154,8 @@ const App: React.FC = () => {
             <Route path="/user-management" element={<UserManagement />} />
             <Route path="/track" element={<Track />} />
             <Route path="/profile-settings" element={<ProfileSettings />} />
+            {/* temp route for organizer viewing */}
+            <Route path="/organizers/*" element={<OrganizerDetails />} />
           </Route>
         </Route>
       </Routes>
