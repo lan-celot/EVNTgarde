@@ -3,7 +3,6 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/assets/OrganizerLogo.png";
-import "./RegistrationLogin.css";
 import { registerUser } from "../../functions/authFunctions";
 import { createUserAccount } from "../../functions/userAccount";
 import { useTheme } from "../../functions/ThemeContext";

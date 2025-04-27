@@ -6,8 +6,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-
-import "./App.css";
+import "./index.css";
 
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
 import AboutLoggedOut from "./Major Pages/Dashboards/Unregistered/about-loggedout";
@@ -26,13 +25,16 @@ import IndividualRegistration from "./Major Pages/Login Page/IndividualRegistrat
 import VendorRegistration from "./Major Pages/Login Page/VendorRegistration";
 
 // Main Pages
-import Dashboard from "./Major Pages/Dashboards/Registered/Main Page/Dashboard";
-import Bookings from "./Major Pages/Dashboards/Registered/Main Page/Bookings";
-import RSVP from "./Major Pages/Dashboards/Registered/Main Page/RSVP";
-import Reviews from "./Major Pages/Dashboards/Registered/Main Page/Reviews";
-import UserManagement from "./Major Pages/Dashboards/Registered/Main Page/UserManagement";
-import Track from "./Major Pages/Dashboards/Registered/Main Page/Track";
-import ProfileSettings from "./Major Pages/Dashboards/Registered/Main Page/ProfileSettings";
+import Dashboard from "./Major Pages/Dashboards/Registered/Dashboard";
+import Bookings from "./Major Pages/Bookings/Bookings";
+import RSVP from "./Major Pages/Dashboards/Registered/RSVP";
+import Reviews from "./Major Pages/Dashboards/Registered/Reviews";
+import UserManagement from "./Major Pages/Dashboards/Registered/UserManagement";
+import Track from "./Major Pages/Dashboards/Registered/Track";
+import ProfileSettings from "./Major Pages/Dashboards/Registered/ProfileSettings";
+
+// Misc Pages
+import OrganizerDetails from "./Major Pages/Dashboards/Registered/Elements/OrganizerDetails";
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -152,6 +154,8 @@ const App: React.FC = () => {
             <Route path="/user-management" element={<UserManagement />} />
             <Route path="/track" element={<Track />} />
             <Route path="/profile-settings" element={<ProfileSettings />} />
+            {/* temp route for organizer viewing */}
+            <Route path="/organizers/:id" element={<OrganizerDetails />} />
           </Route>
         </Route>
       </Routes>

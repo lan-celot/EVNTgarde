@@ -1,13 +1,9 @@
-"use client"
-
-import type React from "react"
-
 import { useState } from "react"
-import { VendorCard } from "../Cards/vendor-card"
+import { VendorCard } from "./Cards/vendor-card"
 import { Search, SlidersHorizontal } from "lucide-react"
-import { Button, Input } from "../../../../../Layout/combined-ui"
-import { mockOrganizers } from "../../../../../functions/mockData"
-import type { Loc } from "../../../../../functions/accsEventsCollections"
+import { Button, Input } from "../../../../Layout/combined-ui"
+import { mockOrganizers } from "../../../../functions/mockData"
+import type { Loc } from "../../../../functions/accsEventsCollections"
 import { FilterModal, type FilterValues } from "./filter-modal"
 
 const Explore: React.FC = () => {

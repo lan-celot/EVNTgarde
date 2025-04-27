@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { Button } from "../../../../../Layout/combined-ui"
-import { Input } from "../../../../../Layout/combined-ui"
+import { Button } from "../../../../Layout/combined-ui"
+import { Input } from "../../../../Layout/combined-ui"
 import { X } from "lucide-react"
 
 interface FilterModalProps {

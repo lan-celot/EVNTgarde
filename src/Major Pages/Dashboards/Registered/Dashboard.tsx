@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { BarChart3, Briefcase, Search } from "lucide-react";
-import ActivityOverview from "../Elements/ForDashboard/ActivityOverview";
-import EventSection from "../Elements/ForDashboard/EventsSection";
-import Explore from "../Elements/ForDashboard/Explore";
+import ActivityOverview from "./Elements/ActivityOverview";
+import EventSection from "./Elements/EventsSection";
+import Explore from "./Elements/Explore";
 
 const tabs = [
   {
@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
         <div className="p-4 space-y-4">
           {/* Row 1 - Dashboard Header */}
           <div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Dashboard</h1>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">Dashboard</h1>
             {/* Tabs */}
             <div className="flex space-x-4 text-sm text-gray-500 pb-2">
               {tabs.map((tab) => (
