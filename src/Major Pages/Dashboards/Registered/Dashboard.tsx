@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { BarChart3, Briefcase, Search } from "lucide-react";
-import ActivityOverview from "../Elements/ForDashboard/ActivityOverview";
-import EventSection from "../Elements/ForDashboard/EventsSection";
-import Explore from "../Elements/ForDashboard/Explore";
+import ActivityOverview from "./Elements/ActivityOverview";
+import EventSection from "./Elements/EventsSection";
+import Explore from "./Elements/Explore";
 
 const tabs = [
   {
@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen font-poppins">
       <div
         className="flex flex-1 flex-col transition-all duration-300"
         style={{ marginLeft: "16rem" }}

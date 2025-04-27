@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { VendorCard } from "../Cards/vendor-card";
+import { VendorCard } from "./Cards/vendor-card";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { Button, Input } from "../../../../../Layout/combined-ui";
-import { mockOrganizers } from "../../../../../functions/mockData";
-import { Loc } from "../../../../../functions/accsEventsCollections";
+import { Button, Input } from "../../../../Layout/combined-ui";
+import { mockOrganizers } from "../../../../functions/mockData";
+import { Loc } from "../../../../functions/accsEventsCollections";
 
 // Update the component to accept and use the logout prop
 const Explore: React.FC = () => {
