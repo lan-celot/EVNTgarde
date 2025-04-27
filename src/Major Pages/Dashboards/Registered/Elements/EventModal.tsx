@@ -33,8 +33,13 @@ const EventModal: React.FC<EventModalProps> = ({
   const [isEditingIntro, setIsEditingIntro] = useState(false);
   const [isEditingFullDetails, setIsEditingFullDetails] = useState(false);
   const [isEditingPrice, setIsEditingPrice] = useState(false);
-  const [editingSectionIdx, setEditingSectionIdx] = useState<number | null>(null);
-  const [editingBulletIdx, setEditingBulletIdx] = useState<{ section: number; bullet: number } | null>(null);
+  const [editingSectionIdx, setEditingSectionIdx] = useState<number | null>(
+    null
+  );
+  const [editingBulletIdx, setEditingBulletIdx] = useState<{
+    section: number;
+    bullet: number;
+  } | null>(null);
 
   const handleSectionChange = (sectionIdx: number, newValue: string) => {
     const updated = [...editableIncluded];
@@ -42,7 +47,11 @@ const EventModal: React.FC<EventModalProps> = ({
     setEditableIncluded(updated);
   };
 
-  const handleBulletChange = (sectionIdx: number, bulletIdx: number, newValue: string) => {
+  const handleBulletChange = (
+    sectionIdx: number,
+    bulletIdx: number,
+    newValue: string
+  ) => {
     const updated = [...editableIncluded];
     updated[sectionIdx].bullets[bulletIdx] = newValue;
     setEditableIncluded(updated);
@@ -63,7 +72,6 @@ const EventModal: React.FC<EventModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-lg border p-8 max-w-2xl w-full relative overflow-y-auto max-h-[90vh]">
-
         {/* Close Button */}
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl font-bold"
@@ -173,7 +181,9 @@ const EventModal: React.FC<EventModalProps> = ({
                     <input
                       type="text"
                       value={section.section}
-                      onChange={(e) => handleSectionChange(sectionIdx, e.target.value)}
+                      onChange={(e) =>
+                        handleSectionChange(sectionIdx, e.target.value)
+                      }
                       className="w-full border rounded p-2 font-bold"
                     />
                     <button
@@ -205,12 +215,19 @@ const EventModal: React.FC<EventModalProps> = ({
               <ul className="list-disc pl-5 mt-2 space-y-2">
                 {section.bullets.map((bullet, bulletIdx) => (
                   <li key={bulletIdx} className="flex items-center group">
-                    {editingBulletIdx?.section === sectionIdx && editingBulletIdx?.bullet === bulletIdx ? (
+                    {editingBulletIdx?.section === sectionIdx &&
+                    editingBulletIdx?.bullet === bulletIdx ? (
                       <>
                         <input
                           type="text"
                           value={bullet}
-                          onChange={(e) => handleBulletChange(sectionIdx, bulletIdx, e.target.value)}
+                          onChange={(e) =>
+                            handleBulletChange(
+                              sectionIdx,
+                              bulletIdx,
+                              e.target.value
+                            )
+                          }
                           className="border rounded p-1 w-full"
                         />
                         <button
@@ -226,14 +243,19 @@ const EventModal: React.FC<EventModalProps> = ({
                         <button
                           className="ml-2 hidden group-hover:inline text-blue-600"
                           onClick={() =>
-                            setEditingBulletIdx({ section: sectionIdx, bullet: bulletIdx })
+                            setEditingBulletIdx({
+                              section: sectionIdx,
+                              bullet: bulletIdx,
+                            })
                           }
                         >
                           <Pencil size={12} />
                         </button>
                         <button
                           className="ml-2 hidden group-hover:inline text-blue-600"
-                          onClick={() => handleDeleteBullet(sectionIdx, bulletIdx)}
+                          onClick={() =>
+                            handleDeleteBullet(sectionIdx, bulletIdx)
+                          }
                         >
                           <X size={12} />
                         </button>
@@ -267,7 +289,9 @@ const EventModal: React.FC<EventModalProps> = ({
               </>
             ) : (
               <>
-                <p className="text-lg font-bold text-blue-700">{editablePrice}</p>
+                <p className="text-lg font-bold text-blue-700">
+                  {editablePrice}
+                </p>
                 <button
                   className="ml-2 hidden group-hover:inline text-blue-600"
                   onClick={() => setIsEditingPrice(true)}
@@ -278,7 +302,6 @@ const EventModal: React.FC<EventModalProps> = ({
             )}
           </div>
         </div>
-
       </div>
     </div>
   );
