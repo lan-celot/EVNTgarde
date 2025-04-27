@@ -7,7 +7,11 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        poppins: ["Poppins", "sans-serif"], // <-- override 'sans' to use Poppins
+        poppins: ["Poppins", "sans-serif"],
+        sans: [
+          "Poppins",
+          ...require("tailwindcss/defaultTheme").fontFamily.sans,
+        ], // <-- override 'sans' to use Poppins
       },
     },
   },
