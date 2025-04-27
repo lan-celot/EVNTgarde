@@ -155,7 +155,7 @@ const App: React.FC = () => {
             <Route path="/track" element={<Track />} />
             <Route path="/profile-settings" element={<ProfileSettings />} />
             {/* temp route for organizer viewing */}
-            <Route path="/organizers/*" element={<OrganizerDetails />} />
+            <Route path="/organizers/:id" element={<OrganizerDetails />} />
           </Route>
         </Route>
       </Routes>
