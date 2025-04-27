@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen font-poppins">
+    <div className="flex min-h-screen">
       <div
         className="flex flex-1 flex-col transition-all duration-300"
         style={{ marginLeft: "16rem" }}
