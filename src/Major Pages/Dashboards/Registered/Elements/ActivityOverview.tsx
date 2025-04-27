@@ -1,6 +1,6 @@
 import { CalendarCard } from "./calendar-card";
 import type React from "react";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, User, MapPin } from "lucide-react";
 import { Star } from "lucide-react";
 
 const ActivityOverview: React.FC = () => {
@@ -10,6 +10,31 @@ const ActivityOverview: React.FC = () => {
     "April 15, 2025",
     "April 16, 2025",
     "April 22, 2025",
+  ];
+  
+  const upcomingEvents = [
+    {
+      id: 2,
+      date: "Mar 29",
+      day: "Saturday",
+      title: "Super Duper Long Event Placeholder",
+      startTime: "5:30 PM",
+      endTime: "10:00 PM",
+      customer: "Customer Name",
+      location: "Location Name",
+      guests: "1,234 Guests",
+    },
+    {
+      id: 6,
+      date: "Mar 30",
+      day: "Sunday",
+      title: "Upcoming Event Placeholder",
+      startTime: "2:00 PM",
+      endTime: "7:00 PM",
+      customer: "Upcoming Customer",
+      location: "Upcoming Location",
+      guests: "456 Guests",
+    },
   ];
 
   return (
@@ -124,12 +149,55 @@ const ActivityOverview: React.FC = () => {
             takenDates={takenDates}
           />
         </div>
-        <div className="bg-white p-4 rounded shadow md:col-span-2">
-          for upcoming events
+
+          {/* Upcoming Events Section */}
+        <div className="bg-white p-6 rounded shadow md:col-span-2">
+          <h2 className="text-2xl font-semibold mb-6">Upcoming Events</h2>
+          <div className="relative pb-16">
+            {/* Timeline line - positioned to the right of the date and extended at the bottom */}
+            <div className="absolute left-[115px] top-2 bottom-0 w-0.5 bg-green-600"></div>
+
+            {upcomingEvents.map((event, index) => (
+              <div key={index} className="flex mb-8">
+                {/* Date column  */}
+                <div className="mr-6 pt-1 w-24 relative">
+                  <div className="font-bold text-xl">{event.date}</div>
+                  <div className="text-gray-400">{event.day}</div>
+                  {/* Green dot */}
+                  <div className="absolute left-[115px] top-2 w-4 h-4 bg-green-500 rounded-full transform -translate-x-1/2"></div>
+                </div>
+
+                {/* Event card */}
+                <div className="flex-1 bg-white rounded-lg shadow-sm p-5 border border-gray-100 ml-10">
+                  <h3 className="text-xl font-semibold text-blue-600 mb-1">{event.title}</h3>
+                  <p className="text-gray-600 mb-4">
+                    {event.startTime} - {event.endTime}
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-y-4">
+                    <div className="flex items-center">
+                      <User className="text-gray-400 mr-2" size={18} />
+                      <span className="text-gray-600">{event.customer}</span>
+                    </div>
+
+                    <div className="flex items-center">
+                      <MapPin className="text-gray-400 mr-2" size={18} />
+                      <span className="text-gray-600">{event.location}</span>
+                    </div>
+
+                    <div className="flex items-center">
+                      <User className="text-gray-400 mr-2" size={18} />
+                      <span className="text-gray-600">{event.guests}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default ActivityOverview;
