@@ -83,16 +83,12 @@ export function EditDatesModal({
   const handleDateClick = (day: number) => {
     const dateString = `${monthNames[currentMonthIndex]} ${day}, ${currentYear}`
 
-    // Skip if date is taken
-    if (takenDates.includes(dateString)) {
-      return
-    }
-
+    // Only allow removing dates that are already blocked
+    // Don't allow adding new dates
     if (selectedDates.includes(dateString)) {
       setSelectedDates(selectedDates.filter((date) => date !== dateString))
-    } else {
-      setSelectedDates([...selectedDates, dateString])
     }
+    // Removed the else clause that would add new dates
   }
 
   const handleRemoveDate = (dateToRemove: string) => {
@@ -137,12 +133,15 @@ export function EditDatesModal({
     const dateString = `${monthNames[currentMonthIndex]} ${day}, ${currentYear}`
     const isSelected = selectedDates.includes(dateString)
     const isTaken = takenDates.includes(dateString)
+    const isBlocked = blockedDates.includes(dateString)
 
     // Apply appropriate background color
     let style = {}
+    let cursorStyle = "cursor-default" // Default to non-clickable
 
     if (isSelected) {
-      style = { backgroundColor: "#CACACA" } // Updated gray for blocked dates
+      style = { backgroundColor: "#CACACA" } // Gray for blocked dates
+      cursorStyle = "cursor-pointer" // Clickable only if it's a blocked date
     } else if (isTaken) {
       style = { backgroundColor: "#B4CAEB80" } // Light blue with transparency for taken dates
     }
@@ -150,7 +149,7 @@ export function EditDatesModal({
     days.push(
       <div
         key={day}
-        className={`h-10 w-10 flex items-center justify-center cursor-pointer hover:bg-gray-100`}
+        className={`h-10 w-10 flex items-center justify-center ${cursorStyle} ${isSelected ? "hover:bg-gray-300" : ""}`}
         onClick={() => handleDateClick(day)}
         style={style}
       >
@@ -246,18 +245,22 @@ export function EditDatesModal({
           {/* Selection Section */}
           <div>
             <h2 className="text-2xl font-bold mb-4">Edit Blocked Dates</h2>
-            <p className="text-gray-700 mb-4">Kindly select your unavailable dates:</p>
+            <p className="text-gray-700 mb-4">Click on blocked dates to remove them:</p>
 
             {/* Selected Dates List */}
             <div className="space-y-2 mb-4 max-h-60 overflow-y-auto">
-              {selectedDates.map((date) => (
-                <div key={date} className="flex items-center justify-between border rounded-lg p-3">
-                  <span>{date}</span>
-                  <button onClick={() => handleRemoveDate(date)} className="text-red-400 hover:text-red-600">
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              ))}
+              {selectedDates.length === 0 ? (
+                <p className="text-gray-500 italic">No blocked dates</p>
+              ) : (
+                selectedDates.map((date) => (
+                  <div key={date} className="flex items-center justify-between border rounded-lg p-3">
+                    <span>{date}</span>
+                    <button onClick={() => handleRemoveDate(date)} className="text-red-400 hover:text-red-600">
+                      <Trash2 className="h-5 w-5" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
