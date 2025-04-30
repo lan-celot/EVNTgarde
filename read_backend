@@ -1,0 +1,3 @@
+install these para gumana
+  npm install pg
+  npm install typeorm reflect-metadata //If you want ORM support (optional, but recommended for TypeScript):
