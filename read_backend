@@ -1,3 +1,13 @@
 install these para gumana
   npm install pg
   npm install typeorm reflect-metadata //If you want ORM support (optional, but recommended for TypeScript):
+
+db.ts is our database
+nasa src/functions/db.ts yun database naten
+
+dapat ganun din yun credentials sa pgadmin nyo
+PGUSER=postgres
+PGHOST=localhost
+PGDATABASE=eletest
+PGPASSWORD=admin
+PGPORT=5433
