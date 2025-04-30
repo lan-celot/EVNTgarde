@@ -37,41 +37,40 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
+  
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const userId = userCredential.user.uid;
-
-      // Retrieve user data from Firestore
-      const userDoc = await getDoc(doc(db, "users", userId));
-      if (!userDoc.exists()) {
-        throw new Error("User data not found.");
+      const response = await fetch('/api/loginCustomer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const result = await response.json();
+  
+      if (!result.success) {
+        setFailedAttempts(failedAttempts + 1);
+        setError(
+          failedAttempts + 1 >= 3
+            ? "Login failed. Please check your credentials and try again."
+            : "Invalid Email/Invalid Password"
+        );
+        setLoading(false);
+        return;
       }
-
-      const userType = userDoc.data().userType;
-      let vendorType;
-      if (userType === "vendor") {
-        vendorType = userDoc.data().vendorType;
-      }
-
+  
       // Store authentication status and userType
       localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userType", userType); // Store userType in localStorage
-      localStorage.setItem("vendorType", vendorType);
-
+      localStorage.setItem("userType", result.user.userType);
+      localStorage.setItem("userId", result.user.id);
+  
       if (rememberMe) {
         localStorage.setItem("loginTimestamp", Date.now().toString());
       }
-
+  
       login();
-
+  
       // Redirect user based on userType
-      switch (userType) {
-        case "individual":
+      switch (result.user.userType) {
+        case "customer":
           navigate("/customer");
           break;
         case "organizer":
@@ -84,14 +83,7 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
           throw new Error("Invalid user type.");
       }
     } catch (err: any) {
-      const newFailedAttempts = failedAttempts + 1;
-      setFailedAttempts(newFailedAttempts);
-      // 3 failed attempts, generic message
-      if (newFailedAttempts >= 3) {
-        setError("Login failed. Please check your credentials and try again.");
-      } else {
-        setError("Invalid Email/Invalid Password");
-      }
+      setError("An error occurred during login. Please try again.");
     } finally {
       setLoading(false);
     }

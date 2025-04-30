@@ -151,8 +151,28 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         preferences,
       });
 
-      // Register user with Firebase
-      await registerUser(email, password, "individual", userData);
+      const response = await fetch('/api/registerCustomer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+          phoneNo: phoneNumber ? `+63${phoneNumber}` : undefined,
+          preferences,
+          customerType: "individual",
+        }),
+      });
+      const result = await response.json();
+      if (!result.success) {
+        setError(result.message);
+        setIsLoading(false);
+        return;
+      }
+      // Success: clear storage, navigate, etc.
+      sessionStorage.removeItem("individualRegistration");
+      navigate("/login");
 
       // Clear session storage
       sessionStorage.removeItem("individualRegistration");
