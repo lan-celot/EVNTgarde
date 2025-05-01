@@ -20,7 +20,7 @@ interface RequestBody {
 
 // Registration endpoint
 router.post('/registerCustomer', async (req: CustomRequest<RequestBody>, res: CustomResponse) => {
-  const { firstName, lastName, email, password, phoneNo, preferences, customerType } = req.body;
+  const { firstName, middleName, lastName, email, password, phoneNo, preferences, customerType } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
