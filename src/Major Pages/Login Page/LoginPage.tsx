@@ -33,58 +33,58 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-        const response = await fetch('http://localhost:5000/api/loginCustomer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+      const response = await fetch("http://localhost:5000/api/loginCustomer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!result.success) {
-            setFailedAttempts(failedAttempts + 1);
-            setError(
-                failedAttempts + 1 >= 3
-                    ? "Login failed. Please check your credentials and try again."
-                    : "Invalid Email/Invalid Password"
-            );
-            setLoading(false);
-            return;
-        }
-
-        // Store authentication status and userType
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("userType", result.user.userType);
-        localStorage.setItem("userId", result.user.id);
-
-        if (rememberMe) {
-            localStorage.setItem("loginTimestamp", Date.now().toString());
-        }
-
-        login();
-
-        // Redirect user based on userType
-        switch (result.user.userType) {
-            case "customer":
-                navigate("/customer");
-                break;
-            case "organizer":
-                navigate("/organizer");
-                break;
-            case "vendor":
-                navigate("/vendor");
-                break;
-            default:
-                throw new Error("Invalid user type.");
-        }
-    } catch (err: any) {
-        setError("An error occurred during login. Please try again.");
-    } finally {
+      if (!result.success) {
+        setFailedAttempts(failedAttempts + 1);
+        setError(
+          failedAttempts + 1 >= 3
+            ? "Login failed. Please check your credentials and try again."
+            : "Invalid Email/Invalid Password"
+        );
         setLoading(false);
+        return;
+      }
+
+      // Store authentication status and userType
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userType", result.user.userType);
+      localStorage.setItem("userId", result.user.id);
+
+      if (rememberMe) {
+        localStorage.setItem("loginTimestamp", Date.now().toString());
+      }
+
+      login();
+
+      // Redirect user based on userType
+      switch (result.user.userType) {
+        case "customer":
+          navigate("/customer");
+          break;
+        case "organizer":
+          navigate("/organizer");
+          break;
+        case "vendor":
+          navigate("/vendor");
+          break;
+        default:
+          throw new Error("Invalid user type.");
+      }
+    } catch (err: any) {
+      setError("An error occurred during login. Please try again.");
+    } finally {
+      setLoading(false);
     }
-};
+  };
 
   const handleGoogleLogin = async () => {
     setLoading(true);
