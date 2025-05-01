@@ -1,6 +1,6 @@
 // src/api/loginCustomer.ts
 import type { NextApiRequest, NextApiResponse } from 'next'; // or your framework's type
-import { query } from '../functions/db';
+import { query } from '../../backend/db';
 import bcrypt from 'bcryptjs';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

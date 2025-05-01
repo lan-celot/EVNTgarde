@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/OrganizerLogo.png";
 import {
-  registerUser,
   signInWithGoogle,
   signInWithYahoo,
 } from "../../functions/authFunctions";
-import { createUserAccount } from "../../functions/userAccount";
 import { useTheme } from "../../functions/ThemeContext";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillYahoo } from "react-icons/ai";
+
 
 const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const navigate = useNavigate();
@@ -85,6 +84,8 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     navigate("/register/individual/step2");
   };
 
+  
+
   // Handle step 2 submission (previously step 1)
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,15 +144,7 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     setIsLoading(true);
 
     try {
-      // Create user account with data from both parts
-      const userData = createUserAccount("individual", email, {
-        firstName,
-        lastName,
-        phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
-        preferences,
-      });
-
-      const response = await fetch('/api/registerCustomer', {
+      const response = await fetch('http://localhost:5000/api/registerCustomer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -170,14 +163,9 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         setIsLoading(false);
         return;
       }
+
       // Success: clear storage, navigate, etc.
       sessionStorage.removeItem("individualRegistration");
-      navigate("/login");
-
-      // Clear session storage
-      sessionStorage.removeItem("individualRegistration");
-
-      // Navigate to login page
       navigate("/login");
     } catch (err: any) {
       setError(err.message);
@@ -633,5 +621,7 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     </div>
   );
 };
+
+
 
 export default IndividualRegistration;
