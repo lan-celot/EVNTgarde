@@ -2,12 +2,15 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import  pool  from '../db';   
 import { CustomRequest, CustomResponse } from '../types/express';
+import { query } from '../db';
+import { v4 as uuidv4 } from 'uuid'; // Install with: npm install uuid
 
 const router = express.Router();
 
 interface RequestBody {
   firstName: string;
   lastName: string;
+  middleName?: string;
   email: string;
   password: string;
   phoneNo?: string;
@@ -22,10 +25,10 @@ router.post('/registerCustomer', async (req: CustomRequest<RequestBody>, res: Cu
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
       `INSERT INTO Customer_Account_Data
-        (Customer_First_Name, Customer_Last_Name, Customer_Email, Customer_Phone_No, Customer_Password, Customer_Type)
-      VALUES ($1, $2, $3, $4, $5, $6)
+        (Customer_First_Name, Customer_Middle_Name, Customer_Last_Name, Customer_Email, Customer_Phone_No, Customer_Password, Customer_Type)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING Customer_ID`,
-      [firstName, lastName, email, phoneNo || null, hashedPassword, customerType]
+      [firstName, middleName || null, lastName, email, phoneNo || null, hashedPassword, customerType]
     );
     res.status(201).json({ success: true, customerId: result.rows[0].customer_id });
   } catch (error: any) {
