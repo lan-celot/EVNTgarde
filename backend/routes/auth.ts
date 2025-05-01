@@ -28,7 +28,7 @@ router.post('/registerCustomer', async (req: CustomRequest<RequestBody>, res: Cu
         (Customer_First_Name, Customer_Middle_Name, Customer_Last_Name, Customer_Email, Customer_Phone_No, Customer_Password, Customer_Type)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING Customer_ID`,
-      [firstName, middleName || null, lastName, email, phoneNo || null, hashedPassword, customerType]
+      [firstName, null, lastName, email, phoneNo || null, hashedPassword, customerType]
     );
     res.status(201).json({ success: true, customerId: result.rows[0].customer_id });
   } catch (error: any) {
