@@ -39,7 +39,7 @@ const Dashboard = () => {
     </div>
   )
 
-  // Organizer POV content (original implementation from the code)
+  
   const OrganizerView = () => {
     return (
       <div className="p-4 space-y-6">
@@ -157,7 +157,7 @@ const Dashboard = () => {
     );
   };
 
-  // Customer POV content (updated to match Organizer styling)
+
   const CustomerView = () => {
     return (
       <div className="p-4 space-y-6">
@@ -220,7 +220,7 @@ const Dashboard = () => {
     );
   };
 
-  // Company Vendor POV content (updated to match Organizer styling)
+ 
   const CompanyVendorView = () => {
     return (
       <div className="p-4 space-y-6">
@@ -297,7 +297,7 @@ const Dashboard = () => {
     );
   };
 
-  // Solo Vendor POV content (updated to match Organizer styling)
+
   const SoloVendorView = () => {
     return (
       <div className="p-4 space-y-6">
@@ -374,7 +374,6 @@ const Dashboard = () => {
     );
   };
 
-  // Header section based exactly on screenshots
   const renderHeader = () => (
     <div className="mb-6">
       <h1 className="text-3xl font-bold text-gray-800 mb-4">Dashboard</h1>
