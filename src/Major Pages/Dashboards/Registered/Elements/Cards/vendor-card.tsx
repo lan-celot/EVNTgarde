@@ -101,14 +101,15 @@ export function VendorCard({
 					{/* HIRE Button */}
 					{showHireButton && (
 					<Button
-						className="bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-md w-full py-2 font-semibold mt-2"
-						onClick={(e) => {
-						e.stopPropagation(); // Prevent card click event
-						alert(`Hiring ${name}. No page yet`);
-						}}
-					>
-						Hire
-					</Button>
+					className="bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-md w-full py-2 font-semibold mt-2"
+					onClick={(e) => {
+						e.stopPropagation(); 
+						navigate(`/organizers/${id}`); 
+					}}
+					
+				  >
+					Hire
+				  </Button>
 					)}
 					</div>
 				</div>

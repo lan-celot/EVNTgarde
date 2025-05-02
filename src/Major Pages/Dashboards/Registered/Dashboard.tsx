@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { BarChart3, Briefcase, Search } from "lucide-react";
 import ActivityOverview from "./Elements/ActivityOverview";
 import EventSection from "./Elements/EventsSection";
 import Explore from "./Elements/Explore";
+
 
 const tabs = [
   {
@@ -14,8 +16,16 @@ const tabs = [
   { key: "explore", label: "Explore", icon: <Search size={16} /> },
 ];
 
+
 const Dashboard: React.FC = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("activity");
+
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -31,6 +41,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
+    
     <div className="flex min-h-screen">
       <div
         className="flex flex-1 flex-col transition-all duration-300"
