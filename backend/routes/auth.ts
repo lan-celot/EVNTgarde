@@ -102,71 +102,72 @@ interface VendorLoginRequestBody {
 }
 
 // Login endpoint
-// Login for customer
+// Login for customer and vendor
 router.post('/loginCustomer', async (req: CustomRequest<LoginRequestBody>, res: CustomResponse) => {
   const { email, password } = req.body;
+
   try {
-    const result = await pool.query(
+    // Step 1: Try Customer login
+    const customerResult = await pool.query(
       `SELECT * FROM Customer_Account_Data WHERE Customer_Email = $1`,
       [email]
     );
-    if (result.rows.length === 0) {
-      return res.status(401).json({ success: false, message: 'Invalid email or password.' });
-    }
-    const user = result.rows[0];
-    const isMatch = await bcrypt.compare(password, user.customer_password);
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Invalid email or password.' });
-    }
-    res.status(200).json({
-      success: true,
-      user: {
-        id: user.customer_id,
-        email: user.customer_email,
-        userType: user.customer_type,
-        firstName: user.customer_first_name,
-        lastName: user.customer_last_name,
+
+    if (customerResult.rows.length > 0) {
+      const customer = customerResult.rows[0];
+      const isMatch = await bcrypt.compare(password, customer.customer_password);
+
+      if (!isMatch) {
+        return res.status(401).json({ success: false, message: 'Invalid email or password.' });
       }
-    });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
 
-// Login for vendor
-router.post('/loginVendor', async (req: CustomRequest<VendorLoginRequestBody>, res: CustomResponse) => {
-  const { vendorEmail, vendorPassword } = req.body;
+      return res.status(200).json({
+        success: true,
+        user: {
+          id: customer.customer_id,
+          email: customer.customer_email,
+          userType: customer.customer_type,
+          firstName: customer.customer_first_name,
+          lastName: customer.customer_last_name,
+        }
+      });
+    }
 
-  try {
-    const result = await pool.query(
-      `SELECT * FROM Vendor_Account_Data WHERE vendor_email = $1`,
-      [vendorEmail]
+    // Step 2: Try Vendor login
+    const vendorResult = await pool.query(
+      `SELECT * FROM Vendor_Account_Data WHERE Vendor_Email = $1`,
+      [email]
     );
 
-    if (result.rows.length === 0) {
+    if (vendorResult.rows.length === 0) {
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
 
-    const vendor = result.rows[0];
-    const isMatch = await bcrypt.compare(vendorPassword, vendor.vendor_password);
+    const vendor = vendorResult.rows[0];
+    const isVendorMatch = await bcrypt.compare(password, vendor.vendor_password);
 
-    if (!isMatch) {
+    if (!isVendorMatch) {
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      vendor: {
+      user: {
         id: vendor.vendor_id,
         email: vendor.vendor_email,
-        name: vendor.vendor_business_name,
-        type: vendor.vendor_type,
-      },
+        userType: 'vendor',
+        businessName: vendor.vendor_business_name,
+        location: vendor.vendor_location,
+        reviewRating: vendor.vendor_review_rating,
+        logoUrl: vendor.vendor_logo_url,
+      }
     });
+
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 
 export default router;
