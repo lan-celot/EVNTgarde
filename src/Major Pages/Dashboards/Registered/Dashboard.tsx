@@ -5,7 +5,6 @@ import ActivityOverview from "./Elements/ActivityOverview";
 import EventSection from "./Elements/EventsSection";
 import Explore from "./Elements/Explore";
 
-
 const tabs = [
   {
     key: "activity",
@@ -15,7 +14,6 @@ const tabs = [
   { key: "services", label: "My Services", icon: <Briefcase size={16} /> },
   { key: "explore", label: "Explore", icon: <Search size={16} /> },
 ];
-
 
 const Dashboard: React.FC = () => {
   const location = useLocation();
@@ -41,7 +39,6 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    
     <div className="flex min-h-screen">
       <div
         className="flex flex-1 flex-col transition-all duration-300"
