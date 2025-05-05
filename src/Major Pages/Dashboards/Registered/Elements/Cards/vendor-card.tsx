@@ -88,28 +88,29 @@ export function VendorCard({
 					</div>
 
 					{/* Price and Ratings */}
-					<div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-						<div className="flex items-center gap-1 text-sm">
-							<span className="font-medium text-gray-900 dark:text-white">
-								PHP {price}
-							</span>
-							<span className="text-gray-500 dark:text-gray-400">
-								• {ratings} ratings
-							</span>
-						</div>
+					<div className="mt-2 flex flex-col gap-3">
+					<div className="flex items-center gap-1 text-sm">
+						<span className="font-medium text-gray-900 dark:text-white">
+						PHP {price}
+						</span>
+						<span className="text-gray-500 dark:text-gray-400">
+						• {ratings} ratings
+						</span>
+					</div>
 
-						{/* HIRE Button */}
-						{showHireButton && (
-							<Button
-								className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
-								onClick={(e) => {
-									e.stopPropagation(); // Prevent card click event
-									alert(`Hiring ${name}`);
-								}}
-							>
-								HIRE
-							</Button>
-						)}
+					{/* HIRE Button */}
+					{showHireButton && (
+					<Button
+					className="bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-md w-full py-2 font-semibold mt-2"
+					onClick={(e) => {
+						e.stopPropagation(); 
+						navigate(`/organizers/${id}`); 
+					}}
+					
+				  >
+					Hire
+				  </Button>
+					)}
 					</div>
 				</div>
 			</Card>
