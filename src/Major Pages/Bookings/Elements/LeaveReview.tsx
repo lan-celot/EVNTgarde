@@ -28,8 +28,8 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
   }
 
   return (
-    <div className="absolute top-0 left-0 right-0 z-50 flex items-start justify-center p-10 overflow-y-auto">
-      <div className="bg-white rounded-md w-full max-w-2xl p-8 shadow-lg relative">
+    <div className="fixed inset-0 z-50 bg-gray-800/40 backdrop-blur-md flex items-center justify-center px-4 py-10 overflow-y-auto">
+      <div className="bg-white rounded-md w-full max-w-2xl p-8 shadow-xl relative max-h-[90vh] overflow-y-auto">
         <button className="absolute top-4 right-4" onClick={onClose}>
           <X className="w-6 h-6 text-gray-600" />
         </button>
@@ -97,7 +97,7 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
               />
               <label htmlFor="fileUpload" className="cursor-pointer">
                 <div className="flex flex-col items-center">
-                  <UploadCloud className="w-8 h-8 mb-2 text-blue-800" />
+                  <UploadCloud className="w-8 h-8 mb-2 text-blue-600" />
                   <span className="text-sm font-medium text-black">
                     Browse and choose the files you want to upload from your device
                   </span>
@@ -105,8 +105,8 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
                     We'd love to see the moments you captured—upload your favorite shot here!
                   </span>
                   <div className="mt-4">
-                    <div className="w-8 h-8 bg-blue-800 rounded-md flex items-center justify-center">
-                    <span className="text-white text-xl leading-none">+</span>
+                    <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
+                      <span className="text-white text-xl leading-none">+</span>
                     </div>
                   </div>
                 </div>
@@ -122,7 +122,7 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
               Cancel
             </button>
             <button
-              className="bg-blue-800 text-white rounded-md px-6 py-2 hover:bg-blue-700"
+              className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700"
             >
               Post
             </button>
