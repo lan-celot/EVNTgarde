@@ -1,5 +1,6 @@
-import type React from "react"
+import React, { useState } from "react"
 import { Facebook, Instagram, Linkedin, Globe } from "lucide-react"
+import LeaveReview from "./LeaveReview"
 
 interface StatusProps {
   activeStatus?: "Pending" | "Upcoming" | "Past"
@@ -34,6 +35,7 @@ const Status: React.FC<StatusProps> = ({
   onMarkCompleted,
   onShareExperience,
 }) => {
+  const [showReviewModal, setShowReviewModal] = useState(false)
 
   const dates = {
     requestDate: "Aug 1, 2025",
@@ -48,8 +50,8 @@ const Status: React.FC<StatusProps> = ({
     ? activeStatus === "Pending"
       ? "awaiting"
       : activeStatus === "Upcoming"
-        ? "accepted"
-        : "completed"
+      ? "accepted"
+      : "completed"
     : "awaiting"
 
   const renderOrganizerInfo = () => {
@@ -87,7 +89,6 @@ const Status: React.FC<StatusProps> = ({
     )
   }
 
-  // Render the status section based on current status
   const renderStatusContent = () => {
     switch (displayStatus) {
       case "awaiting":
@@ -159,7 +160,8 @@ const Status: React.FC<StatusProps> = ({
                 <button
                   className="w-full border border-gray-300 rounded-md py-3 px-4 text-black font-medium hover:bg-gray-300"
                   onClick={onMarkCompleted}
-                >Mark Event as Completed
+                >
+                  Mark Event as Completed
                 </button>
               </div>
             </div>
@@ -193,7 +195,7 @@ const Status: React.FC<StatusProps> = ({
                 </div>
                 <button
                   className="w-full bg-blue-600 rounded-md py-3 px-4 text-white font-medium hover:bg-blue-800"
-                  onClick={onShareExperience}
+                  onClick={() => setShowReviewModal(true)}
                 >
                   Share Experience
                 </button>
@@ -206,7 +208,12 @@ const Status: React.FC<StatusProps> = ({
     }
   }
 
-  return <div className="flex flex-col gap-5 pr-5">{renderStatusContent()}</div>
+  return (
+    <div className="flex flex-col gap-5 pr-5">
+      {renderStatusContent()}
+      {showReviewModal && <LeaveReview onClose={() => setShowReviewModal(false)} />}
+    </div>
+  )
 }
 
 export default Status
