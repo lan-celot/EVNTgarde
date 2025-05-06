@@ -5,7 +5,15 @@ import LeaveReview from "./LeaveReview"
 interface StatusProps {
   activeStatus?: "Pending" | "Upcoming" | "Past" | "Rejected"
   selectedBooking?: any
+  userRole?: "organizer" | "individual" | "vendor"
   organizer?: {
+    name?: string
+    role?: string
+    email?: string
+    phone?: string
+    avatar?: string
+  }
+  customer?: {
     name?: string
     role?: string
     email?: string
@@ -19,13 +27,17 @@ interface StatusProps {
     website?: string
   }
   onMarkCompleted?: () => void
+  onAccept?: () => void
+  onReject?: () => void
   onShareExperience?: () => void
 }
 
 const Status: React.FC<StatusProps> = ({
   activeStatus,
   selectedBooking,
+  userRole,
   organizer,
+  customer,
   socialLinks = {
     facebook: "@linktofacebook",
     instagram: "@linktoinstagram",
@@ -33,17 +45,19 @@ const Status: React.FC<StatusProps> = ({
     website: "@linktowebsite",
   },
   onMarkCompleted,
+  onAccept,
+  onReject,
   onShareExperience,
 }) => {
   const [showReviewModal, setShowReviewModal] = useState(false)
 
   const dates = {
-    requestDate: "Aug 1, 2025",
-    acceptedDate: "Aug 10, 2025",
-    paymentDueDate: "Sept 1, 2025",
-    paidDate: "Sept 1, 2025",
-    paymentDate: "Aug 1, 2025",
-    completedDate: "Aug 10, 2025",
+    requestDate: selectedBooking?.requestDate || "Aug 1, 2025",
+    acceptedDate: selectedBooking?.acceptedDate || "Aug 10, 2025",
+    paymentDueDate: selectedBooking?.paymentDueDate || "Sept 1, 2025",
+    paidDate: selectedBooking?.paidDate || "Sept 1, 2025",
+    paymentDate: selectedBooking?.paymentDate || "Aug 1, 2025",
+    completedDate: selectedBooking?.completedDate || "Aug 10, 2025",
   }
 
   const displayStatus = activeStatus
@@ -59,14 +73,16 @@ const Status: React.FC<StatusProps> = ({
     : "awaiting"
 
   const renderOrganizerInfo = () => {
+    const displayInfo = userRole === "organizer" ? customer : organizer
+
     return (
       <div className="border border-gray-300 rounded-md p-4 bg-white">
         <div className="flex items-center gap-4 mb-4">
-          {organizer?.avatar ? (
+          {displayInfo?.avatar ? (
             <div className="w-16 h-16 rounded-full overflow-hidden">
               <img
-                src={organizer.avatar || "/placeholder.svg"}
-                alt={organizer?.name || "Organizer"}
+                src={displayInfo.avatar || "/placeholder.svg"}
+                alt={displayInfo?.name || "User"}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -74,19 +90,19 @@ const Status: React.FC<StatusProps> = ({
             <div className="w-16 h-16 rounded-full bg-blue-200"></div>
           )}
           <div>
-            <h1 className="text-2xl font-bold">{organizer?.name || "Organizer Name"}</h1>
-            <p className="text-gray-500">{organizer?.role || "Organizer"}</p>
+            <h1 className="text-2xl font-bold">{displayInfo?.name || "User Name"}</h1>
+            <p className="text-gray-500">{displayInfo?.role || "User"}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <div>
             <h3 className="font-semibold">Email</h3>
-            <p className="text-gray-500">{organizer?.email || "santo.tomas@gmail.com"}</p>
+            <p className="text-gray-500">{displayInfo?.email || "email@example.com"}</p>
           </div>
           <div>
             <h3 className="font-semibold">Phone</h3>
-            <p className="text-gray-500">{organizer?.phone || "0919-683-2396"}</p>
+            <p className="text-gray-500">{displayInfo?.phone || "123-456-7890"}</p>
           </div>
         </div>
       </div>
@@ -102,31 +118,51 @@ const Status: React.FC<StatusProps> = ({
             <div className="border border-gray-300 rounded-md p-4 bg-gray-50">
               <h2 className="text-3xl font-bold mb-2">Awaiting Response</h2>
               <p className="text-gray-500">
-                You have booked this organizer, please wait for the organizer to respond to your event request.
+                {userRole === "organizer" 
+                  ? "You have received a booking request. Please review and respond."
+                  : "You have booked this organizer, please wait for the organizer to respond to your event request."}
               </p>
+              {userRole === "organizer" && (
+                <div className="mt-4 flex gap-3">
+                  <button
+                    className="flex-1 bg-green-600 text-white rounded-md py-2 px-4 hover:bg-green-700"
+                    onClick={onAccept}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    className="flex-1 bg-red-600 text-white rounded-md py-2 px-4 hover:bg-red-700"
+                    onClick={onReject}
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
             </div>
 
-            <div className="border border-gray-300 rounded-md p-4 bg-white">
-              <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <Facebook className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-500">{socialLinks.facebook}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Instagram className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-500">{socialLinks.instagram}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Linkedin className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-500">{socialLinks.linkedin}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Globe className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-500">{socialLinks.website}</span>
+            {userRole !== "organizer" && (
+              <div className="border border-gray-300 rounded-md p-4 bg-white">
+                <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Facebook className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-500">{socialLinks.facebook}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Instagram className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-500">{socialLinks.instagram}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Linkedin className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-500">{socialLinks.linkedin}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-500">{socialLinks.website}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </>
         )
       case "accepted":
@@ -199,7 +235,13 @@ const Status: React.FC<StatusProps> = ({
                 </div>
                 <button
                   className="w-full bg-blue-600 rounded-md py-3 px-4 text-white font-medium hover:bg-blue-800"
-                  onClick={() => setShowReviewModal(true)}
+                  onClick={() => {
+                    if (onShareExperience) {
+                      onShareExperience();
+                    } else {
+                      setShowReviewModal(true);
+                    }
+                  }}
                 >
                   Share Experience
                 </button>
