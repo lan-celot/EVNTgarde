@@ -97,7 +97,7 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
               />
               <label htmlFor="fileUpload" className="cursor-pointer">
                 <div className="flex flex-col items-center">
-                  <UploadCloud className="w-8 h-8 mb-2 text-blue-600" />
+                  <UploadCloud className="w-8 h-8 mb-2 text-blue-800" />
                   <span className="text-sm font-medium text-black">
                     Browse and choose the files you want to upload from your device
                   </span>
@@ -105,7 +105,7 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
                     We'd love to see the moments you captured—upload your favorite shot here!
                   </span>
                   <div className="mt-4">
-                    <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
+                    <div className="w-8 h-8 bg-blue-800 rounded-md flex items-center justify-center">
                       <span className="text-white text-xl leading-none">+</span>
                     </div>
                   </div>
@@ -114,15 +114,15 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-4 mt-4">
+          <div className="grid grid-cols-2 gap-4 mt-4">
             <button
               onClick={onClose}
-              className="border border-red-500 text-red-500 rounded-md px-6 py-2 hover:bg-red-50"
+              className="w-full border border-red-400 text-red-500 font-medium rounded-md px-4 py-2 hover:bg-red-50"
             >
               Cancel
             </button>
             <button
-              className="bg-blue-600 text-white rounded-md px-6 py-2 hover:bg-blue-700"
+              className="w-full bg-blue-700 text-white font-medium rounded-md px-4 py-2 hover:bg-blue-800"
             >
               Post
             </button>
