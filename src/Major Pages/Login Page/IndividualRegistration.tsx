@@ -1,5 +1,3 @@
-"use client"
-
 import { Eye, EyeOff } from "lucide-react"
 import type React from "react"
 import { useState, useEffect } from "react"
@@ -11,12 +9,6 @@ import { FcGoogle } from "react-icons/fc"
 import { AiFillYahoo } from "react-icons/ai"
 
 const IndividualRegistration: React.FC = () => {
-  // Step 1 is role selection
-  // Step 1.25 is welcome screen
-  // Step 1.5 is event preferences selection
-  // Step 2 is personal info (name, phone)
-  // Step 2.5 is address info (new step)
-  // Step 3 is account creation
   const [currentStep, setCurrentStep] = useState(1)
   const { isDarkMode } = useTheme()
 
@@ -668,7 +660,6 @@ const IndividualRegistration: React.FC = () => {
               </p>
             </>
           ) : currentStep === 2 ? (
-            /* Step 2 Form - Using the version 1 implementation */
             <>
               <h2 className="text-4xl font-bold text-blue-600 mt-30 mb-6">Sign Up</h2>
               <p className="text-sm text-blue-600 mb-4">Step 1 of 3</p>
