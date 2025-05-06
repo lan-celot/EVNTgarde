@@ -1,12 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, Calendar, Trash2 } from "lucide-react"
+import { X } from "lucide-react"
 
-interface BlockDatesModalProps {
+interface ViewDatesModalProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (dates: string[]) => void
   initialMonth?: number // Month index (0-11)
   initialYear?: number
   blockedDates: string[] // Already blocked dates
@@ -39,26 +38,22 @@ const monthNames = [
   "December",
 ]
 
-export function BlockDatesModal({
+export function ViewDatesModal({
   isOpen,
   onClose,
-  onConfirm,
   initialMonth = new Date().getMonth(), // Default to current month index
   initialYear = new Date().getFullYear(), // Default to current year
   blockedDates = [],
   takenDates = [],
-}: BlockDatesModalProps) {
-  const [newlySelectedDates, setNewlySelectedDates] = useState<string[]>([])
+}: ViewDatesModalProps) {
   const [currentMonthIndex, setCurrentMonthIndex] = useState(initialMonth)
   const [currentYear, setCurrentYear] = useState(initialYear)
-  const [newDate, setNewDate] = useState("")
 
-  // Reset the month, year, and selections when the modal opens
+  // Reset the month and year when the modal opens
   useEffect(() => {
     if (isOpen) {
       setCurrentMonthIndex(initialMonth)
       setCurrentYear(initialYear)
-      setNewlySelectedDates([])
     }
   }, [isOpen, initialMonth, initialYear])
 
@@ -80,33 +75,6 @@ export function BlockDatesModal({
   }, [isOpen, onClose])
 
   if (!isOpen) return null
-
-  const handleDateClick = (day: number) => {
-    const dateString = `${monthNames[currentMonthIndex]} ${day}, ${currentYear}`
-
-    // Skip if date is already blocked or taken
-    if (blockedDates.includes(dateString) || takenDates.includes(dateString)) {
-      return
-    }
-
-    // Toggle selection for new dates
-    if (newlySelectedDates.includes(dateString)) {
-      setNewlySelectedDates(newlySelectedDates.filter((date) => date !== dateString))
-    } else {
-      setNewlySelectedDates([...newlySelectedDates, dateString])
-    }
-  }
-
-  const handleAddDate = () => {
-    if (newDate && !newlySelectedDates.includes(newDate) && !blockedDates.includes(newDate)) {
-      setNewlySelectedDates([...newlySelectedDates, newDate])
-      setNewDate("")
-    }
-  }
-
-  const handleRemoveDate = (dateToRemove: string) => {
-    setNewlySelectedDates(newlySelectedDates.filter((date) => date !== dateToRemove))
-  }
 
   const handlePrevMonth = () => {
     if (currentMonthIndex === 0) {
@@ -130,12 +98,6 @@ export function BlockDatesModal({
     }
   }
 
-  const handleConfirm = () => {
-    // Combine existing blocked dates with newly selected dates
-    const updatedBlockedDates = [...blockedDates, ...newlySelectedDates]
-    onConfirm(updatedBlockedDates)
-  }
-
   // Generate calendar days
   const days = []
   const daysInMonth = getDaysInMonth(currentMonthIndex, currentYear)
@@ -149,28 +111,27 @@ export function BlockDatesModal({
   // Add the actual days
   for (let day = 1; day <= daysInMonth; day++) {
     const dateString = `${monthNames[currentMonthIndex]} ${day}, ${currentYear}`
-    const isAlreadyBlocked = blockedDates.includes(dateString)
-    const isNewlySelected = newlySelectedDates.includes(dateString)
+    const isBlocked = blockedDates.includes(dateString)
     const isTaken = takenDates.includes(dateString)
+    const currentDate = new Date()
+    const isToday =
+      day === currentDate.getDate() &&
+      currentMonthIndex === currentDate.getMonth() &&
+      currentYear === currentDate.getFullYear()
 
     // Apply appropriate background color
     let style = {}
 
-    if (isAlreadyBlocked) {
-      style = { backgroundColor: "#CACACA" } // Updated gray for blocked dates
-    } else if (isNewlySelected) {
-      style = { backgroundColor: "#FFE990" } // Updated yellow for newly selected dates
+    if (isToday) {
+      style = { backgroundColor: "#3061AD", color: "white" }
+    } else if (isBlocked) {
+      style = { backgroundColor: "#CACACA" } // Gray for blocked dates
     } else if (isTaken) {
       style = { backgroundColor: "#B4CAEB80" } // Light blue with transparency for taken dates
     }
 
     days.push(
-      <div
-        key={day}
-        className={`h-10 w-10 flex items-center justify-center cursor-pointer hover:bg-gray-100`}
-        onClick={() => handleDateClick(day)}
-        style={style}
-      >
+      <div key={day} className="h-10 w-10 flex items-center justify-center" style={style}>
         {day}
       </div>,
     )
@@ -183,6 +144,13 @@ export function BlockDatesModal({
   for (let i = 0; i < remainingCells; i++) {
     days.push(<div key={`empty-end-${i}`} className="h-10"></div>)
   }
+
+  // Combine all dates for display
+  const allDates = [...takenDates, ...blockedDates].sort((a, b) => {
+    const dateA = new Date(a)
+    const dateB = new Date(b)
+    return dateA.getTime() - dateB.getTime()
+  })
 
   return (
     <div
@@ -250,73 +218,57 @@ export function BlockDatesModal({
             {/* Legend */}
             <div className="mt-4 flex flex-wrap gap-4">
               <div className="flex items-center">
+                <div className="w-4 h-4 mr-2" style={{ backgroundColor: "#3061AD" }}></div>
+                <span className="text-xs text-gray-600">Today</span>
+              </div>
+              <div className="flex items-center">
                 <div className="w-4 h-4 mr-2" style={{ backgroundColor: "#B4CAEB80" }}></div>
                 <span className="text-xs text-gray-600">Taken</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-4 mr-2" style={{ backgroundColor: "#CACACA" }}></div>
-                <span className="text-xs text-gray-600">Blocked</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 mr-2" style={{ backgroundColor: "#FFE990" }}></div>
-                <span className="text-xs text-gray-600">Selected</span>
+                <span className="text-xs text-gray-600">Unavailable</span>
               </div>
             </div>
           </div>
 
-          {/* Selection Section */}
+          {/* Dates List Section */}
           <div>
-            <h2 className="text-2xl font-bold mb-4">Block Dates</h2>
-            <p className="text-gray-700 mb-4">Kindly select your unavailable dates:</p>
+            <h2 className="text-2xl font-bold mb-4">Event Dates</h2>
+            <p className="text-gray-700 mb-4">These dates are either booked or unavailable:</p>
 
-            {/* Selected Dates List - Only shows newly selected dates */}
+            {/* Dates List */}
             <div className="space-y-2 mb-4 max-h-60 overflow-y-auto">
-              {newlySelectedDates.length === 0 ? (
-                <p className="text-gray-500 italic">No new dates selected</p>
+              {allDates.length === 0 ? (
+                <p className="text-gray-500 italic">No event dates</p>
               ) : (
-                newlySelectedDates.map((date) => (
+                allDates.map((date) => (
                   <div key={date} className="flex items-center justify-between border rounded-lg p-3">
                     <span>{date}</span>
-                    <button onClick={() => handleRemoveDate(date)} className="text-red-400 hover:text-red-600">
-                      <Trash2 className="h-5 w-5" />
-                    </button>
+                    <span
+                      className="text-xs px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: takenDates.includes(date) ? "#B4CAEB80" : "#CACACA",
+                        color: "#333",
+                      }}
+                    >
+                      {takenDates.includes(date) ? "Booked" : "Unavailable"}
+                    </span>
                   </div>
                 ))
               )}
             </div>
-
-            {/* Add New Date Input */}
-            <div className="relative mb-4">
-              <input
-                type="text"
-                placeholder="Select Date/s"
-                className="w-full p-3 pr-10 border rounded-lg"
-                value={newDate}
-                onChange={(e) => setNewDate(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleAddDate()
-                  }
-                }}
-              />
-              <button
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                onClick={handleAddDate}
-              >
-                <Calendar className="h-5 w-5" />
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* Confirm Button */}
+        {/* Close Button */}
         <div className="mt-6">
           <button
-            onClick={handleConfirm}
+            onClick={onClose}
             className="w-full md:w-auto text-white py-3 px-6 rounded-lg hover:opacity-90"
             style={{ backgroundColor: "#3061AD" }}
           >
-            Confirm Dates
+            Close
           </button>
         </div>
       </div>

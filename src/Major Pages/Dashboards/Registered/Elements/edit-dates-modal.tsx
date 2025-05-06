@@ -43,8 +43,8 @@ export function EditDatesModal({
   isOpen,
   onClose,
   onUpdate,
-  initialMonth = 3, // Default to April (index 3)
-  initialYear = 2025,
+  initialMonth = new Date().getMonth(), // Default to current month index
+  initialYear = new Date().getFullYear(), // Default to current year
   blockedDates = [],
   takenDates = [],
 }: EditDatesModalProps) {
