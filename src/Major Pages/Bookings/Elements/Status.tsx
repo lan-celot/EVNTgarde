@@ -3,7 +3,7 @@ import { Facebook, Instagram, Linkedin, Globe } from "lucide-react"
 import LeaveReview from "./LeaveReview"
 
 interface StatusProps {
-  activeStatus?: "Pending" | "Upcoming" | "Past"
+  activeStatus?: "Pending" | "Upcoming" | "Past" | "Rejected"
   selectedBooking?: any
   organizer?: {
     name?: string
@@ -51,7 +51,11 @@ const Status: React.FC<StatusProps> = ({
       ? "awaiting"
       : activeStatus === "Upcoming"
       ? "accepted"
-      : "completed"
+      : activeStatus === "Past"
+      ? "completed"
+      : activeStatus === "Rejected"
+      ? "rejected"
+      : "awaiting"
     : "awaiting"
 
   const renderOrganizerInfo = () => {
@@ -198,6 +202,34 @@ const Status: React.FC<StatusProps> = ({
                   onClick={() => setShowReviewModal(true)}
                 >
                   Share Experience
+                </button>
+              </div>
+            </div>
+          </>
+        )
+      case "rejected":
+        return (
+          <>
+            {renderOrganizerInfo()}
+            <div className="border border-gray-300 rounded-md overflow-hidden">
+              <div className="bg-red-700 p-6 text-white">
+                <h2 className="text-3xl font-bold mb-2">Rejected</h2>
+                <p>The event proposal has been rejected, and will not proceed to event planning.</p>
+              </div>
+              <div className="p-4 space-y-4 bg-white">
+                <div>
+                  <h3 className="text-lg font-semibold">Request Date</h3>
+                  <p className="text-gray-500">{dates.requestDate}</p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Date Rejected</h3>
+                  <p className="text-gray-500">Aug 2, 2025</p>
+                </div>
+                <button
+                  className="w-full bg-blue-600 rounded-md py-3 px-4 text-white font-medium hover:bg-blue-800"
+                  onClick={() => console.log("Browsing vendors")}
+                >
+                  Browse Other Vendors
                 </button>
               </div>
             </div>
