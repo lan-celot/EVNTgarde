@@ -250,7 +250,7 @@ const Bookings: React.FC = () => {
               style={{
                 top: "2rem",
                 bottom: "0",
-                height: calc(100% - ${displayedBookings.length * 0}rem),
+                height: `calc(100% - ${displayedBookings.length * 0}rem)`,
               }}
         ></div>
 
