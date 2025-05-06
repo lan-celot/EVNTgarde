@@ -4,20 +4,29 @@ import { BarChart3, Briefcase, Search } from "lucide-react";
 import ActivityOverview from "./Elements/ActivityOverview";
 import EventSection from "./Elements/EventsSection";
 import Explore from "./Elements/Explore";
+import MyEvents from "./Elements/MyEvents";
 
-const tabs = [
-  {
-    key: "activity",
-    label: "Activity Overview",
-    icon: <BarChart3 size={16} />,
-  },
-  { key: "services", label: "My Services", icon: <Briefcase size={16} /> },
-  { key: "explore", label: "Explore", icon: <Search size={16} /> },
-];
+type UserType = "customer" | "vendor" | "organizer";
 
 const Dashboard: React.FC = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("activity");
+
+  const getUserTypeFromAuth = (): UserType => {
+    const storedType = localStorage.getItem("userType");
+    if (
+      storedType === "customer" ||
+      storedType === "vendor" ||
+      storedType === "organizer"
+    ) {
+      return storedType as UserType;
+    }
+
+    // Default fallback
+    return "customer";
+  };
+
+  const userType = getUserTypeFromAuth();
 
   useEffect(() => {
     if (location.state?.activeTab) {
@@ -25,12 +34,60 @@ const Dashboard: React.FC = () => {
     }
   }, [location.state]);
 
+  const tabs = (() => {
+    if (userType === "customer") {
+      return [
+        {
+          key: "activity",
+          label: "Activity Overview",
+          icon: <BarChart3 size={16} />,
+        },
+        { key: "events", label: "My Events", icon: <Briefcase size={16} /> },
+        { key: "explore", label: "Explore", icon: <Search size={16} /> },
+      ];
+    }
+
+    if (userType === "vendor") {
+      return [
+        {
+          key: "activity",
+          label: "Activity Overview",
+          icon: <BarChart3 size={16} />,
+        },
+        {
+          key: "services",
+          label: "My Services",
+          icon: <Briefcase size={16} />,
+        },
+      ];
+    }
+
+    // organizer
+    return [
+      {
+        key: "activity",
+        label: "Activity Overview",
+        icon: <BarChart3 size={16} />,
+      },
+      { key: "services", label: "My Services", icon: <Briefcase size={16} /> },
+      { key: "events", label: "My Events", icon: <Briefcase size={16} /> },
+      { key: "explore", label: "Explore", icon: <Search size={16} /> },
+    ];
+  })();
+
   const renderContent = () => {
     switch (activeTab) {
       case "activity":
         return <ActivityOverview />;
       case "services":
         return <EventSection />;
+      case "events":
+        return (
+          <MyEvents
+            onBack={() => setActiveTab("activity")}
+            onAdd={() => console.log("Add event clicked")}
+          />
+        );
       case "explore":
         return <Explore />;
       default:

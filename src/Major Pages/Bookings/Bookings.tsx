@@ -254,6 +254,14 @@ const Bookings: React.FC = () => {
             height: `calc(100% - ${bookingsData[activeStatus].length * 0}rem)`,
           }}
         ></div>
+        <div
+          className={`absolute left-[12.95rem] w-0.5 ${activeStatus === "Rejected" ? "bg-red-500" : "bg-gray-600"}`}
+          style={{
+            top: "2rem",
+            bottom: "0",
+            height: `calc(100% - ${bookingsData[activeStatus].length * 0}rem)`,
+          }}
+        ></div>
         {displayedBookings.map((booking) => (
           <div key={booking.id} className="flex mb-12 relative">
             {/* Date and Day Section */}
@@ -266,10 +274,13 @@ const Bookings: React.FC = () => {
                 <div className="w-4.5 h-4.5 bg-gray-600 rounded-full"></div>
               </div>
             </div>
+            <div className="absolute left-[13rem] top-[calc(50%-4.3rem)] transform -translate-y-1/2 -translate-x-1/2">
+            <div className={`w-4.5 h-4.5 ${activeStatus === "Rejected" ? "bg-red-500" : "bg-gray-600"} rounded-full`}></div>
+          </div>
 
             {/* Placeholder Section */}
             <div className="flex-1 border-transparent rounded-lg p-6 shadow-sm bg-white ml-25">
-              <h3 className="text-xl font-semibold text-blue-600 mb-2">
+            <h3 className={`text-xl font-semibold mb-2 ${activeStatus === "Rejected" ? "text-red-800" : "text-blue-600"}`} >
                 {booking.title}
               </h3>
               <p className="text-gray-600 mb-4">
