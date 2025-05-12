@@ -10,9 +10,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
-  server: {
-    proxy: {
-      '/api': 'http://localhost:5000', // or whatever port your backend runs on
-    },
-  },
 });
