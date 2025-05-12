@@ -10,7 +10,11 @@ const pool = new Pool({
 });
 
 // Export a query helper for convenience
-export const query = (text: string, params?: any[]) => pool.query(text, params);
+export const query = (text: string, params?: any[]) => {
+  console.log('Executing SQL:', text);
+  console.log('With parameters:', params);
+  return pool.query(text, params);
+};
 
 // Optionally export the pool for advanced use
 export default pool;
