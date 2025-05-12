@@ -3,8 +3,6 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/assets/OrganizerLogo.png";
-import { registerUser } from "../../functions/authFunctions";
-import { createUserAccount } from "../../functions/userAccount";
 import { useTheme } from "../../functions/ThemeContext";
 import {
   signInWithGoogle,
@@ -173,15 +171,27 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
     try {
       // Create user account with data from both parts
-      const userData = createUserAccount("organizer", email, {
-        companyName,
-        industry,
-        phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
-        preferences,
+      const response = await fetch("http://localhost:5000/api/registerOrganizer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          organizerCompanyName: companyName,
+          organizerEmail: email,
+          organizerPassword: password,
+          organizerIndustry: industry,
+          organizerLocation: "", // update this if needed
+          organizerType: "", // update
+          organizerLogoUrl: "", // provide a logo URL
+        }),
       });
-
-      // Register user with Firebase
-      await registerUser(email, password, "organizer", userData);
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to register");
+      }
 
       // Clear session storage
       sessionStorage.removeItem("organizerRegistration");
