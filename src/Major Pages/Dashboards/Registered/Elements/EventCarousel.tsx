@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import EventCard from "./EventCards";
 import EventModal from "./EventModal";
 
@@ -216,6 +216,21 @@ const EventCarousel: React.FC<EventCarouselProps> = ({
     if (servicePage > 0) setServicePage(servicePage - 1);
   };
 
+  const [userRole, setUserRole] = useState<
+    "organizer" | "individual" | "vendor"
+  >("individual");
+
+  useEffect(() => {
+    const storedUserType = localStorage.getItem("userType");
+    if (
+      storedUserType === "organizer" ||
+      storedUserType === "individual" ||
+      storedUserType === "vendor"
+    ) {
+      setUserRole(storedUserType as "organizer" | "individual" | "vendor");
+    }
+  }, []);
+
   return (
     <div className="space-y-12">
       {/* Event Management Section */}
@@ -360,6 +375,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({
           included={selectedEvent.included}
           price={selectedEvent.price}
           onClose={() => setSelectedEvent(null)}
+          userRole={userRole}
         />
       )}
 
@@ -371,6 +387,7 @@ const EventCarousel: React.FC<EventCarouselProps> = ({
           included={selectedService.included}
           price={selectedService.price}
           onClose={() => setSelectedService(null)}
+          userRole={userRole}
         />
       )}
     </div>

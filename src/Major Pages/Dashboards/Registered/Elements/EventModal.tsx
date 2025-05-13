@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Pencil, Plus, X, Check } from "lucide-react";
 
 interface IncludedItem {
@@ -13,6 +13,7 @@ interface EventModalProps {
   included: IncludedItem[];
   price: string;
   onClose: () => void;
+  userRole: "organizer" | "individual" | "vendor";
 }
 
 const EventModal: React.FC<EventModalProps> = ({
@@ -22,7 +23,10 @@ const EventModal: React.FC<EventModalProps> = ({
   included,
   price,
   onClose,
+  userRole: _userRole,
 }) => {
+  // Force userRole to 'organizer' for debugging
+  const userRole = "organizer";
   const [editableTitle, setEditableTitle] = useState(title);
   const [editableIntro, setEditableIntro] = useState(intro);
   const [editableFullDetails, setEditableFullDetails] = useState(fullDetails);
@@ -30,6 +34,9 @@ const EventModal: React.FC<EventModalProps> = ({
   const [editablePrice, setEditablePrice] = useState(price);
   const [editablePackageName, setEditablePackageName] =
     useState("Full Package");
+  const [headerImage, setHeaderImage] = useState<string>(
+    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80"
+  );
 
   const [isEditingHeader, setIsEditingHeader] = useState(false);
   const [isEditingIncluded, setIsEditingIncluded] = useState(false);
@@ -72,6 +79,19 @@ const EventModal: React.FC<EventModalProps> = ({
     updated.splice(sectionIdx, 1);
     setEditableIncluded(updated);
   };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (ev.target?.result) setHeaderImage(ev.target.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  console.log("EventModal userRole:", userRole);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
@@ -119,6 +139,61 @@ const EventModal: React.FC<EventModalProps> = ({
                 className="w-full border p-2 rounded"
               />
             </div>
+            <div className="grid grid-cols-2 gap-6 items-start">
+              <div>
+                <div className="flex items-center mb-2 group">
+                  <h2 className="text-3xl font-bold">{editableTitle}</h2>
+                  {userRole === "organizer" && (
+                    <button
+                      className="ml-2 hidden group-hover:inline text-blue-600"
+                      onClick={() => setIsEditingHeader(true)}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
+                </div>
+                <p className="text-gray-700 mb-2">{editableIntro}</p>
+                <p className="text-gray-600 whitespace-pre-line">
+                  {editableFullDetails}
+                </p>
+              </div>
+              <div className="relative w-full flex justify-end">
+                <img
+                  src={headerImage}
+                  alt="Event"
+                  className="rounded-lg object-cover w-64 h-64 shadow-md border"
+                />
+                {userRole === "organizer" && (
+                  <label className="absolute bottom-4 right-4 bg-white bg-opacity-80 rounded-full p-2 shadow flex items-center justify-center cursor-pointer">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6 text-gray-700"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.25 15.75v-7.5A2.25 2.25 0 014.5 6h2.379a1.5 1.5 0 001.06-.44l1.122-1.122A1.5 1.5 0 0110.121 4.5h3.758a1.5 1.5 0 011.06.44l1.122 1.122a1.5 1.5 0 001.06.44H19.5a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-15A2.25 2.25 0 012.25 15.75z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 10.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                      />
+                    </svg>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsEditingHeader(false)}
@@ -136,19 +211,61 @@ const EventModal: React.FC<EventModalProps> = ({
           </div>
         ) : (
           <div className="mb-6">
-            <div className="flex items-center mb-2 group">
-              <h2 className="text-3xl font-bold">{editableTitle}</h2>
-              <button
-                className="ml-2 hidden group-hover:inline text-blue-600"
-                onClick={() => setIsEditingHeader(true)}
-              >
-                <Pencil size={16} />
-              </button>
+            <div className="grid grid-cols-2 gap-6 items-start">
+              <div>
+                <div className="flex items-center mb-2 group">
+                  <h2 className="text-3xl font-bold">{editableTitle}</h2>
+                  {userRole === "organizer" && (
+                    <button
+                      className="ml-2 hidden group-hover:inline text-blue-600"
+                      onClick={() => setIsEditingHeader(true)}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
+                </div>
+                <p className="text-gray-700 mb-2">{editableIntro}</p>
+                <p className="text-gray-600 whitespace-pre-line">
+                  {editableFullDetails}
+                </p>
+              </div>
+              <div className="relative w-full flex justify-end">
+                <img
+                  src={headerImage}
+                  alt="Event"
+                  className="rounded-lg object-cover w-64 h-64 shadow-md border"
+                />
+                {userRole === "organizer" && (
+                  <label className="absolute bottom-4 right-4 bg-white bg-opacity-80 rounded-full p-2 shadow flex items-center justify-center cursor-pointer">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6 text-gray-700"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.25 15.75v-7.5A2.25 2.25 0 014.5 6h2.379a1.5 1.5 0 001.06-.44l1.122-1.122A1.5 1.5 0 0110.121 4.5h3.758a1.5 1.5 0 011.06.44l1.122 1.122a1.5 1.5 0 001.06.44H19.5a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-15A2.25 2.25 0 012.25 15.75z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 10.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                      />
+                    </svg>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
             </div>
-            <p className="text-gray-700 mb-2">{editableIntro}</p>
-            <p className="text-gray-600 whitespace-pre-line">
-              {editableFullDetails}
-            </p>
           </div>
         )}
 
@@ -156,14 +273,16 @@ const EventModal: React.FC<EventModalProps> = ({
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-2xl font-semibold">What's included:</h3>
-            <button
-              onClick={() => setIsEditingIncluded(!isEditingIncluded)}
-              className="text-blue-600"
-            >
-              <Pencil size={16} />
-            </button>
+            {userRole === "organizer" && (
+              <button
+                onClick={() => setIsEditingIncluded(!isEditingIncluded)}
+                className="text-blue-600"
+              >
+                <Pencil size={16} />
+              </button>
+            )}
           </div>
-          {isEditingIncluded ? (
+          {isEditingIncluded && userRole === "organizer" ? (
             <div className="space-y-6">
               {editableIncluded.map((section, sectionIdx) => (
                 <div
@@ -266,14 +385,16 @@ const EventModal: React.FC<EventModalProps> = ({
         <div className="mt-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-2xl font-semibold">Pricing</h3>
-            <button
-              onClick={() => setIsEditingPrice(!isEditingPrice)}
-              className="text-blue-600"
-            >
-              <Pencil size={16} />
-            </button>
+            {userRole === "organizer" && (
+              <button
+                onClick={() => setIsEditingPrice(!isEditingPrice)}
+                className="text-blue-600"
+              >
+                <Pencil size={16} />
+              </button>
+            )}
           </div>
-          {isEditingPrice ? (
+          {isEditingPrice && userRole === "organizer" ? (
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-[15px] font-semibold mb-1">
