@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -11,49 +12,35 @@ import { CreateEventModal } from "./CreateEventModal"
 const allEvents: any[] = []
 
 // mockEvents if there are events
-/*
 const allEvents = [
   {
-    title: "Wedding Planning",
-    price: "Php 90,000",
-    intro: "Let us handle every detail for your wedding day.",
-    fullDetails:
-      "We specialize in making your wedding stress-free, memorable, and beautiful...",
-    included: [
-      {
-        section: "Planning",
-        bullets: ["Timeline creation", "Theme selection", "Budget management"],
-      },
-    ],
+    name: "Event Name Placeholder Here",
+    date: "2025-09-11",
+    location: "Location Name",
+    guests: 1234,
+    image: "/placeholder.svg",
+    description:
+      "Lorem ipsum this one is for the boys with the booming system top down AC",
   },
   {
-    title: "Birthday Planning",
-    price: "Php 50,000",
-    intro: "Celebrate birthdays in unforgettable ways.",
-    fullDetails:
-      "Whether for kids, teens, or adults, we plan birthday parties tailored to your dream theme...",
-    included: [
-      {
-        section: "Birthday Setup",
-        bullets: ["Decorations", "Games", "Cake setup"],
-      },
-    ],
+    name: "Event Name Placeholder Here",
+    date: "2025-09-11",
+    location: "Location Name",
+    guests: 1234,
+    image: "/placeholder.svg",
+    description:
+      "Lorem ipsum this one is for the boys with the booming system top down AC",
   },
   {
-    title: "Social Event Planning",
-    price: "Php 70,000",
-    intro: "Memorable social events made simple.",
-    fullDetails:
-      "From intimate gatherings to grand socials, we ensure your event is remarkable...",
-    included: [
-      {
-        section: "Social Coordination",
-        bullets: ["Guest management", "Program hosting"],
-      },
-    ],
+    name: "Event Name Placeholder Here",
+    date: "2025-09-11",
+    location: "Location Name",
+    guests: 1234,
+    image: "/placeholder.svg",
+    description:
+      "Lorem ipsum this one is for the boys with the booming system top down AC",
   },
 ];
-*/
 
 interface Props {
   onBack: () => void
@@ -127,9 +114,8 @@ const MyEvents: React.FC<Props> = ({ onAdd }) => {
     // Add the new event to the events array
     setEvents((prevEvents) => [...prevEvents, newEvent])
   }
-
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-5 space-y-5">
       <div>
       <div className="flex justify-between items-center mb-1">
         <h1 className="text-2xl font-semibold">My Events</h1>
