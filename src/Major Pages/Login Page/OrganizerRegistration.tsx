@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Logo from "@/assets/OrganizerLogo.png";
 import { useTheme } from "../../functions/ThemeContext";
 import {
+  registerUser,
   signInWithGoogle,
   signInWithYahoo,
 } from "../../functions/authFunctions";
@@ -170,36 +171,63 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     setIsLoading(true);
 
     try {
-      // Create user account with data from both parts
-      const response = await fetch("http://localhost:5000/api/registerOrganizer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          organizerCompanyName: companyName,
-          organizerEmail: email,
-          organizerPassword: password,
-          organizerIndustry: industry,
-          organizerLocation: "", // update this if needed
-          organizerType: "", // update
-          organizerLogoUrl: "", // provide a logo URL
-        }),
-      });
-      
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to register");
+      // Create user account with all collected data
+      const userData = {
+        organizationName: companyName,
+        industry,
+        phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
+        preferences,
+        userType: "organizer"
+      };
+
+      // Register user with Firebase
+      const firebaseUser = await registerUser(email, password, "organizer", userData);
+
+      // Register user with PostgreSQL
+      try {
+        const response = await fetch('http://localhost:5000/api/registerOrganizer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: companyName, // Using company name as first name for organizers
+            lastName: "", // Empty for organizers
+            email,
+            password,
+            phoneNo: phoneNumber ? `+63${phoneNumber}` : null,
+            preferences: preferences.join(','),
+            customerType: "organizer",
+            industry
+          }),
+        });
+
+        if (!response.ok) {
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Database registration failed");
+          } else {
+            throw new Error("Database registration failed");
+          }
+        }
+
+        // Success: clear storage, navigate, etc.
+        sessionStorage.removeItem("organizerRegistration");
+        navigate("/login");
+      } catch (dbError: any) {
+        // If PostgreSQL registration fails, delete the Firebase user
+        if (firebaseUser) {
+          try {
+            await firebaseUser.delete();
+          } catch (deleteError) {
+            console.error("Error deleting Firebase user after failed database registration:", deleteError);
+          }
+        }
+        throw new Error(`Database registration error: ${dbError.message}`);
       }
-
-      // Clear session storage
-      sessionStorage.removeItem("organizerRegistration");
-
-      // Navigate to login page
-      navigate("/login");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Failed to create account. Please try again.");
     } finally {
       setIsLoading(false);
     }

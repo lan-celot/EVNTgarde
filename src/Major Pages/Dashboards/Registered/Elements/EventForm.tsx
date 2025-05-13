@@ -42,6 +42,9 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Get customer ID from localStorage or your auth context
+  const customerId = localStorage.getItem('customerId'); // or however you store the customer ID
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: name === "guests" ? Number(value) : value }));
@@ -64,6 +67,13 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
     setLoading(true);
     setError("");
 
+    // Check if customer is logged in
+    if (!customerId) {
+      setError("You must be logged in to create an event");
+      setLoading(false);
+      return;
+    }
+
     // Frontend validation for numeric fields
     if (isNaN(Number(form.guests)) || isNaN(Number(form.budget))) {
       setError("Guests and budget must be numbers");
@@ -80,6 +90,7 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
       const endDateTime = new Date(`${form.endDate}T${form.endTime}`);
 
       const eventData = {
+        customerId, // Add customer ID to the request
         eventName: form.eventName,
         eventOverview: form.eventOverview,
         startDate: form.startDate, // YYYY-MM-DD

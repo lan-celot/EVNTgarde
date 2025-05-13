@@ -23,7 +23,13 @@ router.post('/events', async (req, res) => {
       services,
       additionalServices,
       budget,
+      customerId,
     } = req.body;
+
+    // Validate customerId
+    if (!customerId) {
+      return res.status(400).json({ error: 'Customer ID is required' });
+    }
 
     // Validate numeric fields
     if (isNaN(Number(guests)) || isNaN(Number(budget))) {
@@ -32,6 +38,7 @@ router.post('/events', async (req, res) => {
 
     // Log validation checks
     console.log('Validation checks:', {
+      customerId: !!customerId,
       eventName: !!eventName,
       startDate: !!startDate,
       endDate: !!endDate,
@@ -59,6 +66,7 @@ router.post('/events', async (req, res) => {
     // Insert into Events table (only fields we have data for)
     const result = await query(
       `INSERT INTO events (
+        customer_id,
         event_name,
         event_desc,
         date,
@@ -71,8 +79,9 @@ router.post('/events', async (req, res) => {
         services,
         location,
         budget
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7::integer, $8, $9, $10, $11, $12::integer) RETURNING *`,
+      ) VALUES ($1::integer, $2, $3, $4, $5, $6, $7, $8::integer, $9, $10, $11, $12, $13::integer) RETURNING *`,
       [
+        customerId,
         eventName,
         eventOverview,
         startDate, // just the date part

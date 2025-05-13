@@ -3,12 +3,11 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import Logo from "../../assets/OrganizerLogo.png";
 import { useNavigate } from "react-router-dom";
-import { checkSessionExpiry } from "@/functions/authFunctions";
+import { auth, signInWithEmailAndPassword } from "../../functions/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../functions/firebase";
+import { checkSessionExpiry, signInWithGoogle, signInWithYahoo } from "@/functions/authFunctions";
 import { useTheme } from "../../functions/ThemeContext";
-import {
-  signInWithGoogle,
-  signInWithYahoo,
-} from "../../functions/authFunctions";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillYahoo } from "react-icons/ai";
 
@@ -32,55 +31,96 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
+
     try {
-      const response = await fetch("http://localhost:5000/api/loginCustomer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // First, authenticate with Firebase
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const userId = userCredential.user.uid;
 
-      const result = await response.json();
-
-      if (!result.success) {
-        setFailedAttempts(failedAttempts + 1);
-        setError(
-          failedAttempts + 1 >= 3
-            ? "Login failed. Please check your credentials and try again."
-            : "Invalid Email/Invalid Password"
-        );
-        setLoading(false);
-        return;
+      // Retrieve user data from Firestore
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (!userDoc.exists()) {
+        throw new Error("User data not found.");
       }
 
-      // Store authentication status and userType
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userType", result.user.userType);
-      localStorage.setItem("userId", result.user.id);
-
-      if (rememberMe) {
-        localStorage.setItem("loginTimestamp", Date.now().toString());
+      const userData = userDoc.data();
+      const userType = userData.userType;
+      let vendorType;
+      if (userType === "vendor") {
+        vendorType = userData.vendorType;
       }
 
-      login();
+      // Now authenticate with PostgreSQL
+      try {
+        const response = await fetch('http://localhost:5000/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            userType
+          }),
+        });
 
-      // Redirect user based on userType
-      switch (result.user.userType) {
-        case "customer":
-          navigate("/customer");
-          break;
-        case "organizer":
-          navigate("/organizer");
-          break;
-        case "vendor":
-          navigate("/vendor");
-          break;
-        default:
-          throw new Error("Invalid user type.");
+        if (!response.ok) {
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Database authentication failed");
+          } else {
+            throw new Error("Database authentication failed");
+          }
+        }
+
+        // Store authentication status and userType
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("userType", userType);
+        if (vendorType) {
+          localStorage.setItem("vendorType", vendorType);
+        }
+
+        if (rememberMe) {
+          localStorage.setItem("loginTimestamp", Date.now().toString());
+        }
+
+        login();
+
+        // Redirect user based on userType
+        switch (userType) {
+          case "individual":
+            navigate("/customer");
+            break;
+          case "organizer":
+            navigate("/organizer");
+            break;
+          case "vendor":
+            navigate("/vendor");
+            break;
+          default:
+            throw new Error("Invalid user type.");
+        }
+      } catch (dbError: any) {
+        // If PostgreSQL authentication fails, sign out from Firebase
+        await auth.signOut();
+        throw new Error(`Database authentication error: ${dbError.message}`);
       }
     } catch (err: any) {
-      setError("An error occurred during login. Please try again.");
+      const newFailedAttempts = failedAttempts + 1;
+      setFailedAttempts(newFailedAttempts);
+      // 3 failed attempts, generic message
+      if (newFailedAttempts >= 3) {
+        setError("Login failed. Please check your credentials and try again.");
+      } else {
+        setError(err.message || "Invalid Email/Invalid Password");
+      }
     } finally {
       setLoading(false);
     }

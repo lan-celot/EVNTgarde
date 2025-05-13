@@ -3,15 +3,11 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/assets/OrganizerLogo.png";
-//import { registerUser } from "../../functions/authFunctions";
-//import { createUserAccount } from "../../functions/userAccount";
+import { registerUser, signInWithGoogle, signInWithYahoo } from "../../functions/authFunctions";
 import { useTheme } from "../../functions/ThemeContext";
-import {
-  signInWithGoogle,
-  signInWithYahoo,
-} from "../../functions/authFunctions";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillYahoo } from "react-icons/ai";
+import { createUserAccount } from "../../functions/userAccount";
 
 type VendorType = "Solo Vendor" | "Company Vendor" | "";
 
@@ -24,6 +20,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const [vendorName, setVendorName] = useState("");
   const [businessOffering, setBusinessOffering] = useState("");
   const [preferences, setPreferences] = useState<string[]>([]);
+  const [termsAccepted] = useState(false);
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -160,6 +157,11 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
       return;
     }
 
+    if (!termsAccepted) {
+      setError("You must agree to the Terms and Conditions");
+      return;
+    }
+
     if (passwordError) {
       setError(passwordError);
       return;
@@ -173,32 +175,70 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/registerVendor", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          vendorBusinessName: vendorName,
-          vendorEmail: email,
-          vendorPassword: password,
-          vendorType,
-          vendorPhoneNo: phoneNumber ? `+63${phoneNumber}` : null,
-          services: businessOffering,
-          preferences,
-        }),
+      // Get stored data
+      const storedData = JSON.parse(sessionStorage.getItem("vendorRegistration") || "{}");
+      
+      // Create user account with data from all parts
+      const userData = createUserAccount("vendor", email, {
+        vendorType,
+        businessName: vendorName,
+        services: businessOffering,
+        phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
+        gender: storedData.gender,
+        address: storedData.address,
       });
 
-      const data = await response.json();
+      // Register user with Firebase
+      const firebaseUser = await registerUser(email, password, "vendor", userData);
 
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
+      // Register user with PostgreSQL
+      try {
+        const response = await fetch('http://localhost:5000/api/registerVendor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: vendorName, // Using business name as first name
+            lastName: "", // Empty for vendors
+            email,
+            password,
+            phoneNo: phoneNumber ? `+63${phoneNumber}` : null,
+            preferences: preferences.join(','),
+            customerType: "vendor",
+            vendorType: vendorType.toLowerCase(),
+            service: businessOffering,
+            gender: storedData.gender,
+            address: storedData.address
+          }),
+        });
+
+        if (!response.ok) {
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Database registration failed");
+          } else {
+            throw new Error("Database registration failed");
+          }
+        }
+
+        // Success: clear storage, navigate, etc.
+        sessionStorage.removeItem("vendorRegistration");
+        navigate("/login");
+      } catch (dbError: any) {
+        // If PostgreSQL registration fails, delete the Firebase user
+        if (firebaseUser) {
+          try {
+            await firebaseUser.delete();
+          } catch (deleteError) {
+            console.error("Error deleting Firebase user after failed database registration:", deleteError);
+          }
+        }
+        throw new Error(`Database registration error: ${dbError.message}`);
       }
-
-      sessionStorage.removeItem("vendorRegistration");
-      navigate("/login");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Failed to create account. Please try again.");
     } finally {
       setIsLoading(false);
     }
