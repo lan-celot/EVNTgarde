@@ -1,15 +1,14 @@
+"use client";
 
-"use client"
-
-import type React from "react"
-import { useState } from "react"
-import Card from "./EventCards"
-import EventModal from "./EventModal"
-import clipboardImage from "../../../../assets/clipboard.png"
-import { CreateEventModal } from "./CreateEventModal"
+import type React from "react";
+import { useState } from "react";
+import Card from "./MyEventsCard";
+import EventModal from "./EventModal";
+import clipboardImage from "../../../../assets/clipboard.png";
+import { CreateEventModal } from "./CreateEventModal";
 
 // mockEvents if there are no events
-const allEvents: any[] = []
+//const allEvents: any[] = []
 
 // mockEvents if there are events
 const allEvents = [
@@ -43,54 +42,58 @@ const allEvents = [
 ];
 
 interface Props {
-  onBack: () => void
-  onAdd: () => void
+  onBack: () => void;
+  onAdd: () => void;
 }
 
 interface EventData {
-  name: string
-  overview: string
-  startDate: string
-  endDate: string
-  startTime: string
-  endTime: string
-  numberOfGuests: number
-  location: string
-  eventType: string
-  attire: string
-  services: string[]
-  customServices: string[]
-  budget: string
-  files: File[]
+  name: string;
+  overview: string;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  endTime: string;
+  numberOfGuests: number;
+  location: string;
+  eventType: string;
+  attire: string;
+  services: string[];
+  customServices: string[];
+  budget: string;
+  files: File[];
 }
 
 const MyEvents: React.FC<Props> = ({ onAdd }) => {
-  const [selectedEvent, setSelectedEvent] = useState<(typeof allEvents)[0] | null>(null)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [events, setEvents] = useState<any[]>(allEvents)
+  const [selectedEvent, setSelectedEvent] = useState<
+    (typeof allEvents)[0] | null
+  >(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [events, setEvents] = useState<any[]>(allEvents);
 
   const handleView = (event: (typeof allEvents)[0]) => {
-    setSelectedEvent(event)
-  }
+    setSelectedEvent(event);
+  };
 
   const handleClose = () => {
-    setSelectedEvent(null)
-  }
+    setSelectedEvent(null);
+  };
 
   const handleCreateEvent = () => {
     // Call the original onAdd function for backward compatibility
-    if (onAdd) onAdd()
+    if (onAdd) onAdd();
 
     // Open the create event modal
-    setIsCreateModalOpen(true)
-  }
+    setIsCreateModalOpen(true);
+  };
 
   const handleSaveEvent = (eventData: EventData) => {
     // Create a new event object from the form data
     const newEvent = {
       title: eventData.name,
       price: eventData.budget,
-      intro: eventData.overview.substring(0, 100) + (eventData.overview.length > 100 ? "..." : ""),
+      intro:
+        eventData.overview.substring(0, 100) +
+        (eventData.overview.length > 100 ? "..." : ""),
       fullDetails: eventData.overview,
       included: [
         {
@@ -109,65 +112,68 @@ const MyEvents: React.FC<Props> = ({ onAdd }) => {
           bullets: [...eventData.services, ...eventData.customServices],
         },
       ],
-    }
+    };
 
     // Add the new event to the events array
-    setEvents((prevEvents) => [...prevEvents, newEvent])
-  }
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
+  };
   return (
-    <div className="p-5 space-y-5">
+    <div className="p-4">
       <div>
-      <div className="flex justify-between items-center mb-1">
-        <h1 className="text-2xl font-semibold">My Events</h1>
-        <button
-        onClick={handleCreateEvent}
-        className="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 transition"
-        >
-        + Create Event
-        </button>
-      </div>
-      <p className="text-gray-600">{events.length} events created</p>
+        <div className="flex justify-between items-center mb-1">
+          <h1 className="text-3xl font-semibold">My Events</h1>
+          <button
+            onClick={handleCreateEvent}
+            className="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-900 transition"
+          >
+            + Create Event
+          </button>
+        </div>
+        <p className="text-gray-600">{events.length} events created</p>
       </div>
 
       {/* Check if there are no events */}
       {events.length === 0 && (
-      <div className="bg-gray-100 p-8 rounded-lg flex flex-col items-center space-y-4">
-        <img src={clipboardImage || "/placeholder.svg"} alt="Clipboard" className="w-16 h-16" />
-        <p className="text-gray-700 text-lg font-semibold">You have not created an event yet.</p>
-      </div>
+        <div className="bg-gray-100 p-8 rounded-lg flex flex-col items-center space-y-4">
+          <img
+            src={clipboardImage || "/placeholder.svg"}
+            alt="Clipboard"
+            className="w-16 h-16"
+          />
+          <p className="text-gray-700 text-lg font-semibold">
+            You have not created an event yet.
+          </p>
+        </div>
       )}
 
       {/* Display event cards if there are events */}
       {events.length > 0 && (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {events.map((event: { title: string; price: string }, idx: number) => (
-        <Card key={idx} title={event.title} price={event.price} onView={() => handleView(event)} />
-        ))}
-      </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {allEvents.map((event, idx) => (
+            <Card
+              key={idx}
+              name={event.name}
+              date={event.date}
+              location={event.location}
+              guests={event.guests}
+              image={event.image}
+              description={event.description}
+              onView={() => handleView(event)}
+            />
+          ))}
+        </div>
       )}
-
-      {selectedEvent && (
-      <EventModal
-        title={selectedEvent.title}
-        intro={selectedEvent.intro}
-        fullDetails={selectedEvent.fullDetails}
-        included={selectedEvent.included}
-        price={selectedEvent.price}
-        onClose={handleClose}
-      />
-      )}
-
       {/* Create Event Modal */}
       <CreateEventModal
-      isOpen={isCreateModalOpen}
-      onClose={() => setIsCreateModalOpen(false)}
-      onSave={(eventData: EventData) => {
-        handleSaveEvent(eventData)
-        setIsCreateModalOpen(false)
-      }}
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSave={(eventData: EventData) => {
+          handleSaveEvent(eventData);
+          setIsCreateModalOpen(false);
+        }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default MyEvents
+export default MyEvents;
