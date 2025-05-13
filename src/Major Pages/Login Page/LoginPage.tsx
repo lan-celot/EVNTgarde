@@ -58,7 +58,7 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
 
       // Now authenticate with PostgreSQL
       try {
-        const response = await fetch('http://localhost:5000/api/login', {
+        const response = await fetch('http://localhost:5000/api/loginCustomer', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -6,6 +6,17 @@ const router = express.Router();
 // Add JSON body parser middleware
 router.use(express.json());
 
+// Fetch all event types
+router.get('/event-types', async (req, res) => {
+  try {
+    const result = await query('SELECT event_type_id, event_type_name FROM event_type');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching event types:', error);
+    res.status(500).json({ error: 'Failed to fetch event types' });
+  }
+});
+
 router.post('/events', async (req, res) => {
   try {
     console.log('Received request body:', req.body);
@@ -17,8 +28,11 @@ router.post('/events', async (req, res) => {
       endDate,
       startTime,
       endTime,
+      startDateTime,
+      endDateTime,
       guests,
       location,
+      eventTypeId,
       attire,
       services,
       additionalServices,
@@ -27,13 +41,18 @@ router.post('/events', async (req, res) => {
     } = req.body;
 
     // Validate customerId
-    if (!customerId) {
-      return res.status(400).json({ error: 'Customer ID is required' });
+    if (!customerId || isNaN(Number(customerId))) {
+      return res.status(400).json({ error: 'Valid Customer ID is required' });
     }
 
     // Validate numeric fields
     if (isNaN(Number(guests)) || isNaN(Number(budget))) {
       return res.status(400).json({ error: 'Guests and budget must be numbers' });
+    }
+
+    // Validate eventTypeId
+    if (!eventTypeId || isNaN(Number(eventTypeId))) {
+      return res.status(400).json({ error: 'Valid event type ID is required' });
     }
 
     // Log validation checks
@@ -44,26 +63,31 @@ router.post('/events', async (req, res) => {
       endDate: !!endDate,
       startTime: !!startTime,
       endTime: !!endTime,
+      startDateTime: !!startDateTime,
+      endDateTime: !!endDateTime,
       guests: !!guests,
       location: !!location,
+      eventTypeId: !!eventTypeId,
       attire: !!attire,
       services: !!services,
       budget: !!budget
     });
 
     // Basic validation
-    if (!eventName || !startDate || !endDate || !startTime || !endTime) {
+    if (!eventName || !startDate || !endDate || !startTime || !endTime || !startDateTime || !endDateTime) {
       console.log('Missing required fields:', {
         eventName: !eventName,
         startDate: !startDate,
         endDate: !endDate,
         startTime: !startTime,
-        endTime: !endTime
+        endTime: !endTime,
+        startDateTime: !startDateTime,
+        endDateTime: !endDateTime
       });
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Insert into Events table (only fields we have data for)
+    // Insert into Events table
     const result = await query(
       `INSERT INTO events (
         customer_id,
@@ -73,22 +97,28 @@ router.post('/events', async (req, res) => {
         end_date,
         start_time,
         end_time,
+        start_datetime,
+        end_datetime,
         guests,
+        event_type,
         attire,
         additional_services,
         services,
         location,
         budget
-      ) VALUES ($1::integer, $2, $3, $4, $5, $6, $7, $8::integer, $9, $10, $11, $12, $13::integer) RETURNING *`,
+      ) VALUES ($1::integer, $2, $3, $4, $5, $6, $7, $8, $9, $10::integer, $11::integer, $12, $13, $14, $15, $16::integer) RETURNING *`,
       [
         customerId,
         eventName,
         eventOverview,
-        startDate, // just the date part
-        endDate,   // just the date part
-        startTime, // just the time part
-        endTime,   // just the time part
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        startDateTime,
+        endDateTime,
         guests,
+        eventTypeId,
         attire,
         additionalServices,
         Array.isArray(services) ? services.join(',') : services,

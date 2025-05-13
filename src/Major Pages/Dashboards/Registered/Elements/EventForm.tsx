@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface EventFormState {
   eventName: string;
@@ -9,7 +9,7 @@ interface EventFormState {
   endTime: string;
   guests: number;
   location: string;
-  eventType: string;
+  eventTypeId: number | "";
   attire: string;
   services: string[];
   additionalServices: string;
@@ -26,7 +26,7 @@ const initialForm: EventFormState = {
   endTime: "",
   guests: 1,
   location: "",
-  eventType: "",
+  eventTypeId: "",
   attire: "",
   services: [],
   additionalServices: "",
@@ -41,13 +41,27 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
   const [form, setForm] = useState<EventFormState>(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [eventTypes, setEventTypes] = useState<{ event_type_id: number, event_type_name: string }[]>([]);
 
   // Get customer ID from localStorage or your auth context
   const customerId = localStorage.getItem('customerId'); // or however you store the customer ID
 
+  useEffect(() => {
+    fetch('http://localhost:5000/api/event-types')
+      .then(res => res.json())
+      .then(data => setEventTypes(data))
+      .catch(err => console.error('Failed to fetch event types', err));
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: name === "guests" ? Number(value) : value }));
+    if (name === "guests") {
+      setForm((prev) => ({ ...prev, [name]: Number(value) }));
+    } else if (name === "eventTypeId") {
+      setForm((prev) => ({ ...prev, eventTypeId: value === "" ? "" : Number(value) }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleServiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -81,6 +95,13 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
       return;
     }
 
+    // Validate eventTypeId
+    if (!form.eventTypeId || isNaN(Number(form.eventTypeId))) {
+      setError("Please select a valid event type");
+      setLoading(false);
+      return;
+    }
+
     try {
       // Log form state before processing
       console.log('Form state before submission:', form);
@@ -89,16 +110,26 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
       const startDateTime = new Date(`${form.startDate}T${form.startTime}`);
       const endDateTime = new Date(`${form.endDate}T${form.endTime}`);
 
+      // Validate that end date/time is after start date/time
+      if (endDateTime <= startDateTime) {
+        setError("End date/time must be after start date/time");
+        setLoading(false);
+        return;
+      }
+
       const eventData = {
-        customerId, // Add customer ID to the request
+        customerId: parseInt(customerId),
         eventName: form.eventName,
         eventOverview: form.eventOverview,
-        startDate: form.startDate, // YYYY-MM-DD
-        endDate: form.endDate,     // YYYY-MM-DD
-        startTime: form.startTime, // HH:mm
-        endTime: form.endTime,     // HH:mm
+        startDate: form.startDate,
+        endDate: form.endDate,
+        startTime: form.startTime,
+        endTime: form.endTime,
+        startDateTime: startDateTime.toISOString(),
+        endDateTime: endDateTime.toISOString(),
         guests: form.guests,
         location: form.location,
+        eventTypeId: form.eventTypeId,
         attire: form.attire,
         services: form.services,
         additionalServices: form.additionalServices,
@@ -160,7 +191,12 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
               <input type="number" name="guests" value={form.guests} min={1} onChange={handleChange} className="border rounded p-2 w-24" required />
             </div>
             <input name="location" value={form.location} onChange={handleChange} placeholder="Event Location" className="w-full border rounded p-2" required />
-            <input name="eventType" value={form.eventType} onChange={handleChange} placeholder="Event Type" className="w-full border rounded p-2" required />
+            <select name="eventTypeId" value={form.eventTypeId} onChange={handleChange} className="w-full border rounded p-2" required>
+              <option value="">Select Event Type</option>
+              {eventTypes.map((type) => (
+                <option key={type.event_type_id} value={type.event_type_id}>{type.event_type_name}</option>
+              ))}
+            </select>
             <input name="attire" value={form.attire} onChange={handleChange} placeholder="Attire" className="w-full border rounded p-2" required />
           </div>
         )}
@@ -190,7 +226,7 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
               </div>
               <div>Guests: {form.guests}</div>
               <div>Location: {form.location}</div>
-              <div>Type: {form.eventType}</div>
+              <div>Type: {eventTypes.find(type => type.event_type_id === form.eventTypeId)?.event_type_name || form.eventTypeId}</div>
               <div>Attire: {form.attire}</div>
             </div>
             <div>
