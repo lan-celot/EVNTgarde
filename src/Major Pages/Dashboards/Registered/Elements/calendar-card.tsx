@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { BlockDatesModal } from "./block-dates-modal"
 import { EditDatesModal } from "./edit-dates-modal"
+import { ViewDatesModal } from "./view-dates-modal" // We'll create this component
 
 // Update the CalendarDay interface to include a "isTaken" property
 interface CalendarDay {
@@ -20,6 +21,7 @@ interface CalendarCardProps {
   initialYear?: number
   onEditDates?: () => void
   takenDates?: string[]
+  userType?: string // Add userType prop
 }
 
 // Helper function to get the number of days in a month
@@ -50,20 +52,91 @@ const monthNames = [
 
 // Update the CalendarCard function to accept and use takenDates
 export function CalendarCard({
-  initialMonth = "April",
-  initialYear = 2025,
+  initialMonth = new Date().toLocaleString("en-US", { month: "long" }), // Get current month name
+  initialYear = new Date().getFullYear(), // Get current year
   onEditDates = () => console.log("Edit dates clicked"),
   takenDates = [], // Default to empty array
+  userType = "organizer", // Default to organizer
 }: CalendarCardProps) {
   // Convert initial month name to month index (0-11)
   const initialMonthIndex = monthNames.findIndex((m) => m === initialMonth)
 
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(initialMonthIndex !== -1 ? initialMonthIndex : 3) // Default to April (3) if not found
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(
+    initialMonthIndex !== -1 ? initialMonthIndex : new Date().getMonth(),
+  ) // Default to current month if not found
   const [currentYear, setCurrentYear] = useState(initialYear)
   const [isBlockModalOpen, setIsBlockModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
   const [blockedDates, setBlockedDates] = useState<string[]>([])
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([])
+  const [currentUserType, setCurrentUserType] = useState(userType)
+
+  // Add a new function to handle user type switching
+  const handleSwitchUserType = (newUserType: string) => {
+    // Update localStorage
+    localStorage.setItem("userType", newUserType)
+    // Update state
+    setCurrentUserType(newUserType === "individual" ? "customer" : newUserType)
+    // Dispatch storage event to notify other components
+    window.dispatchEvent(new Event("storage"))
+  }
+
+  // Add demo switcher buttons above the calendar
+  const renderUserTypeSwitcher = () => {
+    return (
+      <div className="mb-4 flex flex-wrap gap-2">
+        <div className="text-sm text-gray-500 mb-1 w-full">Demo Mode: Switch User Type</div>
+        <button
+          className={`text-xs px-3 py-1.5 rounded-md ${
+            currentUserType === "customer" ? "bg-[#3061AD] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+          onClick={() => handleSwitchUserType("individual")}
+        >
+          Customer View
+        </button>
+        <button
+          className={`text-xs px-3 py-1.5 rounded-md ${
+            currentUserType === "organizer" ? "bg-[#3061AD] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+          onClick={() => handleSwitchUserType("organizer")}
+        >
+          Organizer View
+        </button>
+        <button
+          className={`text-xs px-3 py-1.5 rounded-md ${
+            currentUserType === "vendor" ? "bg-[#3061AD] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+          onClick={() => handleSwitchUserType("vendor")}
+        >
+          Vendor View
+        </button>
+      </div>
+    )
+  }
+
+  // Effect to check user type from localStorage
+  useEffect(() => {
+    // Get user type from localStorage if available
+    const storedUserType = localStorage.getItem("userType")
+    if (storedUserType) {
+      // Convert "individual" to "customer" for consistency
+      const normalizedUserType = storedUserType === "individual" ? "customer" : storedUserType
+      setCurrentUserType(normalizedUserType)
+    }
+
+    // Listen for changes to localStorage
+    const handleStorageChange = () => {
+      const updatedUserType = localStorage.getItem("userType")
+      if (updatedUserType) {
+        const normalizedUserType = updatedUserType === "individual" ? "customer" : updatedUserType
+        setCurrentUserType(normalizedUserType)
+      }
+    }
+
+    window.addEventListener("storage", handleStorageChange)
+    return () => window.removeEventListener("storage", handleStorageChange)
+  }, [])
 
   // Update the useEffect to pass takenDates to generateCalendarDays
   useEffect(() => {
@@ -96,11 +169,14 @@ export function CalendarCard({
     setIsBlockModalOpen(true)
   }
 
-  // Update the handleEditDates function to only work when there are blocked dates
   const handleEditDates = () => {
     if (blockedDates.length > 0) {
       setIsEditModalOpen(true)
     }
+  }
+
+  const handleViewDates = () => {
+    setIsViewModalOpen(true)
   }
 
   const handleCloseBlockModal = () => {
@@ -111,6 +187,10 @@ export function CalendarCard({
     setIsEditModalOpen(false)
   }
 
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false)
+  }
+
   const handleConfirmDates = (dates: string[]) => {
     setBlockedDates(dates)
     setIsBlockModalOpen(false)
@@ -119,6 +199,44 @@ export function CalendarCard({
   const handleUpdateDates = (dates: string[]) => {
     setBlockedDates(dates)
     setIsEditModalOpen(false)
+  }
+
+  // Conditional rendering function for calendar buttons
+  const renderCalendarButtons = () => {
+    if (currentUserType === "customer") {
+      return (
+        <button
+          className="bg-[#3061AD] text-white px-4 py-2.5 rounded-md text-sm w-full hover:opacity-90"
+          onClick={handleViewDates}
+        >
+          View Dates
+        </button>
+      )
+    } else {
+      // For organizer and vendor
+      return (
+        <>
+          <button
+            className="text-white px-4 py-2.5 rounded-md text-sm w-full hover:opacity-90"
+            onClick={handleBlockDates}
+            style={{ backgroundColor: "#3061AD" }}
+          >
+            Block Dates
+          </button>
+          <button
+            className={`bg-white text-gray-800 px-4 py-2.5 rounded-md text-sm w-full border ${
+              blockedDates.length > 0
+                ? "border-gray-300 hover:bg-gray-50 cursor-pointer"
+                : "border-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
+            onClick={handleEditDates}
+            disabled={blockedDates.length === 0}
+          >
+            Edit Dates
+          </button>
+        </>
+      )
+    }
   }
 
   return (
@@ -174,26 +292,7 @@ export function CalendarCard({
           ))}
         </div>
 
-        <div className="mt-4 flex flex-col gap-2">
-          <button
-            className="text-white px-4 py-2.5 rounded-md text-sm w-full hover:opacity-90"
-            onClick={handleBlockDates}
-            style={{ backgroundColor: "#3061AD" }}
-          >
-            Block Dates
-          </button>
-          <button
-            className={`bg-white text-gray-800 px-4 py-2.5 rounded-md text-sm w-full border ${
-              blockedDates.length > 0
-                ? "border-gray-300 hover:bg-gray-50 cursor-pointer"
-                : "border-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-            onClick={handleEditDates}
-            disabled={blockedDates.length === 0}
-          >
-            Edit Dates
-          </button>
-        </div>
+        <div className="mt-4 flex flex-col gap-2">{renderCalendarButtons()}</div>
       </div>
 
       <BlockDatesModal
@@ -215,6 +314,18 @@ export function CalendarCard({
         blockedDates={blockedDates}
         takenDates={takenDates}
       />
+
+      {/* View Dates Modal for customers */}
+      {currentUserType === "customer" && (
+        <ViewDatesModal
+          isOpen={isViewModalOpen}
+          onClose={handleCloseViewModal}
+          initialMonth={currentMonthIndex}
+          initialYear={currentYear}
+          blockedDates={blockedDates}
+          takenDates={takenDates}
+        />
+      )}
     </>
   )
 }

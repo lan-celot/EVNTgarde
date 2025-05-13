@@ -28,7 +28,7 @@ import VendorRegistration from "./Major Pages/Login Page/VendorRegistration";
 import Dashboard from "./Major Pages/Dashboards/Registered/Dashboard";
 import Bookings from "./Major Pages/Bookings/Bookings";
 import RSVP from "./Major Pages/Dashboards/Registered/RSVP";
-import Reviews from "./Major Pages/Dashboards/Registered/Reviews";
+import Reviews from "./Major Pages/Reviews/Reviews";
 import UserManagement from "./Major Pages/Dashboards/Registered/UserManagement";
 import Track from "./Major Pages/Dashboards/Registered/Track";
 import ProfileSettings from "./Major Pages/Dashboards/Registered/ProfileSettings";
@@ -153,7 +153,7 @@ const App: React.FC = () => {
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/user-management" element={<UserManagement />} />
             <Route path="/track" element={<Track />} />
-            <Route path="/profile-settings" element={<ProfileSettings />} />
+            <Route path="/profile-settings" element={<ProfileSettings />} />s
             {/* temp route for organizer viewing */}
             <Route path="/organizers/:id" element={<OrganizerDetails />} />
           </Route>
