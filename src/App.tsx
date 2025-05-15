@@ -27,7 +27,7 @@ import VendorRegistration from "./Major Pages/Login Page/VendorRegistration";
 // Main Pages
 import Dashboard from "./Major Pages/Dashboards/Registered/Dashboard";
 import Bookings from "./Major Pages/Bookings/Bookings";
-import RSVP from "./Major Pages/Dashboards/Registered/RSVP";
+import RSVP from "./Major Pages/RSVP/RSVP";
 import Reviews from "./Major Pages/Reviews/Reviews";
 import UserManagement from "./Major Pages/Dashboards/Registered/UserManagement";
 import Track from "./Major Pages/Dashboards/Registered/Track";
