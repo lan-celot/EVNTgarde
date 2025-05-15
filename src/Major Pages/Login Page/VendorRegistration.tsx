@@ -191,19 +191,26 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
       // Register user with Firebase
       const firebaseUser = await registerUser(email, password, "vendor", userData);
+console.log("firebaseUser:", firebaseUser);
+const firebaseUid = firebaseUser?.uid;
+console.log("firebaseUid:", firebaseUid);
 
+      if (!firebaseUid) {
+        setError("Registration failed: No Firebase UID returned.");
+        setIsLoading(false);
+        return;
+      }
       // Register user with PostgreSQL
       try {
         const response = await fetch('http://localhost:5000/api/registerVendor', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            vendorId: firebaseUid, // <-- must be set!
             vendorBusinessName: vendorName,
             vendorEmail: email,
             vendorPassword: password,
-            vendorType: vendorType.toLowerCase(),
+            vendorType,
             vendorPhoneNo: phoneNumber ? `+63${phoneNumber}` : null,
             services: businessOffering,
             preferences: preferences.join(',')

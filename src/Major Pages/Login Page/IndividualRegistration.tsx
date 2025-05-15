@@ -339,9 +339,16 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         },
       });
 
-      // Register user with Firebase
       const firebaseUser = await registerUser(email, password, "individual", userAccountData);
+console.log("firebaseUser:", firebaseUser);
+const firebaseUid = firebaseUser?.uid;
+console.log("firebaseUid:", firebaseUid);
 
+if (!firebaseUid) {
+  setError("Registration failed: No Firebase UID returned.");
+  setIsLoading(false);
+  return;
+}
       // Register user with PostgreSQL
     try {
       const response = await fetch('http://localhost:5000/api/registerCustomer', {
@@ -349,16 +356,17 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
+          body: JSON.stringify({
+            firebaseUid, // <-- send this
+            firstName,
+            lastName,
+            email,
+            password,
             phoneNo: phoneNumber ? `+63${phoneNumber}` : null,
             preferences: preferences.join(','),
             customerType: userData.userRole || "enthusiast"
-        }),
-      });
+          }),
+        });
 
         if (!response.ok) {
           const contentType = response.headers.get("content-type");

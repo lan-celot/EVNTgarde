@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import Logo from "../../assets/OrganizerLogo.png";
 import { useNavigate } from "react-router-dom";
 import { auth, signInWithEmailAndPassword } from "../../functions/firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../functions/firebase";
 import { checkSessionExpiry, signInWithGoogle, signInWithYahoo } from "@/functions/authFunctions";
 import { useTheme } from "../../functions/ThemeContext";
 import { FcGoogle } from "react-icons/fc";
@@ -27,7 +25,13 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
     if (sessionExpired) {
       navigate("/login"); // Redirect user if session expired
     }
+    // Redirect to dashboard if authenticated
+    if (localStorage.getItem("isAuthenticated") === "true") {
+      navigate("/dashboard");
+    }
   }, [navigate]);
+
+  
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,111 +47,41 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
       );
       const userId = userCredential.user.uid;
 
-      // Retrieve user data from Firestore
-      const userDoc = await getDoc(doc(db, "users", userId));
-      if (!userDoc.exists()) {
-        throw new Error("User data not found.");
+      // Fetch user data from your PostgreSQL backend
+      const response = await fetch('http://localhost:5000/api/getUserType', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ firebaseUid: userId, email: userCredential.user.email }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user type from backend');
       }
 
-      const userData = userDoc.data();
+      const userData = await response.json();
       const userType = userData.userType;
-      let vendorType;
-      if (userType === "vendor") {
-        vendorType = userData.vendorType;
+      const vendorType = userData.vendorType;
+
+      // Store authentication status and userType
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userType", userType);
+      if (vendorType) {
+        localStorage.setItem("vendorType", vendorType);
       }
 
-      // Sync user data with PostgreSQL
-      try {
-        const syncData = {
-          firebaseUid: userId,
-          email: userCredential.user.email,
-          userType: userType,
-          vendorType: vendorType
-        };
-        console.log('Attempting to sync user data:', syncData);
-
-        const response = await fetch('http://localhost:5000/api/syncUser', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(syncData),
-        });
-
-        // Log the raw response for debugging
-        console.log('Server response status:', response.status);
-        console.log('Server response headers:', Object.fromEntries(response.headers.entries()));
-        
-        // Try to get the response text first
-        const responseText = await response.text();
-        console.log('Raw server response:', responseText);
-
-        // Try to parse as JSON if possible
-        let data;
-        try {
-          data = JSON.parse(responseText);
-          console.log('Parsed response data:', data);
-        } catch (parseError) {
-          console.error('Failed to parse response as JSON:', parseError);
-          throw new Error('Server returned invalid JSON response');
-        }
-        
-        if (!response.ok) {
-          console.error('Sync error response:', data);
-          throw new Error(data.message || 'Failed to sync user data');
-        }
-
-        // Store authentication status and userType
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("userType", userType);
-        if (vendorType) {
-          localStorage.setItem("vendorType", vendorType);
-        }
-
-        if (rememberMe) {
-          localStorage.setItem("loginTimestamp", Date.now().toString());
-        }
-
-        login();
-
-        // Redirect user based on userType
-        switch (userType) {
-          case "individual":
-            navigate("/customer");
-            break;
-          case "organizer":
-            navigate("/organizer");
-            break;
-          case "vendor":
-            navigate("/vendor");
-            break;
-          default:
-            throw new Error("Invalid user type.");
-        }
-      } catch (dbError: any) {
-        console.error('Database sync error:', {
-          message: dbError.message,
-          stack: dbError.stack,
-          name: dbError.name
-        });
-        
-        // If PostgreSQL sync fails, sign out from Firebase
-        await auth.signOut();
-        
-        // Provide more specific error message based on the error type
-        if (dbError.name === 'TypeError' && dbError.message.includes('fetch')) {
-          throw new Error('Unable to connect to the server. Please check if the server is running.');
-        } else if (dbError.message.includes('invalid JSON')) {
-          throw new Error('Server returned an invalid response. Please try again later.');
-        } else {
-          throw new Error(`Failed to sync user data: ${dbError.message}`);
-        }
+      if (rememberMe) {
+        localStorage.setItem("loginTimestamp", Date.now().toString());
       }
+
+      login();
+      // Do NOT navigate here; let useEffect handle it
+
     } catch (err: any) {
       const newFailedAttempts = failedAttempts + 1;
       setFailedAttempts(newFailedAttempts);
-      // 3 failed attempts, generic message
       if (newFailedAttempts >= 3) {
         setError("Login failed. Please check your credentials and try again.");
       } else {
@@ -158,13 +92,15 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
     }
   };
 
+
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError(null);
     try {
-      await signInWithGoogle("individual"); // Default to individual, will be updated from Firestore
+      await signInWithGoogle("individual"); // Default to individual, will be updated from backend
       login();
-      // Redirect will happen based on userType in Firestore
+      navigate("/dashboard");
+      // Redirect will happen based on userType in backend
     } catch (err: any) {
       setError("Failed to sign in with Google. Please try again.");
       console.error(err);
@@ -177,9 +113,10 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
     setLoading(true);
     setError(null);
     try {
-      await signInWithYahoo("individual"); // Default to individual, will be updated from Firestore
+      await signInWithYahoo("individual"); // Default to individual, will be updated from backend
       login();
-      // Redirect will happen based on userType in Firestore
+      navigate("/dashboard");
+      // Redirect will happen based on userType in backend
     } catch (err: any) {
       setError("Failed to sign in with Yahoo. Please try again.");
       console.error(err);

@@ -182,7 +182,7 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
       // Register user with Firebase
       const firebaseUser = await registerUser(email, password, "organizer", userData);
-
+      const firebaseUid = firebaseUser?.uid;
       // Register user with PostgreSQL
       try {
         const response = await fetch('http://localhost:5000/api/registerOrganizer', {
@@ -191,6 +191,7 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            organizerId: firebaseUid, // <-- use this as the primary key
             organizerCompanyName: companyName,
             organizerEmail: email,
             organizerPassword: password,

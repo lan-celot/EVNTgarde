@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import pool from '../db';
 import { CustomRequest, CustomResponse } from '../types/express';
-import { v4 as uuidv4 } from 'uuid';
+import db from '../db';
 
 const router = express.Router();
 
@@ -13,9 +13,11 @@ interface RequestBody {
   password: string;
   phoneNo?: string;
   customerType: string;
+  firebaseUid: string;
 }
 
 interface VendorRequestBody {
+  vendorId: string;
   vendorBusinessName: string;
   vendorEmail: string;
   vendorPassword: string;
@@ -26,6 +28,7 @@ interface VendorRequestBody {
 }
 
 interface OrganizerRequestBody {
+  organizerId: string;
   organizerCompanyName: string;
   organizerEmail: string;
   organizerPassword: string;
@@ -47,61 +50,128 @@ interface SyncUserRequestBody {
   vendorType?: string;
 }
 
-// Register Customer
-router.post('/registerCustomer', async (req: CustomRequest<RequestBody>, res: CustomResponse) => {
-  const { firstName, lastName, email, password, phoneNo, customerType } = req.body;
+router.post('/getUserType', async (req, res) => {
+  const { firebaseUid, email } = req.body;
+
+  try {
+    // Try Customer
+    const customerResult = await db.query(
+      'SELECT customer_type AS "userType" FROM Customer_Account_Data WHERE customer_id = $1 OR customer_email = $2 LIMIT 1',
+      [firebaseUid, email]
+    );
+    if (customerResult.rows.length > 0) {
+      return res.json({ userType: customerResult.rows[0].userType });
+    }
+
+    // Try Vendor
+    const vendorResult = await db.query(
+      'SELECT vendor_type AS "userType" FROM Vendor_Account_Data WHERE vendor_id = $1 OR vendor_email = $2 LIMIT 1',
+      [firebaseUid, email]
+    );
+    if (vendorResult.rows.length > 0) {
+      return res.json({ userType: 'vendor', vendorType: vendorResult.rows[0].userType });
+    }
+
+    // Try Organizer
+    const organizerResult = await db.query(
+      'SELECT organizer_type AS "userType" FROM Event_Organizer_Account_Data WHERE organizer_id = $1 OR organizer_email = $2 LIMIT 1',
+      [firebaseUid, email]
+    );
+    if (organizerResult.rows.length > 0) {
+      return res.json({ userType: organizerResult.rows[0].userType });
+    }
+
+    // Not found
+    return res.status(404).json({ message: 'User not found' });
+  } catch (err: any) {
+    return res.status(500).json({ message: 'Database error', error: err.message });
+  }
+});
+
+router.post('/registerCustomer', async (req, res) => {
+  console.log('BODY:', req.body); // <--- Add this
+  const {
+    firebaseUid,
+    firstName,
+    lastName,
+    email,
+    password,
+    phoneNo,
+    preferences,
+    customerType
+  } = req.body;
+
+  console.log('firebaseUid:', firebaseUid); // <--- Already present
+ 
+  if (!firebaseUid) {
+    return res.status(400).json({ success: false, message: "Missing firebaseUid" });
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await pool.query(
-      `INSERT INTO Customer_Account_Data
-        (Customer_First_Name, Customer_Last_Name, Customer_Email, Customer_Phone_No, Customer_Password, Customer_Type)
-      VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING Customer_ID`,
-      [firstName, lastName, email, phoneNo || null, hashedPassword, customerType]
+    // Use firebaseUid as customer_id
+    await db.query(
+      `INSERT INTO customer_account_data (customer_id, customer_first_name, customer_last_name, customer_email, customer_password, customer_phone_no, preferences, customer_type)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [firebaseUid, firstName, lastName, email, hashedPassword, phoneNo, preferences, customerType]
     );
-    res.status(201).json({ success: true, customerId: result.rows[0].customer_id });
-  } catch (error: any) {
-    if (error.code === '23505') {
-      res.status(400).json({ success: false, message: 'Email already registered.' });
-    } else {
-      res.status(500).json({ success: false, message: error.message });
-    }
+    res.json({ success: true });
+  } catch (err: any) {
+    console.error(err);
+    console.log('firebaseUid:', firebaseUid);
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
 // Register Vendor
 router.post('/registerVendor', async (req: CustomRequest<VendorRequestBody>, res: CustomResponse) => {
-  const { vendorBusinessName, vendorEmail, vendorPassword, vendorType, vendorPhoneNo, services, preferences } = req.body;
-  try {
-    const hashedPassword = await bcrypt.hash(vendorPassword, 10);
-    const result = await pool.query(
-      `INSERT INTO Vendor_Account_Data 
-        (vendor_business_name, vendor_email, vendor_password, vendor_type, vendor_phone_no, services, preferences)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING vendor_id`,
-      [
-        vendorBusinessName,
-        vendorEmail,
-        hashedPassword,
-        vendorType,
-        vendorPhoneNo || null,
-        services,
-        JSON.stringify(preferences || []),
-      ]
-    );
-    res.status(201).json({ success: true, vendorId: result.rows[0].vendor_id });
+  console.log('BODY:', req.body);
+  const {
+    vendorId, // <-- get this from req.body
+    vendorBusinessName,
+    vendorEmail,
+    vendorPassword,
+    vendorType,
+    vendorPhoneNo,
+    services,
+    preferences
+  } = req.body;
+  console.log('vendorId:', vendorId);
+
+  
+try {
+  const hashedPassword = await bcrypt.hash(vendorPassword, 10);
+const result = await pool.query(
+  `INSERT INTO Vendor_Account_Data 
+    (vendor_id, vendor_business_name, vendor_email, vendor_password, vendor_type, vendor_phone_no, services, preferences)
+   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+   RETURNING vendor_id`,
+  [
+    vendorId, // <-- include this!
+    vendorBusinessName,
+    vendorEmail,
+    hashedPassword,
+    vendorType,
+    vendorPhoneNo || null,
+    services,
+    JSON.stringify(preferences || []),
+  ]
+);
+res.status(201).json({ success: true, vendorId: result.rows[0].vendor_id });
   } catch (error: any) {
     if (error.code === '23505') {
       res.status(400).json({ success: false, message: 'Email already registered.' });
     } else {
       res.status(500).json({ success: false, message: error.message });
     }
+
   }
 });
 
 // Register Organizer
 router.post('/registerOrganizer', async (req: CustomRequest<OrganizerRequestBody>, res: CustomResponse) => {
   const {
+    organizerId, // <-- get this from req.body
     organizerCompanyName,
     organizerEmail,
     organizerPassword,
@@ -119,7 +189,7 @@ router.post('/registerOrganizer', async (req: CustomRequest<OrganizerRequestBody
        VALUES ($1, $2, $3, $4, $5, NULL, $6, $7, $8)
        RETURNING Organizer_ID`,
       [
-        uuidv4(),
+        organizerId, 
         organizerCompanyName,
         organizerIndustry,
         organizerLocation || null,
@@ -136,6 +206,7 @@ router.post('/registerOrganizer', async (req: CustomRequest<OrganizerRequestBody
     } else {
       res.status(500).json({ success: false, message: error.message });
     }
+    
   }
 });
 
@@ -328,6 +399,8 @@ router.post('/syncUser', async (req: CustomRequest<SyncUserRequestBody>, res: Cu
         }
         console.log('Successfully created new user');
       }
+
+      
 
       const response = {
         success: true,

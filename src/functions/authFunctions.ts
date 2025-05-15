@@ -60,6 +60,7 @@ export const registerUser = async (
       password
     );
     const user = userCredential.user;
+    return userCredential.user; // This must return the user object with .uid
 
     // Prepare user data
     const userDocData = {
