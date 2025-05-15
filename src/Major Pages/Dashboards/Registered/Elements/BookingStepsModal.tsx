@@ -3,6 +3,7 @@
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import { X, Check } from "lucide-react";
+import BookingStepsCard from "./BookingStepsCard";
 
 interface AddServiceModalProps {
   isOpen: boolean;
@@ -26,6 +27,82 @@ interface ServiceData {
   amount: string;
 }
 
+type Booking = {
+  id: number;
+  type: string;
+  date: string;
+  day: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  customer: string;
+  location: string;
+  guests: string;
+  organizer?: string;
+  requestedServices: { [key: string]: number }; // Flexible object for services
+};
+
+const dummyBookings: Booking[] = [
+  {
+    id: 1,
+    type: "Wedding Reception",
+    date: "2025-01-01",
+    day: "Wednesday",
+    title: "Grand Wedding Celebration",
+    startTime: "5:30 PM",
+    endTime: "10:00 PM",
+    customer: "Mr. & Mrs. Smith",
+    location: "Ballroom A",
+    guests: "150",
+    organizer: "Elite Events Co.",
+    requestedServices: {
+      Catering: 120000,
+      "Sound & Lighting": 90000,
+      "Floral Arrangements": 60000,
+      Band: 110000,
+    },
+  },
+  {
+    id: 2,
+    type: "Corporate Seminar",
+    date: "2025-05-20",
+    day: "Tuesday",
+    title: "Future of Technology",
+    startTime: "9:00 AM",
+    endTime: "4:00 PM",
+    customer: "Tech Innovations Inc.",
+    location: "Conference Hall 1",
+    guests: "200",
+    organizer: "Corporate Events Ltd.",
+    requestedServices: {
+      "Venue Rental": 50000,
+      Catering: 40000,
+      "AV Equipment": 30000,
+      Speakers: 150000,
+      "Printing & Materials": 15000,
+    },
+  },
+  {
+    id: 3,
+    type: "Birthday Party",
+    date: "2025-07-10",
+    day: "Thursday",
+    title: "Sweet Sixteen Bash",
+    startTime: "7:00 PM",
+    endTime: "11:00 PM",
+    customer: "Jessica Miller",
+    location: "The Party Place",
+    guests: "80",
+    requestedServices: {
+      Catering: 60000,
+      DJ: 40000,
+      Decorations: 35000,
+      Photography: 25000,
+      Cake: 10000,
+    },
+  },
+];
+
 export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
   isOpen,
   onClose,
@@ -40,8 +117,25 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
     type: "",
     amount: "",
   });
+  const [showBookingCard, setShowBookingCard] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Booking | null>(null);
+  const [bookings] = useState(dummyBookings);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [userRole, setUserRole] = useState<
+    "organizer" | "individual" | "vendor"
+  >("individual");
+
+  useEffect(() => {
+    const storedUserType = localStorage.getItem("userType");
+    if (
+      storedUserType === "organizer" ||
+      storedUserType === "individual" ||
+      storedUserType === "vendor"
+    ) {
+      setUserRole(storedUserType as "organizer" | "individual" | "vendor");
+    }
+  }, []);
 
   // Effect to prevent background scrolling when modal is open
   useEffect(() => {
@@ -63,10 +157,9 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
 
   const validateOverview = () => {
     const newErrors: Record<string, boolean> = {};
-    if (!serviceData.name.trim()) newErrors.name = true;
-    if (!serviceData.subtext.trim()) newErrors.subtext = true;
-    if (!serviceData.message.trim()) newErrors.message = true;
-
+    if (!selectedEvent) {
+      newErrors.selectedEvent = true; // Add an error if no event is selected
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -131,6 +224,23 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
     fileInputRef.current?.click();
   };
 
+  const handleSelectEvent = (booking: Booking) => {
+    setSelectedEvent(booking);
+    setShowBookingCard(false);
+    // Now the parent has the full booking object
+    console.log("Selected event in parent:", booking);
+    // Update parent UI with selectedEvent details
+  };
+
+  const handleChangeEvent = () => {
+    setSelectedEvent(null);
+    setShowBookingCard(true);
+  };
+
+  const displayEvents = () => {
+    setShowBookingCard(true);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setServiceData({
@@ -178,8 +288,12 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
     });
   };
 
+  const renderTitle = () => [
+    userRole === "organizer" ? "Book Vendor" : "Book Organizer",
+  ];
+
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-3xl mx-6 relative max-h-[90vh] overflow-auto shadow-xl">
         <button
           onClick={onClose}
@@ -189,7 +303,9 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
         </button>
 
         <div className="p-8">
-          <h2 className="text-3xl font-bold text-blue-600 mb-8">Add Service</h2>
+          <h2 className="text-3xl font-bold text-[#2B579A] mb-8">
+            {renderTitle()}
+          </h2>
 
           {/* Progress Steps */}
           <div className="flex items-center justify-between mb-10 px-4">
@@ -197,22 +313,22 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   currentStep === "overview"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-[#2B579A] text-white"
                     : currentStep === "features" || currentStep === "pricing"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-[#2B579A] text-white"
                       : "border border-gray-300"
                 }`}
               >
                 {currentStep === "overview" ? "01" : <Check size={18} />}
               </div>
-              <span className="text-sm mt-2 text-blue-600 font-medium">
-                Overview
+              <span className="text-sm mt-2 text-[#2B579A] font-medium">
+                Select Event
               </span>
             </div>
 
             <div className="flex-1 h-1 bg-gray-300 mx-4">
               <div
-                className={`h-full bg-blue-600 ${
+                className={`h-full bg-[#2B579A] ${
                   currentStep === "features" || currentStep === "pricing"
                     ? "w-full"
                     : "w-0"
@@ -224,9 +340,9 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   currentStep === "features"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-[#2B579A] text-white"
                     : currentStep === "pricing"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-[#2B579A] text-white"
                       : "border border-gray-300"
                 }`}
               >
@@ -239,15 +355,15 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
                 )}
               </div>
               <span
-                className={`text-sm mt-2 ${currentStep === "features" ? "text-blue-600 font-medium" : "text-gray-500"}`}
+                className={`text-sm mt-2 ${currentStep === "features" ? "text-[#2B579A] font-medium" : "text-gray-500"}`}
               >
-                Features
+                Set Payment
               </span>
             </div>
 
             <div className="flex-1 h-1 bg-gray-300 mx-4">
               <div
-                className={`h-full bg-blue-600 ${currentStep === "pricing" ? "w-full" : "w-0"}`}
+                className={`h-full bg-[#2B579A] ${currentStep === "pricing" ? "w-full" : "w-0"}`}
               ></div>
             </div>
 
@@ -255,16 +371,16 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   currentStep === "pricing"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-[#2B579A] text-white"
                     : "border border-gray-300"
                 }`}
               >
                 {currentStep === "pricing" ? "03" : "03"}
               </div>
               <span
-                className={`text-sm mt-2 ${currentStep === "pricing" ? "text-blue-600 font-medium" : "text-gray-500"}`}
+                className={`text-sm mt-2 ${currentStep === "pricing" ? "text-[#2B579A] font-medium" : "text-gray-500"}`}
               >
-                Pricing
+                Finalize
               </span>
             </div>
           </div>
@@ -272,92 +388,83 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
           {/* Step 1: Overview */}
           {currentStep === "overview" && (
             <div className="space-y-6 px-4">
-              <div>
-                <label className="block text-base font-medium text-gray-700 mb-2">
-                  Service Name
-                </label>
-                <input
-                  type="text"
-                  value={serviceData.name}
-                  onChange={(e) =>
-                    setServiceData({ ...serviceData, name: e.target.value })
-                  }
-                  placeholder="Add a clear title that describes your event or service (e.g. Wedding Planning)"
-                  className={`w-full p-3 border ${errors.name ? "border-red-500" : "border-gray-300"} rounded-md text-base`}
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    Service name is required
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-base font-medium text-gray-700 mb-2">
-                  Subtext
-                </label>
-                <input
-                  type="text"
-                  value={serviceData.subtext}
-                  onChange={(e) =>
-                    setServiceData({ ...serviceData, subtext: e.target.value })
-                  }
-                  placeholder="Write a short tagline or sentence that explains the value of your service"
-                  className={`w-full p-3 border ${errors.subtext ? "border-red-500" : "border-gray-300"} rounded-md text-base`}
-                />
-                {errors.subtext && (
-                  <p className="text-red-500 text-sm mt-1">
-                    Subtext is required
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-base font-medium text-gray-700 mb-2">
-                  Message
-                </label>
-                <textarea
-                  value={serviceData.message}
-                  onChange={(e) =>
-                    setServiceData({ ...serviceData, message: e.target.value })
-                  }
-                  placeholder="Describe the service in detail—what's included, who it's for, and what makes it special"
-                  className={`w-full p-3 border ${errors.message ? "border-red-500" : "border-gray-300"} rounded-md text-base h-32`}
-                />
-                {errors.message && (
-                  <p className="text-red-500 text-sm mt-1">
-                    Message is required
-                  </p>
-                )}
-              </div>
-
               <div className="mt-8">
-                <label className="block text-base font-medium text-gray-700 mb-2">
-                  Upload Image
-                </label>
-                <div className="text-sm text-gray-500 mb-3">
-                  <p>• Upload PNG or JPG</p>
-                  <p>• Image should not exceed 25mb.</p>
-                </div>
-                <button
-                  onClick={handleFileUpload}
-                  className="w-full p-4 border border-dashed border-blue-300 rounded-md text-blue-600 flex items-center justify-center bg-blue-50 hover:bg-blue-100"
-                >
-                  Upload File
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/png, image/jpeg"
-                  className="hidden"
-                />
-                {serviceData.image && (
-                  <p className="text-sm text-green-600 mt-2">
-                    File selected: {serviceData.image.name}
-                  </p>
+                {showBookingCard ? (
+                  <BookingStepsCard
+                    bookings={bookings} // Pass the booking list as a prop
+                    onSelect={handleSelectEvent}
+                    selectedEvent={selectedEvent}
+                  />
+                ) : selectedEvent ? (
+                  <BookingStepsCard
+                    bookings={[selectedEvent]} // Pass the booking list as a prop
+                    onSelect={handleSelectEvent}
+                    selectedEvent={selectedEvent}
+                  />
+                ) : (
+                  <button
+                    onClick={displayEvents}
+                    className="w-full p-4 border border-dashed border-blue-300 rounded-md text-[#2B579A] flex items-center justify-center bg-blue-50 hover:bg-blue-100"
+                  >
+                    Select Event
+                  </button>
                 )}
               </div>
+              {selectedEvent && (
+                <>
+                  <div className="flex justify-center mb-4">
+                    <button
+                      onClick={handleChangeEvent}
+                      className="w-full bg-[#2B579A] hover:bg-blue-600 text-white text-sm font-medium py-2 rounded"
+                    >
+                      Change
+                    </button>
+                  </div>
+                  <div className="gap-4 rounded-lg p-4 shadow-sm bg-white">
+                    <h3 className="text-xl font-semibold text-[#2B579A]">
+                      Event Summary
+                    </h3>
+                    <div className="grid grid-cols-2 gap-y-2 text-gray-500">
+                      <div>Type</div>
+                      <div>{selectedEvent.type}</div>
+                      <div>Date</div>
+                      <div>{selectedEvent.date}</div>
+                      <div>Time</div>
+                      <div>
+                        {selectedEvent.startTime} to {selectedEvent.endTime}
+                      </div>
+                      <div>Location</div>
+                      <div>{selectedEvent.location}</div>
+                      <div>Number of Guests</div>
+                      <div>{selectedEvent.guests}</div>
+                    </div>
+
+                    <h3 className="text-xl font-semibold text-[#2B579A] mt-6">
+                      Requested Services
+                    </h3>
+                    <div className="mt-2">
+                      {Object.entries(selectedEvent.requestedServices).map(
+                        ([service, cost]) => (
+                          <div
+                            key={service}
+                            className="flex justify-between text-gray-500"
+                          >
+                            <div className="gap-y-2">{service}</div>
+                            <div className="gap-y-2">
+                              Php {cost.toLocaleString()}
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+              {errors.selectedEvent && (
+                <p className="text-red-500">
+                  Please select an event before proceeding.
+                </p>
+              )}
             </div>
           )}
 
@@ -417,7 +524,7 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
                     ))}
                     <button
                       onClick={() => addFeature(featureIndex)}
-                      className="w-full p-3 bg-blue-50 text-blue-600 rounded-md flex items-center justify-center hover:bg-blue-100 mt-2"
+                      className="w-full p-3 bg-blue-50 text-[#2B579A] rounded-md flex items-center justify-center hover:bg-blue-100 mt-2"
                     >
                       <span className="mr-1">+</span> Add feature
                     </button>
@@ -427,7 +534,7 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
 
               <button
                 onClick={addServiceFeature}
-                className="w-full p-4 bg-blue-50 text-blue-600 rounded-md flex items-center justify-center hover:bg-blue-100 mt-4"
+                className="w-full p-4 bg-blue-50 text-[#2B579A] rounded-md flex items-center justify-center hover:bg-blue-100 mt-4"
               >
                 <span className="mr-1">+</span> Add Another Service
                 Feature/Inclusion
@@ -501,14 +608,14 @@ export const BookingStepsModal: React.FC<AddServiceModalProps> = ({
             {currentStep !== "pricing" ? (
               <button
                 onClick={handleNext}
-                className="flex-1 py-3 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-base font-medium"
+                className="flex-1 py-3 px-6 bg-[#2B579A] text-white rounded-md hover:bg-blue-700 text-base font-medium"
               >
                 Next
               </button>
             ) : (
               <button
                 onClick={handleFinish}
-                className="flex-1 py-3 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-base font-medium"
+                className="flex-1 py-3 px-6 bg-[#2B579A] text-white rounded-md hover:bg-blue-700 text-base font-medium"
               >
                 Finish
               </button>
