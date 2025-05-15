@@ -1,277 +1,249 @@
-import { useState } from 'react';
-import PackageSummaryPreview from './PackageSummaryPreview';
+import React, { useEffect, useRef, useState } from "react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onContinue: () => void;
   organizerName: string;
 }
 
-export default function BookingModal({ isOpen, onClose, organizerName }: BookingModalProps) {
-  const [eventDetails, setEventDetails] = useState({
-    eventName: '',
-    contactName: '',
-    eventOverview: '',
-    address: '',
-    eventType: '',
-    numberOfGuests: '',
-    numberOfHours: '',
-    spaceConfiguration: '',
-    openSpace: '',
-    organizationName: '',
-    organizationAddress: '',
-    email: '',
-    contactNo: '',
-    startDate: '',
-    endDate: ''
-  });
+const allEvents = [
+  {
+    title: "Wedding Planning",
+    price: "Php 90,000",
+    intro:
+      "Let us handle every detail, so you can fully savor your special day.",
+    fullDetails: `At Eventify, we understand that planning a wedding can be both exciting and overwhelming. Our Full Wedding Planning service is designed to take the stress out of the process, allowing you to relax and enjoy every moment leading up to and on your wedding day.
 
-  const [showPreview, setShowPreview] = useState(false);
+From the initial concept to the final farewell, we meticulously manage every detail to create a celebration that perfectly reflects your unique style and vision.`,
+    included: [
+      {
+        section: "Initial Consultation & Vision Development:",
+        bullets: [
+          "In-depth discussions to understand your vision, preferences, style, and budget.",
+          "Conceptualization of the wedding theme, color palette, and overall aesthetic.",
+          "Development of a detailed wedding plan and timeline.",
+        ],
+      },
+      {
+        section: "Budget Management:",
+        bullets: [
+          "Creation of a realistic and detailed budget.",
+          "Tracking expenses and ensuring adherence to the agreed-upon budget.",
+          "Negotiation with vendors to secure the best possible rates.",
+        ],
+      },
+      {
+        section: "Venue Sourcing & Management:",
+        bullets: [
+          "Scheduling and accompanying you on venue visits.",
+          "Negotiating and managing venue contracts.",
+          "Liaising with the venue coordinator throughout the planning process.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Birthday Planning",
+    price: "Php 50,000",
+    intro: "Celebrate birthdays in unforgettable ways.",
+    fullDetails:
+      "Whether for kids, teens, or adults, we plan birthday parties tailored to your dream theme...",
+    included: [
+      {
+        section: "Birthday Setup",
+        bullets: ["Decorations", "Games", "Cake setup"],
+      },
+    ],
+  },
+  {
+    title: "Social Event Planning",
+    price: "Php 70,000",
+    intro: "Memorable social events made simple.",
+    fullDetails:
+      "From intimate gatherings to grand socials, we ensure your event is remarkable...",
+    included: [
+      {
+        section: "Social Coordination",
+        bullets: ["Guest management", "Program hosting"],
+      },
+    ],
+  },
+  {
+    title: "Corporate Event Planning",
+    price: "Php 99,999",
+    intro: "Professional and seamless corporate events.",
+    fullDetails:
+      "Be it seminars, launches, or year-end parties, we handle the pressure so you don't have to...",
+    included: [
+      {
+        section: "Corporate Services",
+        bullets: ["Venue booking", "Speaker management"],
+      },
+    ],
+  },
+  {
+    title: "Charity Gala Planning",
+    price: "Php 120,000",
+    intro: "Elegant and impactful charity galas.",
+    fullDetails:
+      "From donor engagement to event execution, we help you make a difference in style...",
+    included: [
+      {
+        section: "Charity Setup",
+        bullets: ["Auction management", "Guest VIP handling"],
+      },
+    ],
+  },
+  {
+    title: "Debut Planning",
+    price: "Php 85,000",
+    intro: "A magical debut night, just for you.",
+    fullDetails:
+      "Celebrate your milestone with an unforgettable debut experience...",
+    included: [
+      {
+        section: "Debut Coordination",
+        bullets: ["18 Roses", "18 Candles", "18 Treasures"],
+      },
+    ],
+  },
+];
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
+const BookingModal: React.FC<BookingModalProps> = ({
+  isOpen,
+  onClose,
+  onContinue,
+  organizerName,
+}) => {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [userRole, setUserRole] = useState<
+    "organizer" | "individual" | "vendor"
+  >("individual");
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
       onClose();
     }
   };
 
+  useEffect(() => {
+    const storedUserType = localStorage.getItem("userType");
+    if (
+      storedUserType === "organizer" ||
+      storedUserType === "individual" ||
+      storedUserType === "vendor"
+    ) {
+      setUserRole(storedUserType as "organizer" | "individual" | "vendor");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
-  const availableServices = [
-    'Venue Decoration',
-    'Transportation',
-    'Catering',
-    'Photography',
-    'Lighting',
-    'Sound System',
-    'Photo Booth',
-    'Other services'
-  ];
-
-  const prices = {
-    'Venue Decoration': 'Php 100,000',
-    'Transportation': 'Php 5,000',
-    'Catering': 'Php 50,000',
-    'Photography': 'Php 15,000',
-    'Lighting': 'Php 8,000',
-    'Sound System': 'Php 10,000',
-    'Photo Booth': 'Php 5,000',
-    'Other services': 'Php 200,000'
+  const toggleExpand = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
   };
 
-  const handlePreviewClick = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowPreview(true);
-  };
-
-  const handleBackFromPreview = () => {
-    setShowPreview(false);
+  const renderButton = () => {
+    if (userRole === "organizer")
+      return (
+        <button
+          onClick={onContinue}
+          className="w-full bg-[#2B579A] text-white py-3 rounded-lg hover:bg-blue-600 transition"
+        >
+          Book Vendor
+        </button>
+      );
+    else if (userRole === "individual")
+      return (
+        <button
+          onClick={onContinue}
+          className="w-full bg-[#2B579A] text-white py-3 rounded-lg hover:bg-blue-600 transition"
+        >
+          Book Organizer
+        </button>
+      );
+    else return null;
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-gray-75 bg-opacity-10 flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
-      {!showPreview ? (
-        <div className="bg-white rounded-lg p-6 w-[800px] h-[500px] overflow-y-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
-          <div className="flex items-center mb-6">
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 mr-4">
-              ←
-            </button>
-            <h2 className="text-xl font-semibold">Book Organizer</h2>
-          </div>
+    <div className="fixed inset-0 bg-black/30 flex justify-center items-center z-50">
+      <div
+        ref={modalRef}
+        className="bg-white rounded-lg p-6 w-full max-w-3xl shadow-lg max-h-[90vh] overflow-y-auto relative"
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+        >
+          <X size={20} />
+        </button>
+        <h2 className="text-lg font-semibold mb-4 text-center">
+          {organizerName} Full Event Management List
+        </h2>
 
-          <form className="space-y-6">
-            {/* Event Details Section */}
-            <div className="space-y-4">
-              <h3 className="font-medium text-gray-700">Event Details</h3>
-              <div className="grid grid-cols-1 gap-4">
-                <input
-                  type="text"
-                  placeholder="Event Name"
-                  className="w-full p-2 border rounded-md"
-                  value={eventDetails.eventName}
-                  onChange={(e) => setEventDetails({ ...eventDetails, eventName: e.target.value })}
-                />
-                <textarea
-                  placeholder="Event Overview"
-                  className="w-full p-2 border rounded-md"
-                  value={eventDetails.eventOverview}
-                  onChange={(e) => setEventDetails({ ...eventDetails, eventOverview: e.target.value })}
-                />
-                <input
-                  type="text"
-                  placeholder="123 Example Street and City"
-                  className="w-full p-2 border rounded-md"
-                  value={eventDetails.address}
-                  onChange={(e) => setEventDetails({ ...eventDetails, address: e.target.value })}
-                />
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <select
-                    className="w-full p-2 border rounded-md"
-                    value={eventDetails.eventType}
-                    onChange={(e) => setEventDetails({ ...eventDetails, eventType: e.target.value })}
-                  >
-                    <option value="">Event Type</option>
-                    <option value="wedding">Wedding</option>
-                    <option value="corporate">Corporate</option>
-                    <option value="birthday">Birthday</option>
-                  </select>
-                  <input
-                    type="number"
-                    placeholder="Number of Guests"
-                    className="w-full p-2 border rounded-md"
-                    value={eventDetails.numberOfGuests}
-                    onChange={(e) => setEventDetails({ ...eventDetails, numberOfGuests: e.target.value })}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <select
-                    className="w-full p-2 border rounded-md"
-                    value={eventDetails.numberOfHours}
-                    onChange={(e) => setEventDetails({ ...eventDetails, numberOfHours: e.target.value })}
-                  >
-                    <option value="">Number of Hours a Day</option>
-                    <option value="4">4 Hours</option>
-                    <option value="8">8 Hours</option>
-                    <option value="12">12 Hours</option>
-                  </select>
-                  <select
-                    className="w-full p-2 border rounded-md"
-                    value={eventDetails.spaceConfiguration}
-                    onChange={(e) => setEventDetails({ ...eventDetails, spaceConfiguration: e.target.value })}
-                  >
-                    <option value="">Space Configuration</option>
-                    <option value="indoor">Indoor</option>
-                    <option value="outdoor">Outdoor</option>
-                    <option value="both">Both</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Preferred Date Section */}
-            <div className="space-y-4">
-              <h3 className="font-medium text-gray-700">Preferred Date</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">From</label>
-                  <input
-                    type="date"
-                    className="w-full p-2 border rounded-md"
-                    value={eventDetails.startDate}
-                    onChange={(e) => setEventDetails({ ...eventDetails, startDate: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">To</label>
-                  <input
-                    type="date"
-                    className="w-full p-2 border rounded-md"
-                    value={eventDetails.endDate}
-                    onChange={(e) => setEventDetails({ ...eventDetails, endDate: e.target.value })}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Client Information Section */}
-            <div className="space-y-4">
-              <h3 className="font-medium text-gray-700">Client Information</h3>
-              <div className="grid grid-cols-1 gap-4">
-                <input
-                  type="text"
-                  placeholder="Organization/Company"
-                  className="w-full p-2 border rounded-md"
-                  value={eventDetails.organizationName}
-                  onChange={(e) => setEventDetails({ ...eventDetails, organizationName: e.target.value })}
-                />
-                <input
-                  type="text"
-                  placeholder="Organization Address"
-                  className="w-full p-2 border rounded-md"
-                  value={eventDetails.organizationAddress}
-                  onChange={(e) => setEventDetails({ ...eventDetails, organizationAddress: e.target.value })}
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    className="w-full p-2 border rounded-md"
-                    value={eventDetails.email}
-                    onChange={(e) => setEventDetails({ ...eventDetails, email: e.target.value })}
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Contact No"
-                    className="w-full p-2 border rounded-md"
-                    value={eventDetails.contactNo}
-                    onChange={(e) => setEventDetails({ ...eventDetails, contactNo: e.target.value })}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Package Section */}
-            <div className="space-y-4">
-              <h3 className="font-medium text-gray-700">Package</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  {availableServices.map((service) => (
-                    <label key={service} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        className="form-checkbox text-blue-600"
-                      />
-                      <span className="text-sm">{service}</span>
-                    </label>
-                  ))}
-                </div>
-                <div className="space-y-2">
-                  {availableServices.map((service) => (
-                    <div key={service} className="text-sm text-right">
-                      {prices[service as keyof typeof prices]}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
+        {allEvents.map((event, index) => (
+          <div
+            key={index}
+            className="border border-gray-300 rounded-md mb-4 overflow-hidden"
+          >
             <button
-              type="submit"
-              className="w-full bg-[#2B579A] text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
-              onClick={handlePreviewClick}
+              onClick={() => toggleExpand(index)}
+              className="w-full flex justify-between items-center py-4 pl-5 pr-5 bg-gray-100 hover:bg-gray-200"
             >
-              Preview
+              <span className="font-medium text-gray-800">{event.title}</span>
+              {expandedIndex === index ? (
+                <ChevronUp size={20} />
+              ) : (
+                <ChevronDown size={20} />
+              )}
             </button>
-          </form>
-        </div>
-      ) : (
-        <PackageSummaryPreview 
-          isVisible={showPreview}
-          onBack={handleBackFromPreview}
-          summaryData={{
-            eventDetails: {
-              eventName: eventDetails.eventName,
-              address: eventDetails.address,
-              eventType: eventDetails.eventType,
-              numberOfGuests: eventDetails.numberOfGuests,
-              numberOfHours: eventDetails.numberOfHours,
-              spaceConfiguration: eventDetails.spaceConfiguration,
-              eventDate: `${eventDetails.startDate} - ${eventDetails.endDate}`,
-            },
-            clientDetails: {
-              organizationName: eventDetails.organizationName,
-              organizationAddress: eventDetails.organizationAddress,
-              email: eventDetails.email,
-              contactNumber: eventDetails.contactNo,
-            },
-            selectedServices: []
-          }}
-        />
-      )}
+
+            {expandedIndex === index && (
+              <div className="p-4 space-y-4 text-sm text-gray-700 bg-white">
+                <p className="italic text-gray-600">{event.intro}</p>
+                <p>{event.fullDetails}</p>
+
+                {event.included.map((section, secIdx) => (
+                  <div key={secIdx}>
+                    <h4 className="font-semibold mb-1">{section.section}</h4>
+                    <ul className="list-disc pl-13 space-y-2">
+                      {section.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx}>{bullet}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+
+                <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+                  <span className="font-semibold">Full Package</span>
+                  <span className="text-blue-600 font-medium">
+                    {event.price}
+                  </span>
+                </div>
+
+                {renderButton()}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
-} 
+};
+
+export default BookingModal;

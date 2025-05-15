@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "./EventCards";
 import EventModal from "./EventModal";
 
@@ -6,13 +6,35 @@ const allEvents = [
   {
     title: "Wedding Planning",
     price: "Php 90,000",
-    intro: "Let us handle every detail for your wedding day.",
-    fullDetails:
-      "We specialize in making your wedding stress-free, memorable, and beautiful...",
+    intro:
+      "Let us handle every detail, so you can fully savor your special day.",
+    fullDetails: `At Eventify, we understand that planning a wedding can be both exciting and overwhelming. Our Full Wedding Planning service is designed to take the stress out of the process, allowing you to relax and enjoy every moment leading up to and on your wedding day.
+
+From the initial concept to the final farewell, we meticulously manage every detail to create a celebration that perfectly reflects your unique style and vision.`,
     included: [
       {
-        section: "Planning",
-        bullets: ["Timeline creation", "Theme selection", "Budget management"],
+        section: "Initial Consultation & Vision Development:",
+        bullets: [
+          "In-depth discussions to understand your vision, preferences, style, and budget.",
+          "Conceptualization of the wedding theme, color palette, and overall aesthetic.",
+          "Development of a detailed wedding plan and timeline.",
+        ],
+      },
+      {
+        section: "Budget Management:",
+        bullets: [
+          "Creation of a realistic and detailed budget.",
+          "Tracking expenses and ensuring adherence to the agreed-upon budget.",
+          "Negotiation with vendors to secure the best possible rates.",
+        ],
+      },
+      {
+        section: "Venue Sourcing & Management:",
+        bullets: [
+          "Scheduling and accompanying you on venue visits.",
+          "Negotiating and managing venue contracts.",
+          "Liaising with the venue coordinator throughout the planning process.",
+        ],
       },
     ],
   },
@@ -47,7 +69,7 @@ const allEvents = [
     price: "Php 99,999",
     intro: "Professional and seamless corporate events.",
     fullDetails:
-      "Be it seminars, launches, or year-end parties, we handle the pressure so you don’t have to...",
+      "Be it seminars, launches, or year-end parties, we handle the pressure so you don't have to...",
     included: [
       {
         section: "Corporate Services",
@@ -92,6 +114,20 @@ const EventManagement: React.FC<Props> = ({ onBack, onAdd }) => {
   const [selectedEvent, setSelectedEvent] = useState<
     (typeof allEvents)[0] | null
   >(null);
+  const [userRole, setUserRole] = useState<
+    "organizer" | "individual" | "vendor"
+  >("individual");
+
+  useEffect(() => {
+    const storedUserType = localStorage.getItem("userType");
+    if (
+      storedUserType === "organizer" ||
+      storedUserType === "individual" ||
+      storedUserType === "vendor"
+    ) {
+      setUserRole(storedUserType as "organizer" | "individual" | "vendor");
+    }
+  }, []);
 
   const handleView = (event: (typeof allEvents)[0]) => {
     setSelectedEvent(event);
@@ -138,6 +174,7 @@ const EventManagement: React.FC<Props> = ({ onBack, onAdd }) => {
           included={selectedEvent.included}
           price={selectedEvent.price}
           onClose={handleClose}
+          userRole={userRole}
         />
       )}
     </div>
