@@ -35,7 +35,7 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
     setLoading(true);
 
     try {
-      // First, authenticate with Firebase
+      // Authenticate with Firebase
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -56,28 +56,46 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
         vendorType = userData.vendorType;
       }
 
-      // Now authenticate with PostgreSQL
+      // Sync user data with PostgreSQL
       try {
-        const response = await fetch('http://localhost:5000/api/loginCustomer', {
+        const syncData = {
+          firebaseUid: userId,
+          email: userCredential.user.email,
+          userType: userType,
+          vendorType: vendorType
+        };
+        console.log('Attempting to sync user data:', syncData);
+
+        const response = await fetch('http://localhost:5000/api/syncUser', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
-          body: JSON.stringify({
-            email,
-            password,
-            userType
-          }),
+          body: JSON.stringify(syncData),
         });
 
+        // Log the raw response for debugging
+        console.log('Server response status:', response.status);
+        console.log('Server response headers:', Object.fromEntries(response.headers.entries()));
+        
+        // Try to get the response text first
+        const responseText = await response.text();
+        console.log('Raw server response:', responseText);
+
+        // Try to parse as JSON if possible
+        let data;
+        try {
+          data = JSON.parse(responseText);
+          console.log('Parsed response data:', data);
+        } catch (parseError) {
+          console.error('Failed to parse response as JSON:', parseError);
+          throw new Error('Server returned invalid JSON response');
+        }
+        
         if (!response.ok) {
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.includes("application/json")) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Database authentication failed");
-          } else {
-            throw new Error("Database authentication failed");
-          }
+          console.error('Sync error response:', data);
+          throw new Error(data.message || 'Failed to sync user data');
         }
 
         // Store authentication status and userType
@@ -108,9 +126,23 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
             throw new Error("Invalid user type.");
         }
       } catch (dbError: any) {
-        // If PostgreSQL authentication fails, sign out from Firebase
+        console.error('Database sync error:', {
+          message: dbError.message,
+          stack: dbError.stack,
+          name: dbError.name
+        });
+        
+        // If PostgreSQL sync fails, sign out from Firebase
         await auth.signOut();
-        throw new Error(`Database authentication error: ${dbError.message}`);
+        
+        // Provide more specific error message based on the error type
+        if (dbError.name === 'TypeError' && dbError.message.includes('fetch')) {
+          throw new Error('Unable to connect to the server. Please check if the server is running.');
+        } else if (dbError.message.includes('invalid JSON')) {
+          throw new Error('Server returned an invalid response. Please try again later.');
+        } else {
+          throw new Error(`Failed to sync user data: ${dbError.message}`);
+        }
       }
     } catch (err: any) {
       const newFailedAttempts = failedAttempts + 1;

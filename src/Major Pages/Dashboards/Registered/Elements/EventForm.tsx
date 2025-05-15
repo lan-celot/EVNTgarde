@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 interface EventFormState {
   eventName: string;
@@ -42,9 +43,32 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [eventTypes, setEventTypes] = useState<{ event_type_id: number, event_type_name: string }[]>([]);
+  const [customerId, setCustomerId] = useState<string | null>(null);
 
-  // Get customer ID from localStorage or your auth context
-  const customerId = localStorage.getItem('customerId'); // or however you store the customer ID
+  useEffect(() => {
+    const auth = getAuth();
+    console.log('Current auth state:', auth.currentUser);
+    
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('Auth state changed:', user);
+      if (user) {
+        console.log('User is signed in, UID:', user.uid);
+        setCustomerId(user.uid);
+      } else {
+        console.log('No user is signed in');
+        setCustomerId(null);
+      }
+    });
+
+    // Check current user immediately
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      console.log('Current user found:', currentUser.uid);
+      setCustomerId(currentUser.uid);
+    }
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     fetch('http://localhost:5000/api/event-types')
@@ -83,6 +107,7 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
 
     // Check if customer is logged in
     if (!customerId) {
+      console.log('No customer ID available. Current auth state:', getAuth().currentUser);
       setError("You must be logged in to create an event");
       setLoading(false);
       return;
@@ -105,6 +130,8 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
     try {
       // Log form state before processing
       console.log('Form state before submission:', form);
+      console.log('Current customer ID:', customerId);
+      console.log('Current auth state:', getAuth().currentUser);
 
       // Combine date and time fields
       const startDateTime = new Date(`${form.startDate}T${form.startTime}`);
@@ -118,7 +145,7 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
       }
 
       const eventData = {
-        customerId: parseInt(customerId),
+        customerId: customerId,
         eventName: form.eventName,
         eventOverview: form.eventOverview,
         startDate: form.startDate,
@@ -138,6 +165,8 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
 
       // Log the data being sent
       console.log('Data being sent to backend:', eventData);
+      console.log('Customer ID being sent:', customerId);
+      console.log('Customer ID type:', typeof customerId);
 
       const response = await fetch('http://localhost:5000/api/events', {
         method: 'POST',
@@ -149,6 +178,7 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Server response:', errorData);
         throw new Error(errorData.error || 'Failed to create event');
       }
 
@@ -156,6 +186,7 @@ const EventForm = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () 
       onSuccess();
       onClose();
     } catch (err) {
+      console.error('Error details:', err);
       setError(err instanceof Error ? err.message : 'Failed to create event');
     } finally {
       setLoading(false);

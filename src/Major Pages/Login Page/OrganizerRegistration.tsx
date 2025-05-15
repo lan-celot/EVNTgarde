@@ -191,14 +191,13 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            firstName: companyName, // Using company name as first name for organizers
-            lastName: "", // Empty for organizers
-            email,
-            password,
-            phoneNo: phoneNumber ? `+63${phoneNumber}` : null,
-            preferences: preferences.join(','),
-            customerType: "organizer",
-            industry
+            organizerCompanyName: companyName,
+            organizerEmail: email,
+            organizerPassword: password,
+            organizerIndustry: industry,
+            organizerLocation: null,
+            organizerType: "organizer",
+            organizerLogoUrl: null
           }),
         });
 

@@ -20,6 +20,8 @@ router.get('/event-types', async (req, res) => {
 router.post('/events', async (req, res) => {
   try {
     console.log('Received request body:', req.body);
+    console.log('Customer ID received:', req.body.customerId);
+    console.log('Customer ID type:', typeof req.body.customerId);
     
     const {
       eventName,
@@ -41,8 +43,27 @@ router.post('/events', async (req, res) => {
     } = req.body;
 
     // Validate customerId
-    if (!customerId || isNaN(Number(customerId))) {
-      return res.status(400).json({ error: 'Valid Customer ID is required' });
+    if (!customerId) {
+      console.log('Customer ID validation failed: customerId is missing or empty');
+      return res.status(400).json({ 
+        error: 'Valid Customer ID is required',
+        receivedCustomerId: customerId,
+        requestBody: req.body
+      });
+    }
+
+    // Check if customer exists in Customer_Account_Data
+    const customerCheck = await query(
+      'SELECT customer_id FROM Customer_Account_Data WHERE customer_id = $1',
+      [customerId]
+    );
+
+    if (customerCheck.rows.length === 0) {
+      console.log('Customer not found in database:', customerId);
+      return res.status(400).json({
+        error: 'Customer not found in database. Please ensure you are properly registered.',
+        customerId: customerId
+      });
     }
 
     // Validate numeric fields
@@ -55,8 +76,8 @@ router.post('/events', async (req, res) => {
       return res.status(400).json({ error: 'Valid event type ID is required' });
     }
 
-    // Log validation checks
-    console.log('Validation checks:', {
+    // Log all required fields
+    console.log('Required fields validation:', {
       customerId: !!customerId,
       eventName: !!eventName,
       startDate: !!startDate,
@@ -84,7 +105,18 @@ router.post('/events', async (req, res) => {
         startDateTime: !startDateTime,
         endDateTime: !endDateTime
       });
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        missingFields: {
+          eventName: !eventName,
+          startDate: !startDate,
+          endDate: !endDate,
+          startTime: !startTime,
+          endTime: !endTime,
+          startDateTime: !startDateTime,
+          endDateTime: !endDateTime
+        }
+      });
     }
 
     // Insert into Events table
@@ -106,7 +138,7 @@ router.post('/events', async (req, res) => {
         services,
         location,
         budget
-      ) VALUES ($1::integer, $2, $3, $4, $5, $6, $7, $8, $9, $10::integer, $11::integer, $12, $13, $14, $15, $16::integer) RETURNING *`,
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::integer, $11::integer, $12, $13, $14, $15, $16::integer) RETURNING *`,
       [
         customerId,
         eventName,
