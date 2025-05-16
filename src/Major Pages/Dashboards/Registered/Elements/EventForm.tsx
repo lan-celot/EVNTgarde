@@ -439,6 +439,4 @@ useEffect(() => {
 
 export default EventForm;
 
-function setSuccess(_arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
+
