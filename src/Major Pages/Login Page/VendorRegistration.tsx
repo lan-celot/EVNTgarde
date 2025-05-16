@@ -12,120 +12,116 @@ import { createUserAccount } from "../../functions/userAccount";
 type VendorType = "Solo Vendor" | "Company Vendor" | "";
 
 const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(step);
-  const { isDarkMode } = useTheme();
+	const navigate = useNavigate();
+	const [currentStep, setCurrentStep] = useState(step);
+	const { isDarkMode } = useTheme();
 
-  const [vendorType, setVendorType] = useState<VendorType>("");
-  const [vendorName, setVendorName] = useState("");
-  const [businessOffering, setBusinessOffering] = useState("");
-  const [preferences, setPreferences] = useState<string[]>([]);
-  const [] = useState(false);
+	const [vendorType, setVendorType] = useState<VendorType>("");
+	const [vendorName, setVendorName] = useState("");
+	const [businessOffering, setBusinessOffering] = useState("");
+	const [preferences, setPreferences] = useState<string[]>([]);
 
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [termsAgreed, setTermsAgreed] = useState(false);
-  const [showTermsModal, setShowTermsModal] = useState(false);
+	const [phoneNumber, setPhoneNumber] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const [passwordError, setPasswordError] = useState("");
+	const [confirmPasswordError, setConfirmPasswordError] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 
-  const [hasSelectedVendorType, setHasSelectedVendorType] = useState(false);
+	const [hasSelectedVendorType, setHasSelectedVendorType] = useState(false);
 
-  useEffect(() => {
-    setCurrentStep(step);
-  }, [step]);
+	const [buildingId, setBuildingId] = useState("")
+	const [street, setStreet] = useState("")
+	const [barangay, setBarangay] = useState("")
+	const [city, setCity] = useState("")
+	const [province, setProvince] = useState("")
+	const [zipCode, setZipCode] = useState("")
+	const [country, setCountry] = useState("")
+	const [gender, setGender] = useState("")
+	const [termsAccepted, setTermsAccepted] = useState(false)
+	const [showTermsModal, setShowTermsModal] = useState(false)
 
-  const [error, setError] = useState("");
+	useEffect(() => {
+		setCurrentStep(step);
+	}, [step]);
+
+	const [error, setError] = useState("");
 
   const offeringOptions = [
     { value: "", label: "Please select service offered" },
-    { value: "catering", label: "Catering" },
-    { value: "venue", label: "Venue Rental" },
-    { value: "entertainment", label: "Entertainment" },
-    { value: "decoration", label: "Decoration" },
-    { value: "photography", label: "Photography" },
+    { value: "catering", label: "Catering and Food Services" },
+    { value: "venue", label: "Furniture" },
+    { value: "entertainment", label: "Audio and Visual Equipment" },
+    { value: "decoration", label: "Decor and Styling" },
+    { value: "photography", label: "Entertainment and Hosts" },
   ];
 
-  const preferenceOptions = [
-    "Procurement",
-    "Inventory",
-    "Reservations",
-    "Logistics",
-  ];
+	 useEffect(() => {
+		const validatePassword = (pass: string): string => {
+			if (pass.length < 12)
+				return "Password must be at least 12 characters long.";
+			if (!/[A-Z]/.test(pass))
+				return "Password must include at least one uppercase letter.";
+			if (!/\d/.test(pass)) return "Password must include at least one number.";
+			if (!/[!@#$%^&*_]/.test(pass))
+				return "Password must include at least one special character (!@#$%^&*_).";
+			return "";
+		};
 
-  useEffect(() => {
-    const validatePassword = (pass: string): string => {
-      if (pass.length < 12)
-        return "Password must be at least 12 characters long.";
-      if (!/[A-Z]/.test(pass))
-        return "Password must include at least one uppercase letter.";
-      if (!/\d/.test(pass)) return "Password must include at least one number.";
-      if (!/[!@#$%^&*_]/.test(pass))
-        return "Password must include at least one special character (!@#$%^&*_).";
-      return "";
-    };
+		setPasswordError(validatePassword(password));
+	}, [password]);
 
-    setPasswordError(validatePassword(password));
-  }, [password]);
+	useEffect(() => {
+		if (confirmPassword && password !== confirmPassword) {
+			setConfirmPasswordError("Passwords do not match.");
+		} else {
+			setConfirmPasswordError("");
+		}
+	}, [password, confirmPassword]);
 
-  useEffect(() => {
-    if (confirmPassword && password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match.");
-    } else {
-      setConfirmPasswordError("");
-    }
-  }, [password, confirmPassword]);
+	useEffect(() => {
+		if (currentStep === 3) {
+			const storedData = sessionStorage.getItem("vendorRegistration");
+			if (storedData) {
+				const data = JSON.parse(storedData);
+				setVendorType(data.vendorType);
+				setVendorName(data.vendorName);
+				setBusinessOffering(data.businessOffering);
+				setPreferences(data.preferences);
+			}
+		}
+	}, [currentStep]);
 
-  useEffect(() => {
-    if (currentStep === 3) {
-      const storedData = sessionStorage.getItem("vendorRegistration");
-      if (storedData) {
-        const data = JSON.parse(storedData);
-        setVendorType(data.vendorType);
-        setVendorName(data.vendorName);
-        setBusinessOffering(data.businessOffering);
-        setPreferences(data.preferences);
-      }
-    }
-  }, [currentStep]);
+	const handleGetStarted = () => {
+		if (!vendorType) {
+			setError("Please select a vendor type.");
+			return;
+		}
+		setHasSelectedVendorType(true);
+	};
 
-  const handlePreferenceChange = (preference: string) => {
-    if (preferences.includes(preference)) {
-      setPreferences(preferences.filter((p) => p !== preference));
-    } else {
-      setPreferences([...preferences, preference]);
-    }
-  };
+	const handleProceed = () => {
+		navigate("/register/vendor/step2");
+	};
 
-  const handleGetStarted = () => {
-    if (!vendorType) {
-      setError("Please select a vendor type.");
-      return;
-    }
-    setHasSelectedVendorType(true);
-  };
-
-  const handleProceed = () => {
-    navigate("/register/vendor/step2");
-  };
-
-  const handleNext = (e: React.FormEvent) => {
-    e.preventDefault();
+	const handleNext = (e: React.FormEvent) => {
+		e.preventDefault();
 
     if (!vendorType || !vendorName || !businessOffering) {
-      setError("Vendor type, name, and business offering are required");
-      return;
+      setError("Business name and services offered are required")
+      return
     }
 
-    if (preferences.length === 0) {
-      setError("Please select at least one system preference");
-      return;
+    if (vendorType === "Solo Vendor" && !gender) {
+      setError("Please select your gender")
+      return
     }
+
+    setError("")
+
 
     sessionStorage.setItem(
       "vendorRegistration",
@@ -134,173 +130,138 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         vendorName,
         businessOffering,
         preferences,
-      })
-    );
+        gender,
+      }),
+    )
 
-    navigate("/register/vendor/step3");
-  };
+    navigate("/register/vendor/step3")
+  }
+
+  const handleNextStep2 = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!street || !barangay || !city || !province || !country) {
+      setError("Please fill in all required address fields")
+      return
+    }
+
+    setError("")
+
+    const registrationData = JSON.parse(sessionStorage.getItem("vendorRegistration") || "{}")
+    sessionStorage.setItem(
+      "vendorRegistration",
+      JSON.stringify({
+        ...registrationData,
+        address: {
+          buildingId,
+          street,
+          barangay,
+          city,
+          province,
+          zipCode,
+          country,
+        },
+      }),
+    )
+
+    setCurrentStep(4)
+  }
 
   const handleBack = () => {
     if (currentStep === 1) {
-      navigate("/role-selection");
+      navigate("/role-selection")
     } else if (currentStep === 2) {
-      navigate("/register/vendor");
+      navigate("/register/vendor")
     } else {
-      navigate("/register/vendor/step2");
+      navigate("/register/vendor/step2")
     }
-  };
+  }
 
-  const handleCreateAccount = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+	const handleCreateAccount = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setError("");
 
-    if (!email || !password || !confirmPassword) {
-      setError("All fields are required");
-      return;
-    }
+		if (!email || !password || !confirmPassword) {
+			setError("All fields are required");
+			return;
+		}
 
-    if (!termsAgreed) {
-      setError("You must agree to the Terms and Conditions");
-      return;
-    }
+		if (passwordError) {
+			setError(passwordError);
+			return;
+		}
 
-    if (passwordError) {
-      setError(passwordError);
-      return;
-    }
+		if (confirmPasswordError) {
+			setError(confirmPasswordError);
+			return;
+		}
 
-    if (confirmPasswordError) {
-      setError(confirmPasswordError);
-      return;
-    }
-
-    setIsLoading(true);
+		setIsLoading(true);
 
     try {
-      // Get stored data
-      
-      // Create user account with data from all parts
+      const storedData = JSON.parse(sessionStorage.getItem("vendorRegistration") || "{}")
       const userData = createUserAccount("vendor", email, {
-        vendorType,
-        businessName: vendorName,
-        services: businessOffering,
-        phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
-        preferences: preferences
+				vendorType,
+				businessName: vendorName,
+				services: businessOffering,
+				phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
+				gender: storedData.gender,
+				address: storedData.address,
       });
 
-      // Register user with Firebase
-      const firebaseUser = await registerUser(email, password, "vendor", userData);
-console.log("firebaseUser:", firebaseUser);
-const firebaseUid = firebaseUser?.uid;
-console.log("firebaseUid:", firebaseUid);
+   	  await registerUser(email, password, "vendor", userData);
 
-      if (!firebaseUid) {
-        setError("Registration failed: No Firebase UID returned.");
-        setIsLoading(false);
-        return;
-      }
-      // Register user with PostgreSQL
-      try {
-        const response = await fetch('http://localhost:5000/api/registerVendor', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            vendorId: firebaseUid, // <-- must be set!
-            vendorBusinessName: vendorName,
-            vendorEmail: email,
-            vendorPassword: password,
-            vendorType,
-            vendorPhoneNo: phoneNumber ? `+63${phoneNumber}` : null,
-            services: businessOffering,
-            preferences: preferences.join(','),
-            role: "vendor"
-          }),
-        });
+      sessionStorage.removeItem("vendorRegistration");
 
-        if (!response.ok) {
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.includes("application/json")) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Database registration failed");
-          } else {
-            throw new Error("Database registration failed");
-          }
-        }
+	navigate("/login");
+	} catch (err: any) {
+		setError(err.message);
+	} finally {
+		setIsLoading(false);
+	}
+};
 
-        // Success: clear storage, navigate, etc.
-        sessionStorage.removeItem("vendorRegistration");
-        navigate("/login");
-      } catch (dbError: any) {
-        // If PostgreSQL registration fails, delete the Firebase user
-        if (firebaseUser && typeof firebaseUser.delete === 'function') {
-          try {
-            await firebaseUser.delete();
-          } catch (deleteError) {
-            console.error("Error deleting Firebase user after failed database registration:", deleteError);
-          }
-        }
-        throw new Error(`Database registration error: ${dbError.message}`);
-      }
-    } catch (err: any) {
-      console.error("Registration error:", err);
-      if (err.message.includes("timed out")) {
-        setError("Registration timed out. Please check your internet connection and try again.");
-      } else if (err.message.includes("email-already-in-use")) {
-        setError("This email is already registered. Please use a different email or try logging in.");
-      } else if (err.message.includes("network")) {
-        setError("Network error. Please check your internet connection and try again.");
-      } else {
-        setError(err.message || "Failed to create account. Please try again.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+	const handleGoogleSignUp = async () => {
+		setIsLoading(true);
+		setError("");
+		try {
+			await signInWithGoogle("vendor");
+			navigate("/vendor");
+		} catch (err: any) {
+			setError("Failed to sign up with Google. Please try again.");
+			console.error(err);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-  const handleGoogleSignUp = async () => {
-    setIsLoading(true);
-    setError("");
-    try {
-      await signInWithGoogle("vendor");
-      navigate("/vendor");
-    } catch (err: any) {
-      setError("Failed to sign up with Google. Please try again.");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+	const handleYahooSignUp = async () => {
+		setIsLoading(true);
+		setError("");
+		try {
+			await signInWithYahoo("vendor");
+			navigate("/vendor");
+		} catch (err: any) {
+			setError("Failed to sign up with Yahoo. Please try again.");
+			console.error(err);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-  const handleYahooSignUp = async () => {
-    setIsLoading(true);
-    setError("");
-    try {
-      await signInWithYahoo("vendor");
-      navigate("/vendor");
-    } catch (err: any) {
-      setError("Failed to sign up with Yahoo. Please try again.");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const openTermsModal = () => {
+    setShowTermsModal(true)
+  }
 
-  // Open terms and conditions modal
-  const openTermsModal = (e: React.MouseEvent | React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setShowTermsModal(true);
-  };
-
-  // Close terms and conditions modal
   const closeTermsModal = () => {
-    setShowTermsModal(false);
-  };
+    setShowTermsModal(false)
+  }
 
-  // Accept terms and conditions
   const acceptTerms = () => {
-    setTermsAgreed(true);
-    closeTermsModal();
-  };
+    setTermsAccepted(true)
+    setShowTermsModal(false)
+  }
+
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-300 font-[Poppins] p-4">
@@ -309,26 +270,18 @@ console.log("firebaseUid:", firebaseUid);
           isDarkMode ? "bg-gray-800" : "bg-blue-600"
         } rounded-xl shadow-lg overflow-hidden font-poppins`}
       >
-        {/* Left Side - Logo & Text */}
+
         <div
           className={`w-2/5 ${
             isDarkMode ? "bg-gray-800" : "bg-blue-600"
           } text-white flex flex-col items-center justify-center text-center p-8`}
         >
-          <img
-            src={Logo || "/placeholder.svg"}
-            className="max-w-xs mb-4"
-            alt="Logo"
-          />
-          <p className="text-lg font-medium mb-2">
-            Discover tailored events services.
-          </p>
-          <p className="text-lg font-medium mb-2">
-            Sign up for personalized services today!
-          </p>
+          <img src={Logo || "/placeholder.svg"} className="max-w-xs mb-4" alt="Logo" />
+          <p className="text-lg font-medium mb-2">Discover tailored events services.</p>
+          <p className="text-lg font-medium mb-2">Sign up for personalized services today!</p>
         </div>
 
-        {/* Right Side - Form */}
+
         <div
           className={`w-3/5 ${
             isDarkMode ? "bg-black text-white" : "bg-white text-gray-800"
@@ -340,14 +293,10 @@ console.log("firebaseUid:", firebaseUid);
                 <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
                 <div className="mb-6">
-                  <h3 className="text-2xl font-semibold mb-4">
-                    Are you a solo vendor or part of a company?
-                  </h3>
-                  <p className="text-lg mb-6">
-                    This helps us understand how to showcase your offerings.
-                  </p>
 
-                  {/* Add Radio Buttons with Border Styling */}
+                  <h3 className="text-2xl font-semibold mb-4">Are you a solo vendor or part of a company?</h3>
+                  <p className="text-lg mb-6">This helps us understand how to showcase your offerings.</p>
+
                   <div className="space-y-4">
                     <label
                       className={`flex items-start p-4 border rounded-lg cursor-pointer ${
@@ -389,7 +338,9 @@ console.log("firebaseUid:", firebaseUid);
                   </div>
                 </div>
 
-                {/* Buttons Container */}
+
+             {/* Buttons Container */}
+
                 <div className="flex justify-between gap-4 mt-2">
                   <button
                     type="button"
@@ -402,9 +353,8 @@ console.log("firebaseUid:", firebaseUid);
                     type="button"
                     onClick={handleGetStarted}
                     className={`flex-1 px-6 py-3 ${
-                      isDarkMode
-                        ? "bg-gray-800 hover:bg-gray-300"
-                        : "bg-blue-600 "
+                      isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "
+
                     } rounded-xl shadow-lg overflow-hidden font-poppins`}
                     disabled={!vendorType}
                   >
@@ -412,11 +362,8 @@ console.log("firebaseUid:", firebaseUid);
                   </button>
                 </div>
 
-                <p
-                  className={`text-center mt-4 ${
-                    isDarkMode ? "text-white" : "text-gray-700"
-                  }`}
-                >
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -428,12 +375,11 @@ console.log("firebaseUid:", firebaseUid);
                 <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
                 <div className="mb-8">
-                  <h3 className="text-2xl font-semibold mb-4">
-                    You're a Solo Vendor!
-                  </h3>
+
+                  <h3 className="text-2xl font-semibold mb-4">You're a Solo Vendor!</h3>
                   <p className="text-lg mb-6">
-                    Perfect Pick! Showcase your services/business to organizers.
-                    We'll help you get set up right away.
+                    Perfect Pick! Showcase your services/business to organizers. We'll help you get set up right away.
+
                   </p>
                 </div>
 
@@ -449,20 +395,18 @@ console.log("firebaseUid:", firebaseUid);
                     type="button"
                     onClick={handleProceed}
                     className={`flex-1 px-6 py-3 ${
-                      isDarkMode
-                        ? "bg-gray-800 hover:bg-gray-300"
-                        : "bg-blue-600 "
+
+                      isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "
+
                     } rounded-xl shadow-lg overflow-hidden font-poppins`}
                   >
                     Proceed
                   </button>
                 </div>
 
-                <p
-                  className={`text-center mt-4 ${
-                    isDarkMode ? "text-white" : "text-gray-700"
-                  }`}
-                >
+
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -474,12 +418,11 @@ console.log("firebaseUid:", firebaseUid);
                 <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
                 <div className="mb-8">
-                  <h3 className="text-2xl font-semibold mb-4">
-                    You're a Company Vendor!
-                  </h3>
+
+                  <h3 className="text-2xl font-semibold mb-4">You're a Company Vendor!</h3>
                   <p className="text-lg mb-6">
-                    Perfect Pick! Showcase your services/business to organizers.
-                    We'll help you get set up right away.
+                    Perfect Pick! Showcase your services/business to organizers. We'll help you get set up right away.
+
                   </p>
                 </div>
 
@@ -495,20 +438,17 @@ console.log("firebaseUid:", firebaseUid);
                     type="button"
                     onClick={handleProceed}
                     className={`flex-1 px-6 py-3 ${
-                      isDarkMode
-                        ? "bg-gray-800 hover:bg-gray-300"
-                        : "bg-blue-600 "
+
+                      isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 "
+
                     } rounded-xl shadow-lg overflow-hidden font-poppins`}
                   >
                     Proceed
                   </button>
                 </div>
 
-                <p
-                  className={`text-center mt-4 ${
-                    isDarkMode ? "text-white" : "text-gray-700"
-                  }`}
-                >
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -518,13 +458,12 @@ console.log("firebaseUid:", firebaseUid);
             )
           ) : currentStep === 2 ? (
             <>
-              <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
-              {error && (
-                <div className="bg-red-500 text-white p-3 rounded-md mb-4">
-                  {error}
-                </div>
-              )}
+              <h2 className="text-4xl font-bold mt-4 mb-6">Sign Up</h2>
+              <p className="text-1xl text-gray-500 mb-6">Step 1 of 3</p>
+
+              {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
+
 
               <div className="flex items-center justify-center gap-4 mb-4">
                 <button
@@ -558,41 +497,27 @@ console.log("firebaseUid:", firebaseUid);
               </div>
 
               <div className="relative flex items-center py-2 mb-4">
-                <div
-                  className={`flex-grow border-t ${
-                    isDarkMode ? "border-gray-600" : "border-gray-300"
-                  }`}
-                ></div>
-                <span
-                  className={`flex-shrink mx-4 text-sm ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  OR
-                </span>
-                <div
-                  className={`flex-grow border-t ${
-                    isDarkMode ? "border-gray-600" : "border-gray-300"
-                  }`}
-                ></div>
+
+                <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
+                <span className={`flex-shrink mx-4 text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>OR</span>
+                <div className={`flex-grow border-t ${isDarkMode ? "border-gray-600" : "border-gray-300"}`}></div>
+
               </div>
 
               <form className="space-y-6" onSubmit={handleNext}>
                 <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDarkMode ? "text-white" : "text-gray-700"
-                    }`}
-                  >
+
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                     Business Name
                   </label>
                   <input
                     type="text"
                     placeholder="John's Catering"
                     className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
-                      isDarkMode
-                        ? "bg-gray-700 text-white border-gray-600"
-                        : "bg-white text-gray-800 border-gray-300"
+
+                      isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+
                     }`}
                     value={vendorName}
                     onChange={(e) => setVendorName(e.target.value)}
@@ -600,19 +525,49 @@ console.log("firebaseUid:", firebaseUid);
                   />
                 </div>
 
+
+                {vendorType === "Solo Vendor" && (
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                      Select your gender
+                    </label>
+                    <select
+                      className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      required
+                    >
+                      <option value="" className={isDarkMode ? "text-white" : "text-gray-800"}>
+                        Select your gender
+                      </option>
+                      <option value="male" className={isDarkMode ? "text-white" : "text-gray-800"}>
+                        Male
+                      </option>
+                      <option value="female" className={isDarkMode ? "text-white" : "text-gray-800"}>
+                        Female
+                      </option>
+                      <option value="other" className={isDarkMode ? "text-white" : "text-gray-800"}>
+                        Other
+                      </option>
+                      <option value="prefer-not-to-say" className={isDarkMode ? "text-white" : "text-gray-800"}>
+                        Prefer not to say
+                      </option>
+                    </select>
+                  </div>
+                )}
+
                 <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDarkMode ? "text-white" : "text-gray-700"
-                    }`}
-                  >
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                     Services Offered
                   </label>
                   <select
                     className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      isDarkMode
-                        ? "bg-gray-700 text-white border-gray-600"
-                        : "bg-white text-gray-800 border-gray-300"
+
+                      isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+
                     }`}
                     value={businessOffering}
                     onChange={(e) => setBusinessOffering(e.target.value)}
@@ -630,28 +585,165 @@ console.log("firebaseUid:", firebaseUid);
                   </select>
                 </div>
 
-                <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDarkMode ? "text-white" : "text-gray-700"
-                    }`}
+
+                <div className="flex justify-center items-center gap-5">
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="px-43 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
-                    System Preferences
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {preferenceOptions.map((preference) => (
-                      <label key={preference} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          name="preference"
-                          className="mr-2"
-                          checked={preferences.includes(preference)}
-                          onChange={() => handlePreferenceChange(preference)}
-                        />
-                        {preference}
-                      </label>
-                    ))}
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    className={`flex-1 px-6 py-3 ${
+                      isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"
+                    } rounded-xl shadow-lg overflow-hidden font-poppins`}
+                  >
+                    Next
+                  </button>
+                </div>
+
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                  Already have an account?{" "}
+                  <a href="/login" className="text-blue-600 hover:underline">
+                    Log in
+                  </a>
+                </p>
+              </form>
+            </>
+          ) : currentStep === 3 ? (
+            <>
+              <h2 className="text-4xl font-bold mt-4 mb-6">Sign Up</h2>
+              <p className="text-1xl text-gray-500 mb-6">Step 2 of 3</p>
+
+              {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
+
+              <form className="space-y-6" onSubmit={handleNextStep2}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                      Building ID (optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., 123"
+                      className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={buildingId}
+                      onChange={(e) => setBuildingId(e.target.value)}
+                    />
                   </div>
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                      Street
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Mabini Street"
+                      className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={street}
+                      onChange={(e) => setStreet(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                      Barangay
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Barangay San Isidro"
+                      className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={barangay}
+                      onChange={(e) => setBarangay(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                      City
+                    </label>
+                    <select
+                      className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      required
+                    >
+                      <option value="">Select your city</option>
+                      <option value="manila">Manila</option>
+                      <option value="quezon-city">Quezon City</option>
+                      <option value="cebu">Cebu</option>
+                      <option value="davao">Davao</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                      Province
+                    </label>
+                    <select
+                      className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
+                      required
+                    >
+                      <option value="">Select your province</option>
+                      <option value="metro-manila">Metro Manila</option>
+                      <option value="cebu">Cebu</option>
+                      <option value="davao">Davao</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                      Zip Code
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., 1100"
+                      className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value.replace(/\D/g, ""))}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                    Country
+                  </label>
+                  <select
+                    className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                    }`}
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    required
+                  >
+                    <option value="">Select your country</option>
+                    <option value="philippines">Philippines</option>
+                    <option value="other">Other</option>
+                  </select>
+
                 </div>
 
                 <div className="flex justify-center items-center gap-5">
@@ -665,20 +757,18 @@ console.log("firebaseUid:", firebaseUid);
                   <button
                     type="submit"
                     className={`flex-1 px-6 py-3 ${
-                      isDarkMode
-                        ? "bg-gray-800 hover:bg-gray-300"
-                        : "bg-blue-600 hover:bg-blue-300"
+
+                      isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"
+
                     } rounded-xl shadow-lg overflow-hidden font-poppins`}
                   >
                     Next
                   </button>
                 </div>
 
-                <p
-                  className={`text-center mt-4 ${
-                    isDarkMode ? "text-white" : "text-gray-700"
-                  }`}
-                >
+
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -690,60 +780,44 @@ console.log("firebaseUid:", firebaseUid);
             <>
               <h2 className="text-4xl font-bold mb-6">Sign Up</h2>
 
-              {error && (
-                <div className="bg-red-500 text-white p-3 rounded-md mb-4">
-                  {error}
-                </div>
-              )}
+              <p className="text-1xl text-gray-500 mb-6">Step 3 of 3</p>
+
+              {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
 
               <form onSubmit={handleCreateAccount}>
                 <div className="mb-4">
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDarkMode ? "text-white" : "text-gray-700"
-                    }`}
-                  >
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
                     Phone Number (optional)
                   </label>
                   <div className="flex items-center border rounded-md">
-                    <span
-                      className={`px-3 py-2 ${
-                        isDarkMode ? "text-white" : "text-gray-700"
-                      }`}
-                    >
-                      +63
-                    </span>
+                    <span className={`px-3 py-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>+63</span>
                     <input
                       type="text"
                       placeholder="000 0000 000"
                       className={`w-full px-4 py-2 rounded-md focus:outline-none ${
-                        isDarkMode
-                          ? "bg-gray-700 text-white border-gray-600"
-                          : "bg-white text-gray-800 border-gray-300"
+
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
                       }`}
                       value={phoneNumber}
-                      onChange={(e) =>
-                        setPhoneNumber(e.target.value.replace(/\D/g, ""))
-                      }
+                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+
                     />
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDarkMode ? "text-white" : "text-gray-700"
-                    }`}
-                  >
+
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                     Business Email Address
                   </label>
                   <input
                     type="email"
                     placeholder="business@example.com"
                     className={`w-full px-4 py-2 border rounded-md text-sm focus:outline-blue-500 ${
-                      isDarkMode
-                        ? "bg-gray-700 text-white border-gray-600"
-                        : "bg-white text-gray-800 border-gray-300"
+
+                      isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+
                     }`}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -752,11 +826,9 @@ console.log("firebaseUid:", firebaseUid);
                 </div>
 
                 <div className="mb-4">
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDarkMode ? "text-white" : "text-gray-700"
-                    }`}
-                  >
+
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                     Enter Password
                   </label>
                   <div className="relative">
@@ -766,9 +838,9 @@ console.log("firebaseUid:", firebaseUid);
                       className={`w-full px-4 py-2 border rounded-md text-sm ${
                         passwordError && password ? "border-red-500" : ""
                       } ${
-                        isDarkMode
-                          ? "bg-gray-700 text-white border-gray-600"
-                          : "bg-white text-gray-800 border-gray-300"
+
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+
                       }`}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -783,22 +855,16 @@ console.log("firebaseUid:", firebaseUid);
                     </button>
                   </div>
                   {passwordError && password && (
-                    <p
-                      className={`text-sm mt-1 ${
-                        isDarkMode ? "text-red-400" : "text-red-500"
-                      }`}
-                    >
-                      {passwordError}
-                    </p>
+
+                    <p className={`text-sm mt-1 ${isDarkMode ? "text-red-400" : "text-red-500"}`}>{passwordError}</p>
+
                   )}
                 </div>
 
                 <div className="mb-6">
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDarkMode ? "text-white" : "text-gray-700"
-                    }`}
-                  >
+
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -806,13 +872,11 @@ console.log("firebaseUid:", firebaseUid);
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm password"
                       className={`w-full px-4 py-2 border rounded-md text-sm ${
-                        confirmPasswordError && confirmPassword
-                          ? "border-red-500"
-                          : ""
+
+                        confirmPasswordError && confirmPassword ? "border-red-500" : ""
                       } ${
-                        isDarkMode
-                          ? "bg-gray-700 text-white border-gray-600"
-                          : "bg-white text-gray-800 border-gray-300"
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+
                       }`}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
@@ -821,84 +885,62 @@ console.log("firebaseUid:", firebaseUid);
                     <button
                       type="button"
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
+
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
-                      {showConfirmPassword ? (
-                        <EyeOff size={20} />
-                      ) : (
-                        <Eye size={20} />
-                      )}
+                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                   </div>
                   {confirmPasswordError && confirmPassword && (
-                    <p
-                      className={`text-sm mt-1 ${
-                        isDarkMode ? "text-red-400" : "text-red-500"
-                      }`}
-                    >
+                    <p className={`text-sm mt-1 ${isDarkMode ? "text-red-400" : "text-red-500"}`}>
                       {confirmPasswordError}
                     </p>
                   )}
                 </div>
 
                 <div className="mb-6">
-                  <div className="flex items-center">
+
+                  <label className="flex items-center">
                     <input
                       type="checkbox"
-                      id="terms"
-                      checked={termsAgreed}
-                      onChange={(e) => {
-                        setTermsAgreed(e.target.checked)
-                        if (!termsAgreed) {
-                          openTermsModal(e)
-                        }
-                      }}
-                      className="mr-2 cursor-pointer"
+                      className="mr-2"
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
                     />
-                    <label
-                      htmlFor="terms"
-                      className={`text-sm ${isDarkMode ? "text-white" : "text-gray-700"} cursor-pointer`}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        openTermsModal(e)
-                      }}
-                    >
-                      I agree with EVNTgarde's Terms and Conditions
-                    </label>
-                  </div>
+                    <span className={`text-sm ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                      I agree with{" "}
+                      <button type="button" onClick={openTermsModal} className="text-blue-600 hover:underline">
+                        EVNTgarde's Terms and Conditions
+                      </button>
+                    </span>
+                  </label>
                 </div>
 
-                <div className="flex justify-between">
-                  <button
-                    type="button"
-                    onClick={handleBack}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    className={`flex-1 px-6 py-3 ${
-                      isDarkMode
-                        ? "bg-gray-800 hover:bg-gray-300"
-                        : "bg-blue-600  hover:bg-blue-300"
-                    } rounded-xl shadow-lg overflow-hidden font-poppins`}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    ) : null}
-                    Create Account
-                  </button>
-                </div>
+				<div className="flex justify-center items-center gap-5">
+				<button
+					type="button"
+					onClick={handleBack}
+					className="flex-1 px-6 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 font-poppins shadow-lg"
+				>
+					Back
+				</button>
+				<button
+					type="submit"
+					className={`flex-1 px-6 py-3 ${
+					isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"
+					} rounded-xl shadow-lg overflow-hidden font-poppins flex items-center justify-center`}
+					disabled={isLoading}
+				>
+					{isLoading && (
+					<div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+					)}
+					Create Account
+				</button>
+				</div>
 
-                <p
-                  className={`text-center mt-4 ${
-                    isDarkMode ? "text-white" : "text-gray-700"
-                  }`}
-                >
+
+                <p className={`text-center mt-4 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+
                   Already have an account?{" "}
                   <a href="/login" className="text-blue-600 hover:underline">
                     Log in
@@ -912,98 +954,77 @@ console.log("firebaseUid:", firebaseUid);
 
       {/* Terms and Conditions Modal */}
       {showTermsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden">
-            {/* Modal Header */}
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold text-blue-600 text-center mb-2">Terms and Conditions</h2>
-              <p className="text-sm text-gray-700 text-center">
-                By using our platform, you agree to these Terms and Conditions. Please read them carefully.
-              </p>
-            </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/10 backdrop-brightness-50">
+          <div
+            className={`w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-lg ${isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"} p-6`}
+          >
+            <div className="flex flex-col h-full">
+              <h2 className="text-2xl font-bold mb-4 text-blue-600">Terms and Conditions</h2>
 
-            {/* Modal Body */}
-            <div className="p-6 max-h-[70vh] overflow-y-auto text-sm text-gray-800 space-y-4">
-              <ol className="list-decimal pl-5 space-y-4">
-                <li>
-                  <strong>Acceptance of Terms</strong> By accessing or using EVNTgarde, you agree to be bound by these
-                  Terms and our Privacy Policy. If you do not agree, please do not use our services.
-                </li>
+              <div className="mb-6 overflow-y-auto pr-4">
+                <p className="mb-4">
+                  By using our platform, you agree to these Terms and Conditions. Please read them carefully.
+                </p>
 
-                <li>
-                  <strong>User Roles and Responsibilities</strong>
-                  <ul className="list-disc pl-5 mt-2 space-y-2">
-                    <li>Clients: Responsible for providing accurate event details and timely payments.</li>
-                    <li>Organizers: Must communicate requirements clearly and honor commitments.</li>
-                    <li>Vendors: Must deliver services as described and adhere to agreed timelines.</li>
-                  </ul>
-                </li>
+                <ol className="list-decimal space-y-4 pl-6">
+                  <li>
+                    <p>
+                      <span className="font-medium">Acceptance of Terms</span> By accessing or using EVNTgarde, you
+                      agree to be bound by these Terms and our Privacy Policy. If you do not agree, please do not use
+                      our services.
+                    </p>
+                  </li>
 
-                <li>
-                  <strong>Account Registration</strong> You must provide accurate information and keep your account
-                  secure. You are responsible for all activities under your account.
-                </li>
+                  <li>
+                    <p className="font-medium">User Roles and Responsibilities</p>
+                    <ul className="list-disc pl-5 mt-2">
+                      <li>Clients: Responsible for providing accurate event details and timely payments.</li>
+                      <li>Organizers: Must communicate requirements clearly and honor commitments.</li>
+                      <li>Vendors: Must deliver services as described and adhere to agreed timelines.</li>
+                    </ul>
+                  </li>
 
-                <li>
-                  <strong>Payments and Fees</strong> Payments are processed through secure third-party providers. Service
-                  fees may apply and will be disclosed before confirmation.
-                </li>
+                  <li>
+                    <p>
+                      <span className="font-medium">Account Registration</span> You must provide accurate information
+                      and keep your account secure. You are responsible for all activities under your account.
+                    </p>
+                  </li>
 
-                <li>
-                  <strong>Cancellations and Refunds</strong> Cancellation policies vary by vendor. Refund eligibility is
-                  subject to individual service agreements.
-                </li>
+                  <li>
+                    <p>
+                      <span className="font-medium">Payments and Fees</span> Payments are processed through secure
+                      third-party providers. Service fees may apply and will be disclosed before confirmation...
+                    </p>
+                  </li>
+                </ol>
+              </div>
 
-                <li>
-                  <strong>Prohibited Activities</strong> Users may not:
-                  <ul className="list-disc pl-5 mt-2 space-y-2">
-                    <li>Misrepresent services or credentials</li>
-                    <li>Engage in fraudulent or illegal activities</li>
-                    <li>Abuse or harass other users</li>
-                  </ul>
-                </li>
+              <div className="flex justify-between mt-auto">
+                <button
+                  type="button"
+                  onClick={closeTermsModal}
+                  className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 w-full mr-2"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  onClick={acceptTerms}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full ml-2"
+                >
+                  Accept
+                </button>
+              </div>
 
-                <li>
-                  <strong>Limitation of Liability</strong> EVNTgarde is not liable for disputes between users or issues
-                  with third-party services. We provide the platform, but service agreements are between users.
-                </li>
-
-                <li>
-                  <strong>Changes to Terms</strong> We may update these Terms from time to time. Continued use of the
-                  platform means you accept the revised Terms.
-                </li>
-
-                <li>
-                  <strong>Contact Us</strong> For questions or concerns, contact us at evntgarde@gmail.com.
-                </li>
-              </ol>
-
-              <p className="mt-4">
-                By using EVNTgarde, you acknowledge that you have read, understood, and agree to be bound by these Terms
-                and Conditions.
-              </p>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-4 border-t flex justify-end gap-3 bg-white">
-              <button
-                onClick={closeTermsModal}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition"
-              >
-                Close
-              </button>
-              <button
-                onClick={acceptTerms}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Accept
-              </button>
             </div>
           </div>
         </div>
       )}
     </div>
-  );
+
+	);
+
 };
 
 export default VendorRegistration;

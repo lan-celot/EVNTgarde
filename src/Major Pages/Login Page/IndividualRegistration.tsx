@@ -1,3 +1,4 @@
+
 import { Eye, EyeOff } from "lucide-react";
 import type React from "react";
 import { useState, useEffect } from "react";
@@ -46,8 +47,41 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const [userRole, setUserRole] = useState<string>("");
   const [eventPreferencesError, setEventPreferencesError] = useState("");
 
+
   // Common state
-  const [error, setError] = useState("");
+  const [error, setError] = useState("")
+
+  // Available event types
+  const eventTypes = [
+    "Birthday",
+    "Wedding",
+    "Anniversary",
+    "Baby Shower",
+    "Gender Reveal",
+    "Engagement",
+    "Seminar",
+    "Workshop",
+    "Conference",
+    "Convention",
+    "Product Launch",
+    "Networking",
+    "Training Session",
+    "Certification Class",
+    "Concert",
+    "Live Performance",
+    "Art Exhibit",
+    "Gallery Opening",
+    "Open Mic",
+    "Theater/Stage Play",
+    "Festival/Parade",
+    "Talent Show",
+    "Church Service",
+    "Spiritual Retreat",
+    "Fundraiser",
+    "Charity Event",
+    "Outreach/Volunteering Drive",
+    "Religious Ceremony (e.g. Baptism)",
+  ]
 
   // Available event types
   const eventTypes = [
@@ -88,33 +122,70 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   // Password validation
   useEffect(() => {
     const validatePassword = (pass: string): string => {
-      if (pass.length < 12)
-        return "Password must be at least 12 characters long.";
-      if (!/[A-Z]/.test(pass))
-        return "Password must include at least one uppercase letter.";
-      if (!/\d/.test(pass)) return "Password must include at least one number.";
-      if (!/[!@#$%^&*_]/.test(pass))
-        return "Password must include at least one special character (!@#$%^&*_).";
-      return "";
-    };
+      if (pass.length < 12) return "Password must be at least 12 characters long."
+      if (!/[A-Z]/.test(pass)) return "Password must include at least one uppercase letter."
+      if (!/\d/.test(pass)) return "Password must include at least one number."
+      if (!/[!@#$%^&*_]/.test(pass)) return "Password must include at least one special character (!@#$%^&*_)."
+      return ""
+    }
 
-    setPasswordError(validatePassword(password));
-  }, [password]);
+    setPasswordError(validatePassword(password))
+  }, [password])
 
   // Confirm password validation
   useEffect(() => {
     if (confirmPassword && password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match.");
+      setConfirmPasswordError("Passwords do not match.")
     } else {
-      setConfirmPasswordError("");
+      setConfirmPasswordError("")
     }
-  }, [password, confirmPassword]);
+  }, [password, confirmPassword])
 
   // Load data from session storage when moving to step 3
   useEffect(() => {
     if (currentStep === 3) {
-      const storedData = sessionStorage.getItem("individualRegistration");
+      const storedData = sessionStorage.getItem("individualRegistration")
       if (storedData) {
+        const data = JSON.parse(storedData)
+        setFirstName(data.firstName || "")
+        setLastName(data.lastName || "")
+        setPhoneNumber(data.phoneNumber ? data.phoneNumber.replace("+63", "") : "")
+        setPreferences(data.preferences || [])
+        setUserRole(data.userRole || "")
+
+        // Load address data
+        if (data.address) {
+          setHouseNo(data.address.houseNo || "")
+          setStreet(data.address.street || "")
+          setBarangay(data.address.barangay || "")
+          setCity(data.address.city || "")
+          setProvince(data.address.province || "")
+          setZipCode(data.address.zipCode || "")
+          setCountry(data.address.country || "")
+        }
+      }
+    }
+  }, [currentStep])
+
+  // Load user role from session storage
+  useEffect(() => {
+    if (currentStep === 1.25) {
+      const storedData = sessionStorage.getItem("individualRegistration")
+      if (storedData) {
+        const data = JSON.parse(storedData)
+        if (data.userRole) {
+          setUserRole(data.userRole)
+        }
+      }
+    }
+  }, [currentStep])
+
+  // Load preferences from session storage
+  useEffect(() => {
+    if (currentStep === 1.5) {
+      const storedData = sessionStorage.getItem("individualRegistration")
+      if (storedData) {
+
         const data = JSON.parse(storedData);
         setFirstName(data.firstName || "");
         setLastName(data.lastName || "");
@@ -131,10 +202,30 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
           setProvince(data.address.province || "");
           setZipCode(data.address.zipCode || "");
           setCountry(data.address.country || "");
+
         }
       }
     }
-  }, [currentStep]);
+  }, [currentStep])
+
+  // Handle role selection
+  const handleRoleSelect = (role: string) => {
+    setUserRole(role)
+
+    // Store the selected role in session storage
+    const storedData = sessionStorage.getItem("individualRegistration") || "{}"
+    const parsedData = JSON.parse(storedData)
+    sessionStorage.setItem(
+      "individualRegistration",
+      JSON.stringify({
+        ...parsedData,
+        userRole: role,
+      }),
+    )
+
+    // Go to welcome screen
+    setCurrentStep(1.25)
+  }
 
   // Handle role selection
   const handleRoleSelect = (role: string) => {
@@ -157,6 +248,7 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
   // Handle welcome screen proceed button
   const handleProceed = () => {
+
     setCurrentStep(1.5);
   };
 
@@ -177,11 +269,14 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     }
   };
 
+
   // Handle event preferences submission
   const handlePreferencesNext = () => {
     // Store preferences in session storage
+
     const storedData = sessionStorage.getItem("individualRegistration") || "{}";
     const parsedData = JSON.parse(storedData);
+
 
     sessionStorage.setItem(
       "individualRegistration",
@@ -189,6 +284,7 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         ...parsedData,
         preferences,
       }),
+
     );
 
     // Go to personal info step
@@ -196,17 +292,20 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   };
 
   // Handle step 2 submission
+
   const handleNext = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!firstName || !lastName) {
-      setError("First name and last name are required");
-      return;
+      setError("First name and last name are required")
+      return
     }
 
     // Store form data in sessionStorage
+
     const storedData = sessionStorage.getItem("individualRegistration") || "{}";
     const parsedData = JSON.parse(storedData);
+
 
     sessionStorage.setItem(
       "individualRegistration",
@@ -255,7 +354,28 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     setCurrentStep(3);
   };
 
-  // Handle back button
+
+    sessionStorage.setItem(
+      "individualRegistration",
+      JSON.stringify({
+        ...parsedData,
+        address: {
+          houseNo,
+          street,
+          barangay,
+          city,
+          province,
+          zipCode,
+          country,
+        },
+      }),
+    )
+
+    // Navigate to account creation step
+    setCurrentStep(3)
+  }
+
+  // Update the handleBack function to handle the new step
   const handleBack = () => {
     if (currentStep === 1) {
       navigate("/role-selection");
@@ -269,8 +389,26 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
       setCurrentStep(2);
     } else {
       setCurrentStep(2.5);
+
     }
-  };
+  }
+
+  // Open terms and conditions modal
+  const openTermsModal = (e: React.MouseEvent | React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    setShowTermsModal(true)
+  }
+
+  // Close terms and conditions modal
+  const closeTermsModal = () => {
+    setShowTermsModal(false)
+  }
+
+  // Accept terms and conditions
+  const acceptTerms = () => {
+    setTermsAgreed(true)
+    closeTermsModal()
+  }
 
   // Open terms and conditions modal
   const openTermsModal = (e: React.MouseEvent | React.ChangeEvent<HTMLInputElement>) => {
@@ -291,12 +429,17 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
   // Handle final submission
   const handleCreateAccount = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault()
+    setError("")
 
     if (!email || !password || !confirmPassword) {
-      setError("All fields are required");
-      return;
+      setError("All fields are required")
+      return
+    }
+
+    if (!termsAgreed) {
+      setError("You must agree to the Terms and Conditions")
+      return
     }
 
     if (!termsAgreed) {
@@ -305,21 +448,23 @@ const IndividualRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     }
 
     if (passwordError) {
-      setError(passwordError);
-      return;
+      setError(passwordError)
+      return
     }
 
     if (confirmPasswordError) {
-      setError(confirmPasswordError);
-      return;
+      setError(confirmPasswordError)
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
       // Get stored data including userRole
+
       const storedData = sessionStorage.getItem("individualRegistration");
       const userData = storedData ? JSON.parse(storedData) : {};
+
 
       // Create user account with data from all parts
       const userAccountData = createUserAccount("individual", email, {
@@ -391,47 +536,67 @@ if (!firebaseUid) {
         throw new Error(dbError.message || 'Failed to register with database. Please try again.');
       }
 
+
       // Clear session storage
-      sessionStorage.removeItem("individualRegistration");
+      sessionStorage.removeItem("individualRegistration")
 
       // Navigate to dashboard or login page
+
       navigate("/login");
+
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleGoogleSignUp = async () => {
-    setIsLoading(true);
-    setError("");
+    setIsLoading(true)
+    setError("")
     try {
+
       await signInWithGoogle("individual");
       // Navigate to customer dashboard
       navigate("/login");
+
     } catch (err: any) {
-      setError("Failed to sign up with Google. Please try again.");
-      console.error(err);
+      setError("Failed to sign up with Google. Please try again.")
+      console.error(err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleYahooSignUp = async () => {
-    setIsLoading(true);
-    setError("");
+    setIsLoading(true)
+    setError("")
     try {
+
       await signInWithYahoo("individual");
       // Navigate to customer dashboard
       navigate("/login");
+
     } catch (err: any) {
-      setError("Failed to sign up with Yahoo. Please try again.");
-      console.error(err);
+      setError("Failed to sign up with Yahoo. Please try again.")
+      console.error(err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
+
+  // Get the appropriate welcome message based on user role
+  const getWelcomeMessage = () => {
+    if (userRole === "enthusiast") {
+      return "You're a Customer - an Event Enthusiast!"
+    } else if (userRole === "student") {
+      return "You're a Customer - a Student!"
+    } else if (userRole === "church") {
+      return "You're a Customer - a Church Member!"
+    } else {
+      return "You're a Client!"
+    }
+  }
 
   // Get the appropriate welcome message based on user role
   const getWelcomeMessage = () => {
@@ -459,17 +624,9 @@ if (!firebaseUid) {
             isDarkMode ? "bg-gray-800" : "bg-blue-600"
           } text-white flex flex-col items-center justify-center text-center p-8`}
         >
-          <img
-            src={Logo || "/placeholder.svg"}
-            className="max-w-xs mb-4"
-            alt="Logo"
-          />
-          <p className="text-lg font-medium mb-2">
-            Discover tailored events services.
-          </p>
-          <p className="text-lg font-medium mb-2">
-            Sign up for personalized services today!
-          </p>
+          <img src={Logo || "/placeholder.svg"} className="max-w-xs mb-4" alt="Logo" />
+          <p className="text-lg font-medium mb-2">Discover tailored events services.</p>
+          <p className="text-lg font-medium mb-2">Sign up for personalized services today!</p>
         </div>
 
         {/* Right Side - Form */}
@@ -564,7 +721,9 @@ if (!firebaseUid) {
                   type="button"
                   onClick={handleBack}
                   className="px-6 py-3 border border-gray-300 rounded-lg text-blue-600 bg-white hover:bg-gray-100 dark:text-blue-400 dark:border-gray-600 dark:bg-transparent dark:hover:bg-gray-700"
+
                 >
+
                   Back
                 </button>
                 <button
@@ -572,6 +731,7 @@ if (!firebaseUid) {
                   onClick={() => handleRoleSelect(userRole)}
                   disabled={!userRole}
                   className={`flex-1 px-6 py-3 text-white ${
+
                     !userRole
                       ? "bg-gray-400 cursor-not-allowed"
                       : isDarkMode
@@ -608,7 +768,9 @@ if (!firebaseUid) {
                   type="button"
                   onClick={handleBack}
                   className="px-6 py-3 border border-gray-300 rounded-lg text-blue-600 bg-white hover:bg-gray-100 dark:text-blue-400 dark:border-gray-600 dark:bg-transparent dark:hover:bg-gray-700"
+
                 >
+
                   Start Over
                 </button>
                 <button
@@ -673,7 +835,9 @@ if (!firebaseUid) {
                   type="button"
                   onClick={handleBack}
                   className="px-6 py-3 border border-gray-300 rounded-lg text-blue-600 bg-white hover:bg-gray-100 dark:text-blue-400 dark:border-gray-600 dark:bg-transparent dark:hover:bg-gray-700"
+
                 >
+
                   Back
                 </button>
                 <button
@@ -695,7 +859,9 @@ if (!firebaseUid) {
               </p>
             </>
           ) : currentStep === 2 ? (
+
             /* Personal Information Form */
+
             <>
               <h2 className="text-4xl font-bold text-blue-600 mt-30 mb-6">Sign Up</h2>
               <p className="text-sm text-blue-600 mb-4">Step 1 of 3</p>
@@ -795,7 +961,9 @@ if (!firebaseUid) {
                     type="button"
                     onClick={handleBack}
                     className="px-6 py-3 border border-gray-300 rounded-lg text-blue-600 bg-white hover:bg-gray-100 dark:text-blue-400 dark:border-gray-600 dark:bg-transparent dark:hover:bg-gray-700"
+
                   >
+
                     Back
                   </button>
                   <button
@@ -817,10 +985,12 @@ if (!firebaseUid) {
               </form>
             </>
           ) : currentStep === 2.5 ? (
+
             /* Address Form */
             <>
               <h2 className="text-4xl font-bold text-blue-600 mt-30 mb-6">Sign Up</h2>
               <p className="text-sm text-blue-600 mb-6">Step 2 of 3</p>
+
 
               {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
 
@@ -1001,14 +1171,34 @@ if (!firebaseUid) {
               </form>
             </>
           ) : (
+
             /* Account Creation Form */
             <>
               <h2 className="text-4xl font-bold text-blue-600 mt-30 mb-6">Sign Up</h2>
+
               <p className="text-sm text-blue-600 mb-6">Step 3 of 3</p>
 
               {error && <div className="bg-red-500 text-white p-3 rounded-md mb-4">{error}</div>}
 
               <form onSubmit={handleCreateAccount}>
+                <div className="mb-4">
+                  <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+                    Phone Number (optional)
+                  </label>
+                  <div className="flex items-center border rounded-md">
+                    <span className={`px-3 py-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>+63</span>
+                    <input
+                      type="text"
+                      placeholder="000 0000 000"
+                      className={`w-full px-4 py-2 rounded-md focus:outline-none ${
+                        isDarkMode ? "bg-gray-700 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"
+                      }`}
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+                    />
+                  </div>
+                </div>
+
                 <div className="mb-4">
                   <label className={`block text-sm font-medium mb-2 ${isDarkMode ? "text-white" : "text-gray-700"}`}>
                     Email Address
@@ -1120,6 +1310,7 @@ if (!firebaseUid) {
                     onClick={handleBack}
                     className="px-6 py-3 border border-gray-300 rounded-lg text-blue-600 bg-white hover:bg-gray-100 dark:text-blue-400 dark:border-gray-600 dark:bg-transparent dark:hover:bg-gray-700"
                   >
+
                     Back
                   </button>
                   <button
@@ -1241,7 +1432,7 @@ if (!firebaseUid) {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default IndividualRegistration;
+export default IndividualRegistration

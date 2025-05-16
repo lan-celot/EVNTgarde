@@ -11,7 +11,7 @@ const ActivityOverview: React.FC = () => {
     "April 16, 2025",
     "April 22, 2025",
   ];
-  
+
   const upcomingEvents = [
     {
       id: 2,
@@ -150,7 +150,7 @@ const ActivityOverview: React.FC = () => {
           />
         </div>
 
-          {/* Upcoming Events Section */}
+        {/* Upcoming Events Section */}
         <div className="bg-white p-6 rounded shadow md:col-span-2">
           <h2 className="text-2xl font-semibold mb-6">Upcoming Events</h2>
           <div className="relative pb-16">
@@ -169,7 +169,9 @@ const ActivityOverview: React.FC = () => {
 
                 {/* Event card */}
                 <div className="flex-1 bg-white rounded-lg shadow-sm p-5 border border-gray-100 ml-10">
-                  <h3 className="text-xl font-semibold text-blue-600 mb-1">{event.title}</h3>
+                  <h3 className="text-xl font-semibold text-blue-600 mb-1">
+                    {event.title}
+                  </h3>
                   <p className="text-gray-600 mb-4">
                     {event.startTime} - {event.endTime}
                   </p>
@@ -197,7 +199,7 @@ const ActivityOverview: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default ActivityOverview;
