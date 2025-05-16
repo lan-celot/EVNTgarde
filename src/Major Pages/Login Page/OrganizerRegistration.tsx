@@ -222,94 +222,103 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
     setBudgetDescription(description)
   }
 
-  // Validate form fields based on current step
-  const validateStep = (): boolean => {
-    const newErrors: Record<string, string> = {}
+const validateStep = (): boolean => {
+  const newErrors: Record<string, string> = {};
 
-    if (currentStep === 2) {
-      if (!budget) {
-        newErrors.budget = "Please select a budget range"
-      }
-    } else if (currentStep === 3) {
-      if (!companyName) {
-        newErrors.companyName = "Company name is required"
-      }
-      if (!gender) {
-        newErrors.gender = "Gender is required"
-      }
-      if (!industry) {
-        newErrors.industry = "Industry is required"
-      }
-    } else if (currentStep === 4) {
-      // House number is optional
-      if (!street) {
-        newErrors.street = "Street is required"
-      }
-      if (!barangay) {
-        newErrors.barangay = "Barangay is required"
-      }
-      if (!city) {
-        newErrors.city = "City is required"
-      }
-      if (!province) {
-        newErrors.province = "Province is required"
-      }
-      if (!zipCode) {
-        newErrors.zipCode = "Zip code is required"
-      }
-    } else if (currentStep === 5) {
-      if (!phoneNumber) {
-        newErrors.phoneNumber = "Phone number is required"
-      } else if (phoneError) {
-        newErrors.phoneNumber = phoneError
-      }
-      if (!email) {
-        newErrors.email = "Email is required"
-      }
-      if (!password) {
-        newErrors.password = "Password is required"
-      } else if (passwordError) {
-        newErrors.password = passwordError
-      }
-      if (!confirmPassword) {
-        newErrors.confirmPassword = "Please confirm your password"
-      } else if (confirmPasswordError) {
-        newErrors.confirmPassword = confirmPasswordError
-      }
-      if (!termsAccepted) {
-        newErrors.terms = "You must accept the Terms and Conditions"
-      }
+  if (currentStep === 1) {
+    if (!budget) {
+      newErrors.budget = "Please select a budget range";
     }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+  } else if (currentStep === 2) {
+    if (!companyName) {
+      newErrors.companyName = "Company name is required";
+    }
+    if (!gender) {
+      newErrors.gender = "Gender is required";
+    }
+    if (!industry) {
+      newErrors.industry = "Industry is required";
+    }
+  } else if (currentStep === 3) { // Changed from 2.5 to 3
+    // House number is optional
+    if (!street) {
+      newErrors.street = "Street is required";
+    }
+    if (!barangay) {
+      newErrors.barangay = "Barangay is required";
+    }
+    if (!city) {
+      newErrors.city = "City is required";
+    }
+    if (!province) {
+      newErrors.province = "Province is required";
+    }
+    if (!zipCode) {
+      newErrors.zipCode = "Zip code is required";
+    }
+  } else if (currentStep === 4) {
+    if (!phoneNumber) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (phoneError) {
+      newErrors.phoneNumber = phoneError;
+    }
+    if (!email) {
+      newErrors.email = "Email is required";
+    }
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (passwordError) {
+      newErrors.password = passwordError;
+    }
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (confirmPasswordError) {
+      newErrors.confirmPassword = confirmPasswordError;
+    }
+    if (!termsAccepted) {
+      newErrors.terms = "You must accept the Terms and Conditions";
+    }
   }
 
-  // Handle step navigation
-  const goToNextStep = () => {
-    if (!validateStep()) {
-      return
-    }
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
-    // Save current step data to session storage
-    saveStepData()
 
-    // If we're on the budget selection step, go directly to the confirmation step
+  const handleNext = () => {
+  if (!validateStep()) {
+    return;
+  }
+
+  // Save current step data to session storage
+  saveStepData();
+
     if (currentStep === 1) {
-      setCurrentStep(5)
-    } else {
-      setCurrentStep(currentStep + 1)
-    }
+    setCurrentStep(5); // Go to budget confirmation
+  } else if (currentStep === 2) {
+    setCurrentStep(3); // Company details to Address details
+  } else if (currentStep === 3) {
+    setCurrentStep(4); // Address details to Contact/Password
+  } else if (currentStep === 4) {
+    // Handle form submission
+    handleCreateAccount(new Event('submit') as unknown as React.FormEvent);
+  } else if (currentStep === 5) {
+    setCurrentStep(2); // From budget confirmation to Company details
   }
-
-  const goToPreviousStep = () => {
-    // If we're on the confirmation step after budget selection, go back to budget selection
-    if (currentStep === 6 && budget) {
-      setCurrentStep(2)
-    } else {
-      setCurrentStep(currentStep - 1)
-    }
+};
+ const handleBack = () => {
+  if (currentStep === 1) {
+    navigate("/role-selection");
+  } else if (currentStep === 2) {
+    setCurrentStep(1); // Company details back to Budget selection
+  } else if (currentStep === 3) {
+    setCurrentStep(2); // Address details back to Company details
+  } else if (currentStep === 4) {
+    setCurrentStep(3); // Contact/Password back to Address details
+  } else if (currentStep === 5) {
+    setCurrentStep(1); // Budget confirmation back to Budget selection
   }
+};
 
   // Save step data to session storage
   const saveStepData = () => {
@@ -404,7 +413,6 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         budgetDescription,
         companyName,
         gender,
-
         industry,
         address: {
           houseNo,
@@ -416,9 +424,8 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
           country,
         },
         phoneNumber: phoneNumber ? `+63${phoneNumber}` : "",
-        preferences,
         userType: "organizer"
-      };
+      });
 
       // Register user with Firebase
       const firebaseUser = await registerUser(email, password, "organizer", userData);
@@ -467,7 +474,7 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
         throw new Error(`Database registration error: ${dbError.message}`);
       }
     } catch (err: any) {
-      setError(err.message || "Failed to create account. Please try again.");
+      setErrors(err.message || "Failed to create account. Please try again.");
     } finally {
       setIsLoading(false)
     }
@@ -612,14 +619,14 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               <div className="flex justify-between mt-auto">
                 <button
                   type="button"
-                  onClick={goToPreviousStep}
+                 onClick={handleBack}
                   className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                 >
                   Back
                 </button>
                 <button
                   type="button"
-                  onClick={goToNextStep}
+                  onClick={handleNext}
                   className={`px-6 py-3 text-white rounded-lg ${
                     isDarkMode ? "bg-blue-700 hover:bg-blue-800" : "bg-blue-600 hover:bg-blue-700"
                   }`}
@@ -762,14 +769,14 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 <div className="flex justify-between mt-6">
                   <button
                     type="button"
-                    onClick={goToPreviousStep}
+                    onClick={handleBack}
                     className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
                     Back
                   </button>
                   <button
                     type="button"
-                    onClick={goToNextStep}
+                    onClick={handleNext}
                     className={`px-6 py-3 text-white rounded-lg ${
                       isDarkMode ? "bg-blue-700 hover:bg-blue-800" : "bg-blue-600 hover:bg-blue-700"
                     }`}
@@ -943,14 +950,14 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 <div className="flex justify-between mt-6">
                   <button
                     type="button"
-                    onClick={goToPreviousStep}
+                    onClick={handleBack}
                     className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
                     Back
                   </button>
                   <button
                     type="button"
-                    onClick={goToNextStep}
+                    onClick={handleNext}
                     className={`px-6 py-3 text-white rounded-lg ${
                       isDarkMode ? "bg-blue-700 hover:bg-blue-800" : "bg-blue-600 hover:bg-blue-700"
                     }`}
@@ -1093,7 +1100,7 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
                 <div className="flex justify-between mt-6">
                   <button
                     type="button"
-                    onClick={goToPreviousStep}
+                    onClick={handleBack}
                     className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                   >
                     Back
@@ -1131,7 +1138,7 @@ const OrganizerRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
               <div className="flex justify-center items-center gap-5">
                 <button
                   type="button"
-                  onClick={goToPreviousStep}
+                  onClick={handleBack}
                   className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
                 >
                   Start Over

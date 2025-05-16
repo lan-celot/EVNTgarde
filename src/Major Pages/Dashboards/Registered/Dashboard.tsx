@@ -13,15 +13,9 @@ type UserType = "customer" | "vendor" | "organizer";
 const Dashboard: React.FC = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("activity");
-  const [showEventForm, setShowEventForm] = useState(false);
-  const [successMsg, setSuccessMsg] = useState("");
+  const [, setShowEventForm] = useState(false);
+  const [successMsg] = useState("");
 
-  const handleEventSuccess = () => {
-    setShowEventForm(false);
-    setSuccessMsg("Event created successfully!");
-    setTimeout(() => setSuccessMsg(""), 3000);
-    // Optionally, trigger a refresh of event data here
-  };
 
   const getUserTypeFromAuth = (): UserType => {
     const storedType = localStorage.getItem("userType");
@@ -149,9 +143,6 @@ const Dashboard: React.FC = () => {
           {/* Dynamic Tab Content */}
           <div>{renderContent()}</div>
         </div>
-        {showEventForm && (
-          <EventForm onClose={() => setShowEventForm(false)} onSuccess={handleEventSuccess} />
-        )}
       </div>
     </div>
   );
