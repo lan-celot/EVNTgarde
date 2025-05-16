@@ -98,7 +98,7 @@ router.post('/registerCustomer', async (req, res) => {
     password,
     phoneNo,
     preferences,
-    customerType
+    customerType,
   } = req.body;
 
   console.log('firebaseUid:', firebaseUid); // <--- Already present

@@ -20,7 +20,7 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
   const [vendorName, setVendorName] = useState("");
   const [businessOffering, setBusinessOffering] = useState("");
   const [preferences, setPreferences] = useState<string[]>([]);
-  const [termsAccepted] = useState(false);
+  const [] = useState(false);
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -178,7 +178,6 @@ const VendorRegistration: React.FC<{ step: number }> = ({ step = 1 }) => {
 
     try {
       // Get stored data
-      const storedData = JSON.parse(sessionStorage.getItem("vendorRegistration") || "{}");
       
       // Create user account with data from all parts
       const userData = createUserAccount("vendor", email, {
@@ -213,7 +212,8 @@ console.log("firebaseUid:", firebaseUid);
             vendorType,
             vendorPhoneNo: phoneNumber ? `+63${phoneNumber}` : null,
             services: businessOffering,
-            preferences: preferences.join(',')
+            preferences: preferences.join(','),
+            role: "vendor"
           }),
         });
 

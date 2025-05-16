@@ -7,9 +7,12 @@ const router = express.Router();
 router.use(express.json());
 
 // Fetch all event types
+// Fetch all event types
 router.get('/event-types', async (req, res) => {
   try {
+    console.log('Fetching event types...');
     const result = await query('SELECT event_type_id, event_type_name FROM event_type');
+    console.log('Event types fetched:', result.rows);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching event types:', error);
@@ -19,10 +22,7 @@ router.get('/event-types', async (req, res) => {
 
 router.post('/events', async (req, res) => {
   try {
-    console.log('Received request body:', req.body);
-    console.log('Customer ID received:', req.body.customerId);
-    console.log('Customer ID type:', typeof req.body.customerId);
-    
+    console.log('Starting event creation process...');
     const {
       eventName,
       eventOverview,
@@ -40,138 +40,138 @@ router.post('/events', async (req, res) => {
       additionalServices,
       budget,
       customerId,
+      organizerId,
+      vendorId,
+      venueId,
+      isPackage,
     } = req.body;
 
-    // Validate customerId
+    console.log('Validating customer ID...');
     if (!customerId) {
-      console.log('Customer ID validation failed: customerId is missing or empty');
-      return res.status(400).json({ 
+      console.log('Customer ID validation failed:', customerId);
+      return res.status(400).json({
         error: 'Valid Customer ID is required',
-        receivedCustomerId: customerId,
-        requestBody: req.body
+        receivedCustomerId: customerId
       });
     }
 
-    // Check if customer exists in Customer_Account_Data
+    console.log('Checking customer in database...');
     const customerCheck = await query(
       'SELECT customer_id FROM Customer_Account_Data WHERE customer_id = $1',
       [customerId]
     );
 
     if (customerCheck.rows.length === 0) {
-      console.log('Customer not found in database:', customerId);
+      console.log('Customer not found:', customerId);
       return res.status(400).json({
-        error: 'Customer not found in database. Please ensure you are properly registered.',
-        customerId: customerId
+        error: 'Customer not found in database'
       });
     }
 
-    // Validate numeric fields
-    if (isNaN(Number(guests)) || isNaN(Number(budget))) {
-      return res.status(400).json({ error: 'Guests and budget must be numbers' });
-    }
+    // Quick validation of required fields
+    const requiredFields = {
+      eventName,
+      startDate,
+      endDate,
+      startTime,
+      endTime,
+      guests: Number(guests),
+      budget: Number(budget),
+      eventTypeId: Number(eventTypeId)
+    };
 
-    // Validate eventTypeId
-    if (!eventTypeId || isNaN(Number(eventTypeId))) {
-      return res.status(400).json({ error: 'Valid event type ID is required' });
-    }
+    const missingFields = Object.entries(requiredFields)
+      .filter(([_, value]) => !value)
+      .map(([key]) => key);
 
-    // Log all required fields
-    console.log('Required fields validation:', {
-      customerId: !!customerId,
-      eventName: !!eventName,
-      startDate: !!startDate,
-      endDate: !!endDate,
-      startTime: !!startTime,
-      endTime: !!endTime,
-      startDateTime: !!startDateTime,
-      endDateTime: !!endDateTime,
-      guests: !!guests,
-      location: !!location,
-      eventTypeId: !!eventTypeId,
-      attire: !!attire,
-      services: !!services,
-      budget: !!budget
-    });
-
-    // Basic validation
-    if (!eventName || !startDate || !endDate || !startTime || !endTime || !startDateTime || !endDateTime) {
-      console.log('Missing required fields:', {
-        eventName: !eventName,
-        startDate: !startDate,
-        endDate: !endDate,
-        startTime: !startTime,
-        endTime: !endTime,
-        startDateTime: !startDateTime,
-        endDateTime: !endDateTime
-      });
-      return res.status(400).json({ 
+    if (missingFields.length > 0) {
+      console.log('Missing required fields:', missingFields);
+      return res.status(400).json({
         error: 'Missing required fields',
-        missingFields: {
-          eventName: !eventName,
-          startDate: !startDate,
-          endDate: !endDate,
-          startTime: !startTime,
-          endTime: !endTime,
-          startDateTime: !startDateTime,
-          endDateTime: !endDateTime
-        }
+        fields: missingFields
       });
     }
 
-    // Insert into Events table
-    const result = await query(
-      `INSERT INTO events (
-        customer_id,
+    console.log('Preparing database insertion...');
+    const insertQuery = `
+      INSERT INTO events (
+        event_id,
         event_name,
+        event_type_id,
         event_desc,
-        date,
+        venue_id,
+        organizer_id,
+        vendor_id,
+        customer_id,
+        event_status,
+        start_date,
         end_date,
         start_time,
         end_time,
-        start_datetime,
-        end_datetime,
         guests,
-        event_type,
         attire,
         additional_services,
         services,
         location,
-        budget
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::integer, $11::integer, $12, $13, $14, $15, $16::integer) RETURNING *`,
-      [
-        customerId,
-        eventName,
-        eventOverview,
-        startDate,
-        endDate,
-        startTime,
-        endTime,
-        startDateTime,
-        endDateTime,
-        guests,
-        eventTypeId,
-        attire,
-        additionalServices,
-        Array.isArray(services) ? services.join(',') : services,
-        location,
-        budget
-      ]
-    );
+        ispackage,
+        budget,
+        event_type
+      ) 
+      VALUES (
+        DEFAULT,
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
+      )
+      RETURNING *
+    `;
 
-    if (result.rows && result.rows[0]) {
-      res.status(201).json(result.rows[0]);
-    } else {
-      res.status(201).json({ success: true });
+    const values = [
+      eventName,
+      Number(eventTypeId),
+      eventOverview || '',
+      venueId || null,
+      organizerId || null,
+      vendorId || null,
+      customerId,
+      'pending',  // default event_status
+      startDate,
+      endDate,
+      startTime,
+      endTime,
+      Number(guests),
+      attire || '',
+      additionalServices || '',
+      Array.isArray(services) ? services.join(',') : '',
+      location,
+      isPackage || false,
+      Number(budget),
+      Number(eventTypeId)
+    ];
+
+    console.log('Executing database insertion...');
+    const result = await query(insertQuery, values);
+
+    if (!result.rows || result.rows.length === 0) {
+      throw new Error('Failed to insert event data');
     }
+
+    console.log('Event created successfully:', result.rows[0].event_id);
+    return res.status(201).json({
+      success: true,
+      message: 'Event created successfully',
+      event: result.rows[0]
+    });
+
   } catch (error) {
-    console.error('Error creating event:', error);
-    if (error instanceof Error && error.message) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Failed to create event' });
-    }
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    return res.status(500).json({
+      error: 'Failed to create event',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
-export default router; 
+export default router;

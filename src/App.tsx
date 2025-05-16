@@ -69,7 +69,7 @@ const App: React.FC = () => {
         return "/dashboard";
       default:
         console.log('No userType found, defaulting to /', currentUserType); // Debug log
-        return "/";
+        return "/dashboard";
     }
   };
 
