@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import "./index.css";
 
+import EventRegistrationForm from "../backend/event-guest-registration"; // Event registration form
+
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
 import AboutLoggedOut from "./Major Pages/Dashboards/Unregistered/about-loggedout";
 import LoginPage from "./Major Pages/Login Page/LoginPage"; // Login page
@@ -148,6 +150,8 @@ const App: React.FC = () => {
         />
 
         <Route path="/about" element={<AboutLoggedOut />} />
+
+        <Route path="/event-registration" element={<EventRegistrationForm eventId={1} />} />
 
         <Route element={<ProtectedLayout />}>
           <Route element={<CombinedLayout isLoggedIn={isAuthenticated} />}>
