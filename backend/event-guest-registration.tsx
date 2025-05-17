@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
 interface FormData {
   fullName: string;
@@ -69,7 +68,7 @@ const EventRegistrationForm: React.FC<EventRegistrationFormProps> = ({ eventId }
     setIsSubmitting(true);
     setMessage({ text: '', type: null });
 
-    try {
+    /* try {
       const response = await axios.post('/backend/register', {
         ...formData,
         eventId,
@@ -110,8 +109,8 @@ const EventRegistrationForm: React.FC<EventRegistrationFormProps> = ({ eventId }
       }
     } finally {
       setIsSubmitting(false);
-    }
-  };
+    }*/
+  }; 
 
   const handleCancel = () => {
     setFormData({
