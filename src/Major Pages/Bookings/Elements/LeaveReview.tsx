@@ -1,14 +1,23 @@
+<<<<<<< Updated upstream
 import React, { useState } from "react"
 import { X, Star, UploadCloud } from "lucide-react"
 
 interface LeaveReviewProps {
   onClose: () => void
+=======
+import React, { useState } from "react";
+import { X, Star, UploadCloud } from "lucide-react";
+
+interface LeaveReviewProps {
+  onClose: () => void;
+>>>>>>> Stashed changes
 }
 
 const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
   const [ratings, setRatings] = useState({
     overall: 0,
     communication: 0,
+<<<<<<< Updated upstream
     prepared: 0,
     professional: 0,
     price: 0,
@@ -26,6 +35,93 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
       setFiles(Array.from(e.target.files))
     }
   }
+=======
+    preparedness: 0,
+    professional: 0,
+    perceived_value: 0,
+  });
+  const [title, setTitle] = useState("");
+  const [experience, setExperience] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+
+  const handleRating = (field: keyof typeof ratings, value: number) => {
+    setRatings((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      let imageUrls: string[] = [];
+
+      if (files.length > 0) {
+        const fileFormData = new FormData();
+        files.forEach((file) => fileFormData.append("files", file));
+
+        const uploadRes = await fetch(
+          "http://localhost:5000/api/upload-images",
+          {
+            method: "POST",
+            body: fileFormData,
+          }
+        );
+
+        const uploadText = await uploadRes.text();
+
+        try {
+          const uploadJson = JSON.parse(uploadText);
+          imageUrls = uploadJson.imageUrls || [];
+        } catch (err) {
+          console.warn("File upload response was not valid JSON:", uploadText);
+        }
+      }
+
+      const reviewForm = new FormData();
+      reviewForm.append("ratings", JSON.stringify(ratings));
+      reviewForm.append("title", title);
+      reviewForm.append("experience", experience);
+      reviewForm.append("image_urls", imageUrls.join(","));
+
+      const reviewerId = localStorage.getItem("userId");
+      if (reviewerId) reviewForm.append("reviewer_id", reviewerId);
+
+      const selectedBookingID = localStorage.getItem("selectedBookingId");
+      if (selectedBookingID) reviewForm.append("event_id", selectedBookingID);
+
+      for (const [key, value] of reviewForm.entries()) {
+        console.log(key, value);
+      }
+
+      const reviewRes = await fetch("http://localhost:5000/api/submit-review", {
+        method: "POST",
+        body: reviewForm,
+      });
+
+      const reviewText = await reviewRes.text();
+
+      if (!reviewRes.ok) {
+        throw new Error(
+          `Review submission failed. Status: ${reviewRes.status}, Body: ${reviewText}`
+        );
+      }
+
+      try {
+        const result = JSON.parse(reviewText);
+        console.log("Review submitted successfully", result);
+      } catch (err) {
+        console.warn("Review response not valid JSON:", reviewText);
+      }
+
+      onClose();
+    } catch (err) {
+      console.error("Error submitting review:", err);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFiles(Array.from(e.target.files));
+    }
+  };
+>>>>>>> Stashed changes
 
   return (
     <div className="fixed inset-0 z-50 bg-gray-800/40 backdrop-blur-md flex items-center justify-center px-4 py-10 overflow-y-auto">
@@ -38,6 +134,7 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
 
         <div className="space-y-6">
           {[
+<<<<<<< Updated upstream
             { label: "How would you rate the organizer overall?", key: "overall" },
             { label: "Clear and prompt communication?", key: "communication" },
             { label: "On time and prepared?", key: "prepared" },
@@ -45,6 +142,21 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
             { label: "Worth the price?", key: "price" },
           ].map(item => (
             <div key={item.key} className="flex items-center justify-between py-1">
+=======
+            {
+              label: "How would you rate the organizer overall?",
+              key: "overall",
+            },
+            { label: "Clear and prompt communication?", key: "communication" },
+            { label: "On time and prepared?", key: "preparedness" },
+            { label: "Professional and respectful?", key: "professional" },
+            { label: "Worth the price?", key: "perceived_value" },
+          ].map((item) => (
+            <div
+              key={item.key}
+              className="flex items-center justify-between py-1"
+            >
+>>>>>>> Stashed changes
               <p className="text-slate-800 text-[15px]">{item.label}</p>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -52,10 +164,23 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
                     key={star}
                     size={24}
                     stroke="#d1d5db"
+<<<<<<< Updated upstream
                     fill={ratings[item.key as keyof typeof ratings] >= star ? "#facc15" : "none"}
                     strokeWidth={1.5}
                     className="cursor-pointer"
                     onClick={() => handleRating(item.key as keyof typeof ratings, star)}
+=======
+                    fill={
+                      ratings[item.key as keyof typeof ratings] >= star
+                        ? "#facc15"
+                        : "none"
+                    }
+                    strokeWidth={1.5}
+                    className="cursor-pointer"
+                    onClick={() =>
+                      handleRating(item.key as keyof typeof ratings, star)
+                    }
+>>>>>>> Stashed changes
                   />
                 ))}
               </div>
@@ -63,7 +188,13 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
           ))}
 
           <div>
+<<<<<<< Updated upstream
             <label className="block text-slate-800 mb-2 font-semibold">Share Your Experience</label>
+=======
+            <label className="block text-slate-800 mb-2 font-semibold">
+              Share Your Experience
+            </label>
+>>>>>>> Stashed changes
             <input
               type="text"
               value={title}
@@ -85,7 +216,12 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
 
           <div>
             <p className="text-slate-800 mb-2">
+<<<<<<< Updated upstream
               Got any event pictures? Upload them here! <span className="text-sm text-slate-500">(optional)</span>
+=======
+              Got any event pictures? Upload them here!{" "}
+              <span className="text-sm text-slate-500">(optional)</span>
+>>>>>>> Stashed changes
             </p>
             <div className="w-full border border-dashed border-gray-300 bg-gray-50 rounded-md p-6 text-center">
               <input
@@ -99,10 +235,19 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
                 <div className="flex flex-col items-center">
                   <UploadCloud className="w-8 h-8 mb-2 text-blue-800" />
                   <span className="text-sm font-medium text-black">
+<<<<<<< Updated upstream
                     Browse and choose the files you want to upload from your device
                   </span>
                   <span className="text-xs text-slate-500 mt-1">
                     We'd love to see the moments you captured—upload your favorite shot here!
+=======
+                    Browse and choose the files you want to upload from your
+                    device
+                  </span>
+                  <span className="text-xs text-slate-500 mt-1">
+                    We'd love to see the moments you captured—upload your
+                    favorite shot here!
+>>>>>>> Stashed changes
                   </span>
                   <div className="mt-4">
                     <div className="w-8 h-8 bg-blue-800 rounded-md flex items-center justify-center">
@@ -122,6 +267,10 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
               Cancel
             </button>
             <button
+<<<<<<< Updated upstream
+=======
+              onClick={handleSubmit}
+>>>>>>> Stashed changes
               className="w-full bg-blue-700 text-white font-medium rounded-md px-4 py-2 hover:bg-blue-800"
             >
               Post
@@ -130,7 +279,14 @@ const LeaveReview: React.FC<LeaveReviewProps> = ({ onClose }) => {
         </div>
       </div>
     </div>
+<<<<<<< Updated upstream
   )
 }
 
 export default LeaveReview
+=======
+  );
+};
+
+export default LeaveReview;
+>>>>>>> Stashed changes

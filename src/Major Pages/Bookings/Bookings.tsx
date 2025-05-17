@@ -202,9 +202,11 @@ const Bookings: React.FC = () => {
 
   const onBookingClick = (booking: Booking) => {
     setSelectedBooking(booking); // Set the selected booking
+    localStorage.setItem("selectedBookingId", booking.id.toString());
   };
   const onBackClick = () => {
     setSelectedBooking(null); // Go back to the booking list
+    localStorage.removeItem("selectedBookingId");
   };
 
   if (selectedBooking) {
