@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 import Logo from "../../assets/OrganizerLogo.png";
 import { useNavigate } from "react-router-dom";
 import { auth, signInWithEmailAndPassword } from "../../functions/firebase";
-import { checkSessionExpiry, signInWithGoogle, signInWithYahoo } from "@/functions/authFunctions";
+import {
+  checkSessionExpiry,
+  signInWithGoogle,
+  signInWithYahoo,
+} from "@/functions/authFunctions";
 import { useTheme } from "../../functions/ThemeContext";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillYahoo } from "react-icons/ai";
@@ -31,8 +35,6 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
     }
   }, [navigate]);
 
-  
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -48,22 +50,26 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
       const userId = userCredential.user.uid;
 
       // Fetch user data from your PostgreSQL backend
-      const response = await fetch('http://localhost:5000/api/getUserType', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/api/getUserType", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify({ firebaseUid: userId, email: userCredential.user.email }),
+        body: JSON.stringify({
+          firebaseUid: userId,
+          email: userCredential.user.email,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch user type from backend');
+        throw new Error("Failed to fetch user type from backend");
       }
 
       const userData = await response.json();
       const userType = userData.userType;
       const vendorType = userData.vendorType;
+      localStorage.setItem("userId", userId);
 
       // Store authentication status and userType
       localStorage.setItem("isAuthenticated", "true");
@@ -78,7 +84,6 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
 
       login();
       // Do NOT navigate here; let useEffect handle it
-
     } catch (err: any) {
       const newFailedAttempts = failedAttempts + 1;
       setFailedAttempts(newFailedAttempts);
@@ -91,7 +96,6 @@ const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
       setLoading(false);
     }
   };
-
 
   const handleGoogleLogin = async () => {
     setLoading(true);

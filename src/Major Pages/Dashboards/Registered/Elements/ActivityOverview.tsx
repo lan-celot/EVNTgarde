@@ -1,9 +1,15 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { CalendarCard } from "./calendar-card";
 import type React from "react";
-import { ArrowUp, User, MapPin } from "lucide-react";
-import { Star } from "lucide-react";
+import { ArrowUp, User, MapPin, Star } from "lucide-react";
+import papa from "papaparse";
 
 const ActivityOverview: React.FC = () => {
+  const [customerRating, setCustomerRating] = useState<number | null>(null);
+  const [reviewCount, setReviewCount] = useState<number>(0);
+
   const takenDates = [
     "April 10, 2025",
     "April 11, 2025",
@@ -37,6 +43,49 @@ const ActivityOverview: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    papa.parse("/Reviews.csv", {
+      download: true,
+      header: true,
+      complete: (results) => {
+        const data = results.data as { liking_score: string }[];
+
+        const scores = data
+          .map((row) => parseFloat(row.liking_score))
+          .filter((score) => !isNaN(score));
+
+        const average =
+          scores.length > 0
+            ? ((scores.reduce((acc, val) => acc + val, 0) / scores.length) *
+                10) /
+              2
+            : null;
+
+        setCustomerRating(average ? parseFloat(average.toFixed(1)) : null);
+        setReviewCount(scores.length);
+      },
+    });
+  }, []);
+
+  const renderStars = (rating: number | null) => {
+    if (rating === null) return null;
+
+    const fullStars = Math.floor(rating);
+    const halfStar = rating - fullStars >= 0.5;
+
+    return [1, 2, 3, 4, 5].map((_, index) => {
+      let fill = "text-gray-300";
+
+      if (index < fullStars) {
+        fill = "text-yellow-400 fill-yellow-400";
+      } else if (index === fullStars && halfStar) {
+        fill = "text-yellow-400 fill-yellow-400 opacity-50";
+      }
+
+      return <Star key={index} className={`h-5 w-5 ${fill}`} />;
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="space-y-4">
@@ -67,24 +116,16 @@ const ActivityOverview: React.FC = () => {
               Customer Satisfaction Rating
             </h3>
             <div className="flex items-center mt-2">
-              <p className="text-3xl font-bold mr-2">4.5</p>{" "}
-              {/* Add margin-right */}
-              <div className="flex">
-                {[1, 2, 3, 4, 5].map((star, index) => (
-                  <Star
-                    key={index}
-                    className={`h-5 w-5 ${
-                      index < 4
-                        ? "text-yellow-400 fill-yellow-400"
-                        : index === 4
-                          ? "text-yellow-400 fill-yellow-400 opacity-50"
-                          : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
+              <p className="text-3xl font-bold mr-2">
+                {customerRating !== null
+                  ? customerRating?.toFixed(1)
+                  : "Loading..."}
+              </p>
+              <div className="flex">{renderStars(customerRating)}</div>
             </div>
-            <p className="text-xs text-gray-500 mt-1">Based on 43 reviews</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Based on {reviewCount} {reviewCount === 1 ? "review" : "reviews"}
+            </p>
           </div>
         </div>
 
@@ -119,8 +160,7 @@ const ActivityOverview: React.FC = () => {
               Vendor Satisfaction Rating
             </h3>
             <div className="flex items-center mt-2">
-              <p className="text-3xl font-bold mr-2">4.5</p>{" "}
-              {/* Add some margin */}
+              <p className="text-3xl font-bold mr-2">4.5</p>
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star, index) => (
                   <Star
@@ -154,20 +194,16 @@ const ActivityOverview: React.FC = () => {
         <div className="bg-white p-6 rounded shadow md:col-span-2">
           <h2 className="text-2xl font-semibold mb-6">Upcoming Events</h2>
           <div className="relative pb-16">
-            {/* Timeline line - positioned to the right of the date and extended at the bottom */}
             <div className="absolute left-[115px] top-2 bottom-0 w-0.5 bg-green-600"></div>
 
             {upcomingEvents.map((event, index) => (
               <div key={index} className="flex mb-8">
-                {/* Date column  */}
                 <div className="mr-6 pt-1 w-24 relative">
                   <div className="font-bold text-xl">{event.date}</div>
                   <div className="text-gray-400">{event.day}</div>
-                  {/* Green dot */}
                   <div className="absolute left-[115px] top-2 w-4 h-4 bg-green-500 rounded-full transform -translate-x-1/2"></div>
                 </div>
 
-                {/* Event card */}
                 <div className="flex-1 bg-white rounded-lg shadow-sm p-5 border border-gray-100 ml-10">
                   <h3 className="text-xl font-semibold text-blue-600 mb-1">
                     {event.title}

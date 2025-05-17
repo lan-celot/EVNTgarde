@@ -27,6 +27,7 @@ import VendorRegistration from "./Major Pages/Login Page/VendorRegistration";
 // Main Pages
 import Dashboard from "./Major Pages/Dashboards/Registered/Dashboard";
 import Bookings from "./Major Pages/Bookings/Bookings";
+<<<<<<< Updated upstream
 import RSVP from "./Major Pages/RSVP/RSVP";
 import Reviews from "./Major Pages/Reviews/Reviews";
 import UserManagement from "./Major Pages/Dashboards/Registered/UserManagement";
@@ -54,21 +55,21 @@ const App: React.FC = () => {
     setUserType(storedUserType);
     // Then set authentication
     setIsAuthenticated(true);
-    
-    console.log('Login called with userType:', storedUserType); // Debug log
+
+    console.log("Login called with userType:", storedUserType); // Debug log
   };
-  
+
   // Function to determine the correct route based on userType
   const getDashboardRoute = () => {
     const currentUserType = localStorage.getItem("userType"); // Read directly from localStorage
-    
+
     switch (currentUserType) {
       case "individual":
       case "organizer":
       case "vendor":
         return "/dashboard";
       default:
-        console.log('No userType found, defaulting to /', currentUserType); // Debug log
+        console.log("No userType found, defaulting to /", currentUserType); // Debug log
         return "/dashboard";
     }
   };
