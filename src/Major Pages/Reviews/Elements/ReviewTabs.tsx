@@ -1,9 +1,5 @@
-<<<<<<< Updated upstream
-import React from "react";
-=======
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse"; // added a csv and a csv parsing dependency for temporary purposes since wala pang db. will add more review data once finished na yung monte carlo.
->>>>>>> Stashed changes
 import ReviewCard from "./ReviewCard";
 
 interface ReviewTabsProp {
@@ -11,8 +7,6 @@ interface ReviewTabsProp {
   onViewReceived: () => void;
 }
 
-<<<<<<< Updated upstream
-=======
 interface CSVRow {
   review_title: string;
   liking_score: string;
@@ -34,7 +28,6 @@ interface Review {
   direction: "by";
 }
 
->>>>>>> Stashed changes
 const sampleReviewsGiven = [
   {
     reviewTitle: "Magical Wedding",
@@ -43,13 +36,7 @@ const sampleReviewsGiven = [
     dateReviewed: "Feb 20, 2025",
     recipient: "Juan Dela Cruz",
     eventTags: ["Wedding"],
-<<<<<<< Updated upstream
-    images: [
-      // "https://example.com/image1.jpg", etc.
-    ],
-=======
     images: [],
->>>>>>> Stashed changes
     direction: "to" as const,
   },
   {
@@ -65,42 +52,10 @@ const sampleReviewsGiven = [
   },
 ];
 
-<<<<<<< Updated upstream
-const sampleReviewsReceived = [
-  {
-    reviewTitle: "Fantastic Organizer",
-    stars: 5,
-    eventReview: "The event went flawlessly thanks to this amazing organizer!",
-    dateReviewed: "Feb 20, 2025",
-    reviewer: "Juan Dela Cruz",
-    eventTags: ["Concert", "School Event"],
-    images: [],
-    direction: "by" as const,
-  },
-  {
-    reviewTitle: "Excellent Planning",
-    stars: 5,
-    eventReview: "Great planning and coordination. Very satisfied!",
-    dateReviewed: "Feb 20, 2025",
-    reviewer: "Juan Dela Cruz",
-    eventTags: ["Concert", "School Event"],
-    images: [],
-    direction: "by" as const,
-  },
-];
-
-=======
->>>>>>> Stashed changes
 const ReviewTabs: React.FC<ReviewTabsProp> = ({
   onViewReviews,
   onViewReceived,
 }) => {
-<<<<<<< Updated upstream
-  return (
-    <div className="space-y-6 p-4">
-      {" "}
-      {/* Changed space-y-12 to space-y-6 for less vertical space */}
-=======
   const [latestReviewsReceived, setLatestReviewsReceived] = useState<Review[]>(
     []
   );
@@ -137,7 +92,6 @@ const ReviewTabs: React.FC<ReviewTabsProp> = ({
 
   return (
     <div className="space-y-6 p-4">
->>>>>>> Stashed changes
       {/* My Reviews Section */}
       <div>
         <h2
@@ -147,26 +101,13 @@ const ReviewTabs: React.FC<ReviewTabsProp> = ({
           My Reviews &gt;
         </h2>
         <div className="space-y-4">
-<<<<<<< Updated upstream
-          {" "}
-          {/* Use space-y for vertical stacking with spacing */}
           {sampleReviewsGiven.map((review, index) => (
             <div key={index}>
-              {" "}
-              {/* Add a wrapper div if needed for specific full-width styling */}
-=======
-          {sampleReviewsGiven.map((review, index) => (
-            <div key={index}>
->>>>>>> Stashed changes
               <ReviewCard {...review} />
             </div>
           ))}
         </div>
       </div>
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
       {/* Reviews Received Section */}
       <div>
         <h2
@@ -176,17 +117,8 @@ const ReviewTabs: React.FC<ReviewTabsProp> = ({
           Reviews Received &gt;
         </h2>
         <div className="space-y-4">
-<<<<<<< Updated upstream
-          {" "}
-          {/* Use space-y for vertical stacking with spacing */}
-          {sampleReviewsReceived.map((review, index) => (
-            <div key={index}>
-              {" "}
-              {/* Add a wrapper div if needed for specific full-width styling */}
-=======
           {latestReviewsReceived.map((review, index) => (
             <div key={index}>
->>>>>>> Stashed changes
               <ReviewCard {...review} />
             </div>
           ))}
