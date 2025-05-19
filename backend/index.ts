@@ -1,7 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import eventsRoutes from './routes/events';
+import eventGuestRegistrationRoutes from './routes/event-guest-registration';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 
@@ -15,6 +20,7 @@ app.use(cors({
 
 // Body parsing middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -29,6 +35,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('EVNTgarde API Server is running');
+});
+
 // Test endpoint
 app.get('/api/test', (req, res) => {
   console.log('Test endpoint hit');
@@ -38,6 +49,7 @@ app.get('/api/test', (req, res) => {
 // Routes
 app.use('/api', authRoutes);
 app.use('/api', eventsRoutes);
+app.use('/api/guest-registration', eventGuestRegistrationRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -70,6 +82,7 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
   console.log(`CORS enabled for http://localhost:5173`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Health check available at http://localhost:${PORT}/health`);
 });
 

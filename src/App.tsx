@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import "./index.css";
 
-import EventRegistrationForm from "../backend/event-guest-registration"; // Event registration form
+import EventRegistrationForm from "../backend/components/EventGuestRegistration"; // Event registration form
 
 import HomePage from "./Major Pages/Dashboards/Unregistered/homepage"; // Non-registered home
 import AboutLoggedOut from "./Major Pages/Dashboards/Unregistered/about-loggedout";
