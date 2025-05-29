@@ -51,8 +51,8 @@ router.get("/events/user/:userId", async (req: Request, res: Response) => {
     const result = await query(
       `SELECT 
         event_id, event_name, event_desc, start_date, end_date, 
-        start_time, end_time, guests, location, event_type_name, 
-        attire, services, additional_services, budget, event_status
+        start_datetime, end_datetime, guests, attire, budget, event_type_id,
+        event_status
       FROM events 
       WHERE customer_id = $1
       ORDER BY start_date DESC`,
@@ -84,17 +84,16 @@ router.post(
         startTime,
         endTime,
         guests,
-        location,
         eventTypeId,
         eventTypeName,
-        attire,
         services,
-        additionalServices,
+        attire,
         budget,
         customerId,
         organizerId,
         vendorId,
         venueId,
+        likingScore,
       } = req.body;
 
     // Check customer exists
@@ -145,15 +144,18 @@ router.post(
       const insertSQL = `
         INSERT INTO events (
           event_id, event_name, event_type_id, event_desc, venue_id,
-          organizer_id, vendor_id, customer_id,
-          start_date, end_date, start_time, end_time,
-          guests, attire, additional_services, services,
-          location, budget, event_type_name, event_status
+          organizer_id, vendor_id, customer_id, liking_score,
+          start_date, end_date, start_datetime, end_datetime,
+          guests, attire, budget, event_status, services
         ) VALUES (
           DEFAULT, $1,$2,$3,$4,$5,$6,$7,
-          $8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,'pending'
+          $8,$9,$10,$11,$12,$13,$14,$15,$16,$17
         ) RETURNING *
       `;
+      
+      const startDatetime = `${startDate} ${startTime}`;  // '2025-05-30 22:05'
+      const endDatetime = `${endDate} ${endTime}`;        // '2025-05-31 23:05'
+
       const vals = [
         eventName,              // $1
         +eventTypeId,           // $2
@@ -162,17 +164,16 @@ router.post(
         organizerId || null,    // $5
         vendorId || null,       // $6
         customerId,             // $7
-        startDate,              // $8
-        endDate,                // $9
-        startTime,              // $10
-        endTime,                // $11
-        +guests,                // $12
-        attire || "",           // $13
-        additionalServices || "", // $14
-        Array.isArray(services) ? services.join(",") : "", // $15
-        location || "",         // $16
-        +budget,                // $17
-        eventTypeName           // $18
+        likingScore || null,  // $8
+        startDate,              // $9
+        endDate,                // $10
+        startDatetime,              // $11
+        endDatetime,                // $12
+        +guests,                // $13
+        attire || "",           // $14
+        +budget,                // $15
+        eventTypeName,          // $16
+        services,               // $17 
       ];
       console.log("Executing database insertion...");
       const result = await query(insertSQL, vals);

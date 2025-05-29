@@ -5,7 +5,7 @@ import eventsRoutes from "./routes/events";
 import reviewRoutes from "./routes/reviews";
 import uploadImages from "./routes/uploadImage";
 import superAdminAuthRoutes from "./routes/super-admin-auth";
-import rsvpRoutes from "./routes/rsvp"
+//import rsvpRoutes from "./routes/rsvp"
 
 
 const app = express();
@@ -49,7 +49,7 @@ app.use("/api", authRoutes);
 app.use("/api", eventsRoutes);
 app.use("/api", reviewRoutes);
 app.use("/api", uploadImages);
-app.use("/api", rsvpRoutes)
+//app.use("/api", rsvpRoutes)
 
 // Error handling middleware
 app.use(
