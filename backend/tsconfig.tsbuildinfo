@@ -1,0 +1,1 @@
+{"root":["./db.ts","./index.ts","./routes/auth.ts","./routes/events.ts","./routes/reviews.ts","./routes/rsvp.ts","./routes/super-admin-auth.ts","./routes/uploadimage.ts","./types/express.d.ts"],"version":"5.8.3"}
