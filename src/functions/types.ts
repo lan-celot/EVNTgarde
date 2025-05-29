@@ -97,7 +97,7 @@ export interface CustomerRegistrationData {
   location?: string;
   password: string;
   customerType: string;
-
+}
 
 export interface EventData {
   name: string;
@@ -108,7 +108,7 @@ export interface EventData {
   endTime: string;
   numberOfGuests: number;
   location: string;
-  eventType: string;
+  event_type_id: number;
   attire: string;
   services: string[];
   customServices: string[];

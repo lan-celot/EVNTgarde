@@ -49,34 +49,36 @@ interface EventFormData {
   overview: string;
   startDate: string;
   endDate: string;
-  startTime: string;
-  endTime: string;
+  startDatetime: string;
+  endDatetime: string;
   numberOfGuests: number;
-  location: string;
   eventTypeId: number | "";
   attire: string;
   services: string[];
-  customServices: string[];
   budget: string;
-  files: File[];
+  likingScore?: number;
+  files?: File[];
 }
 
 interface EventData {
   event_id: number;
   event_name: string;
   event_desc: string;
+  event_type_id: number;
+  venue_id: number;
+  organizer_id: number;
+  vendor_id: number;
+  customer_id: string;
+  event_status: string;
   start_date: string;
   end_date: string;
-  start_time: string;
-  end_time: string;
   guests: number;
-  location: string;
-  event_type_name: string;
   attire: string;
-  services: string;
-  additional_services: string;
   budget: number;
-  event_status: string;
+  liking_score: number;
+  start_datetime: string;
+  end_datetime: string;
+  services: string;
 }
 
 const MyEvents: React.FC<Props> = ({ onAdd }) => {
@@ -157,14 +159,13 @@ const MyEvents: React.FC<Props> = ({ onAdd }) => {
           eventOverview: eventData.overview,
           startDate: eventData.startDate,
           endDate: eventData.endDate,
-          startTime: eventData.startTime,
-          endTime: eventData.endTime,
+          startTime: eventData.startDatetime,
+          endTime: eventData.endDatetime,
           guests: eventData.numberOfGuests,
           location: eventData.location,
           eventTypeId: eventData.eventTypeId,
           attire: eventData.attire,
           services: eventData.services,
-          additionalServices: eventData.customServices.join(", "),
           budget: parseFloat(eventData.budget),
           customerId,
         }),

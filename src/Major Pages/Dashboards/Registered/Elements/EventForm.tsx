@@ -6,20 +6,19 @@ interface EventFormState {
   eventOverview: string;
   startDate: string;
   endDate: string;
-  startTime: string;
-  endTime: string;
+  startDatetime: string;
+  endDatetime: string;
   guests: number;
-  location: string;
   eventTypeId: number | "";
   attire: string;
   services: string[];
-  additionalServices: string;
   budget: string;
-  files: File[];
-  organizerId: string;
-  vendorId: string;
-  venueId: string;
-  isPackage: boolean;
+  likingScore?: number;
+  files?: File[];
+  organizerId?: string;
+  vendorId?: string;
+  venueId?: string;
+  isPackage?: boolean;
 }
 
 const initialForm: EventFormState = {
@@ -27,19 +26,18 @@ const initialForm: EventFormState = {
   eventOverview: "",
   startDate: "",
   endDate: "",
-  startTime: "",
-  endTime: "",
+  startDatetime: "",
+  endDatetime: "",
   guests: 1,
-  location: "",
   eventTypeId: "",
   attire: "",
   services: [],
-  additionalServices: "",
   budget: "",
-  files: [],
-  organizerId: "",
-  vendorId: "",
-  venueId: "",
+  likingScore: undefined,
+  files: undefined,
+  organizerId: undefined,
+  vendorId: undefined,
+  venueId: undefined,
   isPackage: false,
 };
 
@@ -132,8 +130,8 @@ useEffect(() => {
     }
 
     try {
-      const startDateTime = new Date(`${form.startDate}T${form.startTime}`).toISOString();
-      const endDateTime = new Date(`${form.endDate}T${form.endTime}`).toISOString();
+      const startDateTime = new Date(`${form.startDate}T${form.startDatetime}`).toISOString();
+      const endDateTime = new Date(`${form.endDate}T${form.endDatetime}`).toISOString();
 
       const eventData = {
         ...form,
@@ -236,16 +234,16 @@ useEffect(() => {
             <div className="flex space-x-2">
               <input
                 type="time"
-                name="startTime"
-                value={form.startTime}
+                name="startDatetime"
+                value={form.startDatetime}
                 onChange={handleChange}
                 className="border rounded p-2 flex-1"
                 required
               />
               <input
                 type="time"
-                name="endTime"
-                value={form.endTime}
+                name="endDatetime"
+                value={form.endDatetime}
                 onChange={handleChange}
                 className="border rounded p-2 flex-1"
                 required
@@ -264,31 +262,12 @@ useEffect(() => {
               />
             </div>
             <input
-              name="location"
-              value={form.location}
+              name="eventTypeId"
+              value={form.eventTypeId}
               onChange={handleChange}
-              placeholder="Event Location"
               className="w-full border rounded p-2"
               required
             />
-          <select
-  name="eventTypeId"
-  value={form.eventTypeId}
-  onChange={handleChange}
-  className="w-full border rounded p-2"
-  required
->
-  <option value="">Select Event Type</option>
-  {eventTypes.length === 0 ? (
-    <option value="" disabled>Loading event types...</option>
-  ) : (
-    eventTypes.map((type) => (
-      <option key={type.event_type_id} value={type.event_type_id}>
-        {type.event_type_name}
-      </option>
-    ))
-  )}
-</select>
             <input
               name="organizerId"
               value={form.organizerId}
@@ -337,13 +316,6 @@ useEffect(() => {
               <option value="Wedding Planning">Wedding Planning</option>
             </select>
             <input
-              name="additionalServices"
-              value={form.additionalServices}
-              onChange={handleChange}
-              placeholder="Additional Services (optional)"
-              className="w-full border rounded p-2"
-            />
-            <input
               name="budget"
               value={form.budget}
               onChange={handleChange}
@@ -368,10 +340,9 @@ useEffect(() => {
                 {form.startDate} to {form.endDate}
               </div>
               <div>
-                {form.startTime} to {form.endTime}
+                {form.startDatetime} to {form.endDatetime}
               </div>
               <div>Guests: {form.guests}</div>
-              <div>Location: {form.location}</div>
               <div>
                 Type:{" "}
                 {eventTypes.find((type) => type.event_type_id === form.eventTypeId)?.event_type_name ||
@@ -382,7 +353,6 @@ useEffect(() => {
             <div>
               <h3 className="font-semibold">Requested Services</h3>
               <div>{form.services.join(", ")}</div>
-              <div>Additional: {form.additionalServices}</div>
               <div>Budget: {form.budget}</div>
             </div>
           </div>

@@ -1,80 +1,74 @@
-import { StepProps } from "../../../../functions/types";
+import { EventData } from "../../../../functions/types";
 
-export function PreviewStep({ eventData }: StepProps) {
+interface PreviewStepProps {
+  eventData: EventData;
+  eventTypes: { event_type_id: number; event_type_name: string }[];
+}
+
+export function PreviewStep({ eventData, eventTypes }: PreviewStepProps) {
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-medium text-[#3061AD] mb-4">Event Details</h3>
-        <div className="grid grid-cols-2 gap-y-4 gap-x-8">
-          <div>
-            <h4 className="text-sm text-gray-500">Name</h4>
-            <p className="font-medium">{eventData.name}</p>
-          </div>
-
-          <div className="col-span-2">
-            <h4 className="text-sm text-gray-500">Overview</h4>
-            <p>{eventData.overview}</p>
-          </div>
-
-          <div>
-            <h4 className="text-sm text-gray-500">Date</h4>
-            <p>
-              {new Date(eventData.startDate).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}{" "}
-              to{" "}
-              {new Date(eventData.endDate).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-
-          <div>
-            <h4 className="text-sm text-gray-500">Time</h4>
-            <p>{eventData.startTime} to {eventData.endTime}</p>
-          </div>
-
-          <div>
-            <h4 className="text-sm text-gray-500">Number of Guest</h4>
-            <p>{eventData.numberOfGuests}</p>
-          </div>
-
-          <div className="col-span-2">
-            <h4 className="text-sm text-gray-500">Address</h4>
-            <p>{eventData.location}</p>
-          </div>
-
-          <div>
-            <h4 className="text-sm text-gray-500">Type</h4>
-            <p>{eventData.eventType}</p>
-          </div>
-
-          <div>
-            <h4 className="text-sm text-gray-500">Attire</h4>
-            <p>{eventData.attire}</p>
-          </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-6">
+        <div>
+          <h4 className="text-sm text-gray-500 mb-2">Name</h4>
+          <p className="text-base font-medium">{eventData.name}</p>
+        </div>
+        <div>
+          <h4 className="text-sm text-gray-500 mb-2">Type</h4>
+          <p className="text-base">
+            {eventTypes.find(type => type.event_type_id === eventData.event_type_id)?.event_type_name || "Unknown"}
+          </p>
+        </div>
+        <div className="col-span-2">
+          <h4 className="text-sm text-gray-500 mb-2">Overview</h4>
+          <p className="text-base">{eventData.overview}</p>
+        </div>
+        <div>
+          <h4 className="text-sm text-gray-500 mb-2">Date</h4>
+          <p className="text-base">
+            {new Date(eventData.startDate).toLocaleDateString()} to{" "}
+            {new Date(eventData.endDate).toLocaleDateString()}
+          </p>
+        </div>
+        <div>
+          <h4 className="text-sm text-gray-500 mb-2">Time</h4>
+          <p className="text-base">
+            {eventData.startTime} to {eventData.endTime}
+          </p>
+        </div>
+        <div>
+          <h4 className="text-sm text-gray-500 mb-2">Guests</h4>
+          <p className="text-base">{eventData.numberOfGuests}</p>
+        </div>
+        <div>
+          <h4 className="text-sm text-gray-500 mb-2">Attire</h4>
+          <p className="text-base">{eventData.attire}</p>
+        </div>
+        <div className="col-span-2">
+          <h4 className="text-sm text-gray-500 mb-2">Location</h4>
+          <p className="text-base">{eventData.location}</p>
         </div>
       </div>
 
       <div>
-        <h3 className="text-lg font-medium text-[#3061AD] mb-4">Requested Services</h3>
-        <ul className="space-y-2">
+        <h4 className="text-sm text-gray-500 mb-3">Services</h4>
+        <div className="space-y-2">
           {eventData.services.map((service, index) => (
-            <li key={index}>{service}</li>
+            <div key={index} className="text-base bg-gray-50 p-3 rounded-lg">
+              {service}
+            </div>
           ))}
           {eventData.customServices.map((service, index) => (
-            <li key={`custom-${index}`}>{service}</li>
+            <div key={`custom-${index}`} className="text-base bg-gray-50 p-3 rounded-lg">
+              {service}
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
 
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-[#3061AD]">Total Event Budget</h3>
-        <p className="text-xl font-semibold text-[#3061AD]">{eventData.budget}</p>
+      <div className="flex justify-between items-center pt-4 border-t">
+        <h4 className="text-base font-medium text-[#3061AD]">Total Budget</h4>
+        <p className="text-lg font-semibold text-[#3061AD]">{eventData.budget}</p>
       </div>
     </div>
   );

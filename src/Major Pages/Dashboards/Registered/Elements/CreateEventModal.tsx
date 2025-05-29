@@ -1,17 +1,16 @@
 import { useState, useEffect, useRef } from "react"
-import { X, Calendar, Clock, Plus, Minus, ChevronDown, Upload, Check } from "lucide-react"
+import { X } from "lucide-react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { EventDetailsStep } from "./EventDetailsStep";
 import { ServicesStep } from "./ServicesStep";
 import { PreviewStep } from "./PreviewStep";
 import { ProgressSteps } from "./ProgressSteps";
-import { EventData } from "../../../../functions/types";
-
+import { EventData as EventDataType } from "../../../../functions/types";
 
 interface CreateEventModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (eventData: EventData) => void
+  onSave: (eventData: EventDataType) => void
 }
 
 interface EventData {
@@ -23,25 +22,24 @@ interface EventData {
   endTime: string
   numberOfGuests: number
   location: string
-  eventTypeId: number | ""
+  event_type_id: number
   attire: string
   services: string[]
   customServices: string[]
   budget: string
   files: File[]
-
 }
 
 interface ErrorState {
-  [key: string]: boolean | string
+  [key: string]: boolean | string;
 }
 
 export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalProps) {
-
   const [step, setStep] = useState(1)
   const [errors, setErrors] = useState<ErrorState>({})
   const [loading, setLoading] = useState(false)
   const [customerId, setCustomerId] = useState<string | null>(null)
+  const [customService, setCustomService] = useState("")
   const [eventTypes, setEventTypes] = useState<{ event_type_id: number; event_type_name: string }[]>([])
   const [eventData, setEventData] = useState<EventData>({
     name: "",
@@ -52,12 +50,12 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
     endTime: "",
     numberOfGuests: 0,
     location: "",
-    eventTypeId: "",
+    event_type_id: 0,
     attire: "",
     services: [],
     customServices: [],
     budget: "",
-    files: [],
+    files: []
   });
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -80,7 +78,7 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
       .then((res) => res.json())
       .then((data) => {
         setEventTypes(data);
-        console.log("Fetched event types:", data); // <-- Add this
+        console.log("Fetched event types:", data);
       })
       .catch((err) => console.error("Failed to fetch event types", err));
   }, []);
@@ -96,6 +94,23 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
+
+  // Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -135,7 +150,7 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
   }
 
   const validateStep1 = () => {
-    const newErrors: Record<string, boolean> = {}
+    const newErrors: ErrorState = {}
 
     if (!eventData.name.trim()) newErrors.name = true
     if (!eventData.overview.trim()) newErrors.overview = true
@@ -144,55 +159,32 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
     if (!eventData.startTime) newErrors.startTime = true
     if (!eventData.endTime) newErrors.endTime = true
     if (eventData.numberOfGuests <= 0) newErrors.numberOfGuests = true
-    if (!eventData.location.trim()) newErrors.location = true
-    if (!eventData.eventTypeId) newErrors.eventTypeId = true
     if (!eventData.attire) newErrors.attire = true
+    if (!eventData.location.trim()) newErrors.location = true
+    if (!eventData.event_type_id || eventData.event_type_id === 0) newErrors.event_type_id = "Please select an event type";
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const validateStep2 = () => {
-    const newErrors: Record<string, boolean> = {}
+    const newErrors: ErrorState = {}
 
-    if (eventData.services.length === 0 && eventData.customServices.length === 0) {
+    if (eventData.services.length === 0) {
       newErrors.services = true
     }
 
     if (!eventData.budget.trim()) {
       newErrors.budget = true
     }
-  };
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const validators = {
-    1: () => {
-      const newErrors: Record<string, boolean> = {};
-      const requiredFields = [
-        "name", "overview", "startDate", "endDate", 
-        "startTime", "endTime", "location", "eventType", "attire"
-      ];
-      
-      requiredFields.forEach(field => {
-        if (!eventData[field as keyof EventData] || 
-            (typeof eventData[field as keyof EventData] === 'string' && 
-             !(eventData[field as keyof EventData] as string).trim())) {
-          newErrors[field] = true;
-        }
-      });
-      
-      if (eventData.numberOfGuests <= 0) newErrors.numberOfGuests = true;
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    },
-    2: () => {
-      const newErrors: Record<string, boolean> = {};
-      if (eventData.services.length === 0 && eventData.customServices.length === 0) {
-        newErrors.services = true;
-      }
-      if (!eventData.budget.trim()) newErrors.budget = true;
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    },
+    1: validateStep1,
+    2: validateStep2,
     3: () => true
   };
 
@@ -225,17 +217,17 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
         startTime: "Start Time",
         endTime: "End Time",
         numberOfGuests: "Number of Guests",
+        event_type_id: "Event Type",
         location: "Location",
-        eventTypeId: "Event Type",
         attire: "Attire",
         budget: "Budget"
       };
 
       const missingFields = [];
       for (const [field, label] of Object.entries(requiredFields)) {
-        if (!eventData[field as keyof EventData] || 
-            (typeof eventData[field as keyof EventData] === 'string' && 
-             eventData[field as keyof EventData].toString().trim() === '')) {
+        const value = eventData[field as keyof EventData];
+        if (!value || 
+            (typeof value === 'string' && value.trim() === '')) {
           missingFields.push(label);
         }
       }
@@ -250,7 +242,7 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
       }
 
       // Map form data to database schema
-      const eventTypeObj = eventTypes.find(t => t.event_type_id === eventData.eventTypeId);
+      const selectedType = eventTypes.find(t => t.event_type_id === eventData.event_type_id);
       const eventPayload = {
         eventName: eventData.name,
         eventOverview: eventData.overview,
@@ -259,13 +251,12 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
         startTime: eventData.startTime,
         endTime: eventData.endTime,
         guests: eventData.numberOfGuests,
+        eventTypeId: eventData.event_type_id,
         location: eventData.location,
-        eventTypeId: eventData.eventTypeId,
-        eventTypeName: eventTypeObj ? eventTypeObj.event_type_name : "",
         attire: eventData.attire,
         services: eventData.services.join(", ") || null,
-        additionalServices: eventData.customServices.join(", ") || null,
         budget: eventData.budget,
+        files: eventData.files,
         customerId: customerId,
         organizerId: null,
         vendorId: null,
@@ -323,50 +314,7 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
           </div>
 
           {/* Progress Steps */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-base ${
-                  step >= 1 ? "bg-[#3061AD] text-white" : "border-2 border-gray-300 text-gray-500"
-                }`}
-              >
-                {step > 1 ? <Check size={18} /> : "01"}
-              </div>
-              <div className={`ml-3 text-sm ${step === 1 ? "text-[#3061AD] font-medium" : "text-gray-500"}`}>
-                Event Details
-              </div>
-            </div>
-
-            <div className={`flex-1 h-1 mx-4 ${step > 1 ? "bg-[#3061AD]" : "bg-gray-200"}`}></div>
-
-            <div className="flex items-center">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-base ${
-                  step >= 2 ? "bg-[#3061AD] text-white" : "border-2 border-gray-300 text-gray-500"
-                }`}
-              >
-                {step > 2 ? <Check size={18} /> : "02"}
-              </div>
-              <div className={`ml-3 text-sm ${step === 2 ? "text-[#3061AD] font-medium" : "text-gray-500"}`}>
-                Services
-              </div>
-            </div>
-
-            <div className={`flex-1 h-1 mx-4 ${step > 2 ? "bg-[#3061AD]" : "bg-gray-200"}`}></div>
-
-            <div className="flex items-center">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-base ${
-                  step === 3 ? "bg-[#3061AD] text-white" : "border-2 border-gray-300 text-gray-500"
-                }`}
-              >
-                03
-              </div>
-              <div className={`ml-3 text-sm ${step === 3 ? "text-[#3061AD] font-medium" : "text-gray-500"}`}>
-                Preview
-              </div>
-            </div>
-          </div>
+          <ProgressSteps currentStep={step} />
 
           {/* Error Messages */}
           {errors.auth && (
@@ -384,310 +332,35 @@ export function CreateEventModal({ isOpen, onClose, onSave }: CreateEventModalPr
           <div className="max-h-[65vh] overflow-y-auto space-y-6">
             {/* Step 1: Event Details */}
             {step === 1 && (
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Name</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Annual Business Conference 2025"
-                    className={`w-full p-3 border ${errors.name ? "border-red-500" : "border-gray-300"} rounded-lg text-base`}
-                    value={eventData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                  />
-                  {errors.name && <p className="text-red-500 text-sm mt-1">Event name is required</p>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Overview</label>
-                  <textarea
-                    placeholder="Provide an overview of your event"
-                    className={`w-full p-3 border ${errors.overview ? "border-red-500" : "border-gray-300"} rounded-lg text-base h-24`}
-                    value={eventData.overview}
-                    onChange={(e) => handleInputChange("overview", e.target.value)}
-                  />
-                  {errors.overview && <p className="text-red-500 text-sm mt-1">Event overview is required</p>}
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        className={`w-full p-3 border ${errors.startDate ? "border-red-500" : "border-gray-300"} rounded-lg text-base pr-10`}
-                        value={eventData.startDate}
-                        onChange={(e) => handleInputChange("startDate", e.target.value)}
-                      />
-                      <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        className={`w-full p-3 border ${errors.endDate ? "border-red-500" : "border-gray-300"} rounded-lg text-base pr-10`}
-                        value={eventData.endDate}
-                        onChange={(e) => handleInputChange("endDate", e.target.value)}
-                      />
-                      <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Time</label>
-                    <div className="relative">
-                      <input
-                        type="time"
-                        className={`w-full p-3 border ${errors.startTime ? "border-red-500" : "border-gray-300"} rounded-lg text-base pr-10`}
-                        value={eventData.startTime}
-                        onChange={(e) => handleInputChange("startTime", e.target.value)}
-                      />
-                      <Clock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">End Time</label>
-                    <div className="relative">
-                      <input
-                        type="time"
-                        className={`w-full p-3 border ${errors.endTime ? "border-red-500" : "border-gray-300"} rounded-lg text-base pr-10`}
-                        value={eventData.endTime}
-                        onChange={(e) => handleInputChange("endTime", e.target.value)}
-                      />
-                      <Clock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Number of Guests</label>
-                    <div className="flex items-center">
-                      <button className="p-3 border border-gray-300 rounded-l-lg" onClick={decrementGuests}>
-                        <Minus size={18} />
-                      </button>
-                      <input
-                        type="text"
-                        className={`flex-1 p-3 border-y ${errors.numberOfGuests ? "border-red-500" : "border-gray-300"} text-base text-center`}
-                        value={eventData.numberOfGuests || ""}
-                        onChange={(e) => {
-                          const value = Number.parseInt(e.target.value) || 0;
-                          handleInputChange("numberOfGuests", value);
-                        }}
-                      />
-                      <button className="p-3 border border-gray-300 rounded-r-lg" onClick={incrementGuests}>
-                        <Plus size={18} />
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Event Type</label>
-                    <div className="relative">
-                      <select
-                        className={`w-full p-3 border ${errors.eventTypeId ? "border-red-500" : "border-gray-300"} rounded-lg text-base appearance-none pr-10`}
-                        value={eventData.eventTypeId}
-                        onChange={(e) => handleInputChange("eventTypeId", Number(e.target.value))}
-                      >
-                        <option value="">Choose Event Type</option>
-                        {eventTypes.map((type) => (
-                          <option key={type.event_type_id} value={type.event_type_id}>
-                            {type.event_type_name}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Event Location"
-                    className={`w-full p-3 border ${errors.location ? "border-red-500" : "border-gray-300"} rounded-lg text-base`}
-                    value={eventData.location}
-                    onChange={(e) => handleInputChange("location", e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Attire</label>
-                  <div className="relative">
-                    <select
-                      className={`w-full p-3 border ${errors.attire ? "border-red-500" : "border-gray-300"} rounded-lg text-base appearance-none pr-10`}
-                      value={eventData.attire}
-                      onChange={(e) => handleInputChange("attire", e.target.value)}
-                    >
-                      <option value="">Choose Attire</option>
-                      <option value="Casual">Casual</option>
-                      <option value="Business Casual">Business Casual</option>
-                      <option value="Formal">Formal</option>
-                      <option value="Black Tie">Black Tie</option>
-                      <option value="White Tie">White Tie</option>
-                      <option value="Costume">Costume</option>
-                      <option value="School Uniform">School Uniform</option>
-                      <option value="Other">Other</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  </div>
-                </div>
-              </div>
+              <EventDetailsStep
+                eventData={eventData}
+                errors={errors}
+                onInputChange={handleInputChange}
+                eventTypes={eventTypes}
+                onIncrementGuests={incrementGuests}
+                onDecrementGuests={decrementGuests}
+              />
             )}
 
             {/* Step 2: Services */}
             {step === 2 && (
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">Required Services</label>
-                  <div className="flex flex-wrap gap-3 mb-4">
-                    {["Catering", "Decor", "Entertainment", "Photography"].map((service) => (
-                      <button
-                        key={service}
-                        className={`flex items-center px-4 py-2 rounded-lg border text-base ${
-                          eventData.services.includes(service)
-                            ? "border-[#3061AD] text-[#3061AD]"
-                            : "border-gray-300 text-gray-700"
-                        }`}
-                        onClick={() => handleServiceToggle(service)}
-                      >
-                        {service}
-                        <span className="ml-2 w-5 h-5 rounded-full border flex items-center justify-center">
-                          {eventData.services.includes(service) && <Check size={14} />}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">Custom Services</label>
-                  <div className="flex items-center gap-3 mb-4">
-                    <input
-                      type="text"
-                      placeholder="Add custom service"
-                      className="flex-1 p-3 border border-gray-300 rounded-lg text-base"
-                      value={customService}
-                      onChange={(e) => setCustomService(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          addCustomService();
-                        }
-                      }}
-                    />
-                    <button
-                      className="bg-gray-100 text-[#3061AD] px-4 py-3 rounded-lg hover:bg-gray-200 text-base"
-                      onClick={addCustomService}
-                    >
-                      Add Service
-                    </button>
-                  </div>
-
-                  {eventData.customServices.length > 0 && (
-                    <div className="space-y-2">
-                      {eventData.customServices.map((service, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg text-base">
-                          <span>{service}</span>
-                          <button
-                            className="text-red-500"
-                            onClick={() => {
-                              const updatedServices = [...eventData.customServices];
-                              updatedServices.splice(index, 1);
-                              setEventData({
-                                ...eventData,
-                                customServices: updatedServices,
-                              });
-                            }}
-                          >
-                            <X size={18} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Budget</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., PHP 100,000"
-                    className={`w-full p-3 border ${errors.budget ? "border-red-500" : "border-gray-300"} rounded-lg text-base`}
-                    value={eventData.budget}
-                    onChange={(e) => handleInputChange("budget", e.target.value)}
-                  />
-                </div>
-              </div>
+              <ServicesStep
+                eventData={eventData}
+                errors={errors}
+                onInputChange={handleInputChange}
+                onServiceToggle={handleServiceToggle}
+                customService={customService}
+                setCustomService={setCustomService}
+                onAddCustomService={addCustomService}
+              />
             )}
 
             {/* Step 3: Preview */}
             {step === 3 && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="text-sm text-gray-500 mb-2">Name</h4>
-                    <p className="text-base font-medium">{eventData.name}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-gray-500 mb-2">Type</h4>
-                    <p className="text-base">{eventTypes.find(t => t.event_type_id === eventData.eventTypeId)?.event_type_name || "Unknown"}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <h4 className="text-sm text-gray-500 mb-2">Overview</h4>
-                    <p className="text-base">{eventData.overview}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-gray-500 mb-2">Date</h4>
-                    <p className="text-base">
-                      {new Date(eventData.startDate).toLocaleDateString()} to{" "}
-                      {new Date(eventData.endDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-gray-500 mb-2">Time</h4>
-                    <p className="text-base">
-                      {eventData.startTime} to {eventData.endTime}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-gray-500 mb-2">Guests</h4>
-                    <p className="text-base">{eventData.numberOfGuests}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-gray-500 mb-2">Attire</h4>
-                    <p className="text-base">{eventData.attire}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <h4 className="text-sm text-gray-500 mb-2">Location</h4>
-                    <p className="text-base">{eventData.location}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-sm text-gray-500 mb-3">Services</h4>
-                  <div className="space-y-2">
-                    {eventData.services.map((service, index) => (
-                      <div key={index} className="text-base bg-gray-50 p-3 rounded-lg">
-                        {service}
-                      </div>
-                    ))}
-                    {eventData.customServices.map((service, index) => (
-                      <div key={`custom-${index}`} className="text-base bg-gray-50 p-3 rounded-lg">
-                        {service}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center pt-4 border-t">
-                  <h4 className="text-base font-medium text-[#3061AD]">Total Budget</h4>
-                  <p className="text-lg font-semibold text-[#3061AD]">{eventData.budget}</p>
-                </div>
-              </div>
+              <PreviewStep
+                eventData={eventData}
+                eventTypes={eventTypes}
+              />
             )}
           </div>
 

@@ -50,9 +50,8 @@ router.get("/events/user/:userId", async (req: Request, res: Response) => {
     console.log("Fetching events for user...");
     const result = await query(
       `SELECT 
-        event_id, event_name, event_desc, start_date, end_date, 
-        start_time, end_time, guests, location, event_type_name, 
-        attire, services, additional_services, budget, event_status
+        event_id, event_name, event_type_id, event_desc, venue_id, organizer_id, vendor_id, customer_id,
+        event_status, start_date, end_date, guests, attire, budget, liking_score, start_datetime, end_datetime, services
       FROM events 
       WHERE customer_id = $1
       ORDER BY start_date DESC`,
@@ -76,25 +75,25 @@ router.post(
   async (req, res, next): Promise<void> => {
     try {
       console.log("Starting event creation process...");
+      console.log('req.body:', req.body);
+      const eventTypeId = req.body.eventTypeId;
+      console.log('eventTypeId:', eventTypeId, typeof eventTypeId);
       const {
         eventName,
         eventOverview,
-        startDate,
-        endDate,
-        startTime,
-        endTime,
-        guests,
-        location,
-        eventTypeId,
-        eventTypeName,
-        attire,
-        services,
-        additionalServices,
-        budget,
-        customerId,
+        venueId,
         organizerId,
         vendorId,
-        venueId,
+        customerId,
+        startDate,
+        endDate,
+        guests,
+        attire,
+        budget,
+        likingScore,
+        startDatetime,
+        endDatetime,
+        services
       } = req.body;
 
     // Check customer exists
@@ -118,15 +117,11 @@ router.post(
         return;
       }
 
-  
-
       // Quick validation of required fields (use unary + to coerce)
       const requiredFields = {
         eventName,
         startDate,
         endDate,
-        startTime,
-        endTime,
         guests: +guests,
         budget: +budget,
         eventTypeId: +eventTypeId,
@@ -145,13 +140,12 @@ router.post(
       const insertSQL = `
         INSERT INTO events (
           event_id, event_name, event_type_id, event_desc, venue_id,
-          organizer_id, vendor_id, customer_id,
-          start_date, end_date, start_time, end_time,
-          guests, attire, additional_services, services,
-          location, budget, event_type_name, event_status
+          organizer_id, vendor_id, customer_id, event_status,
+          start_date, end_date, guests, attire, budget, liking_score, start_datetime, end_datetime, services
         ) VALUES (
-          DEFAULT, $1,$2,$3,$4,$5,$6,$7,
-          $8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,'pending'
+          DEFAULT, $1, $2, $3, $4,
+          $5, $6, $7, 'pending',
+          $8, $9, $10, $11, $12, $13, $14, $15, $16
         ) RETURNING *
       `;
       const vals = [
@@ -164,15 +158,13 @@ router.post(
         customerId,             // $7
         startDate,              // $8
         endDate,                // $9
-        startTime,              // $10
-        endTime,                // $11
-        +guests,                // $12
-        attire || "",           // $13
-        additionalServices || "", // $14
-        Array.isArray(services) ? services.join(",") : "", // $15
-        location || "",         // $16
-        +budget,                // $17
-        eventTypeName           // $18
+        +guests,                // $10
+        attire || "",           // $11
+        +budget,                // $12
+        +likingScore || 0,      // $13
+        startDatetime || null,  // $14
+        endDatetime || null,    // $15
+        Array.isArray(services) ? services.join(",") : services || "" // $16
       ];
       console.log("Executing database insertion...");
       const result = await query(insertSQL, vals);
