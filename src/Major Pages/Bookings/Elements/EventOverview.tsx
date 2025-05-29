@@ -9,10 +9,8 @@ type Booking = {
   title: string;
   date: string;
   day: string;
-  customer: string;
   startTime: string;
   endTime: string;
-
   startDateTime: string;
   endDateTime: string;
   customer: string;
@@ -46,7 +44,6 @@ const formatDateTime = (dateTimeStr: string): string => {
 const EventOverview: React.FC<EventOverviewProps> = ({
   activeStatus,
   selectedBooking,
-  activeStatus,
   userRole,
 }) => {
   const [activeTab, setActiveTab] = useState("Services");

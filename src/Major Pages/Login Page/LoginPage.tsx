@@ -1,4 +1,3 @@
-
 import { Eye, EyeOff } from "lucide-react";
 import type React from "react";
 import { useState, useEffect } from "react";
@@ -13,7 +12,7 @@ import {
 import { useTheme } from "../../functions/ThemeContext";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillYahoo } from "react-icons/ai";
-
+import AuthLayout from "@/Major Pages/Dashboards/Registered/Elements/AuthLayout";
 
 const LoginPage: React.FC<{ login: () => void }> = ({ login }) => {
   const navigate = useNavigate()

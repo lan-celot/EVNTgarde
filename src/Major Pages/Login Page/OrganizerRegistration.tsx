@@ -779,7 +779,7 @@ const validateStep = (): boolean => {
                   <button
                     type="button"
 
-                    onClick={goToNextStep}
+                    onClick={handleNext}
                      className={`flex-1 px-6 py-3 text-white ${
                       isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"
                     } rounded-xl shadow-lg overflow-hidden font-poppins`}
@@ -960,8 +960,8 @@ const validateStep = (): boolean => {
                   </button>
                   <button
                     type="button"
-                    onClick={goToNextStep}
-                   className={`flex-1 px-6 py-3 text-white ${
+                    onClick={handleNext}
+                    className={`flex-1 px-6 py-3 text-white ${
                       isDarkMode ? "bg-gray-800 hover:bg-gray-300" : "bg-blue-600 hover:bg-blue-300"
                     } rounded-xl shadow-lg overflow-hidden font-poppins`}
                   >

@@ -229,19 +229,15 @@ const VendorRegistration = ({ step = 1 }: { step: number }) => {
     }
     setError("")
 
-
-
     sessionStorage.setItem(
       "vendorRegistration",
       JSON.stringify({
-        vendorType,
-        vendorName,
-        businessOffering,
-        preferences,
-        gender,
+        vendorType: formData.vendorType,
+        vendorName: formData.vendorName,
+        businessOffering: formData.businessOffering,
+        gender: formData.gender,
       }),
     )
-
 
     navigate("/register/vendor/step3")
   }
@@ -566,10 +562,8 @@ const VendorRegistration = ({ step = 1 }: { step: number }) => {
           </div>
         </div>
       )}
-
-    </div>
-	);
+    </AuthLayout>
+  );
 };
-
 
 export default VendorRegistration;

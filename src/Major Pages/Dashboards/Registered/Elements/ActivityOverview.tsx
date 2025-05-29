@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { CalendarCard } from "./calendar-card";
 import type React from "react";
@@ -10,6 +9,8 @@ type userType = "organizer" | "vendor" | "customer";
 
 const ActivityOverview: React.FC = () => {
  const [userType, setUserRole] = useState<userType>("organizer");
+ const [customerRating, setCustomerRating] = useState<number | null>(null);
+ const [reviewCount, setReviewCount] = useState<number>(0);
 
 
  useEffect(() => {
@@ -64,7 +65,7 @@ const ActivityOverview: React.FC = () => {
     papa.parse("/Reviews.csv", {
       download: true,
       header: true,
-      complete: (results) => {
+      complete: (results: { data: { liking_score: string; }[]; }) => {
         const data = results.data as { liking_score: string }[];
 
         const scores = data
