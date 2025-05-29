@@ -2,7 +2,7 @@ import React from 'react';
 import CreateGuestListModal from "../../../components/CreateGuestListModal";
 
 const TestGuestListPage: React.FC = () => {
-  const dummyEventId = 1; // ✅ make sure this is a valid event_id in your DB
+  const dummyEventId = 1;
 
   const handleGuestListSubmit = async (guests: any[]) => {
     try {
@@ -57,7 +57,7 @@ const TestGuestListPage: React.FC = () => {
       <CreateGuestListModal
         eventId={dummyEventId}
         onSubmit={handleGuestListSubmit}
-        onUploadCsv={handleCsvUpload} // ✅ now supports CSV upload
+        onUploadCsv={handleCsvUpload}
       />
     </div>
   );
