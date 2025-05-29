@@ -23,6 +23,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@types/aws-sdk": "^0.0.42",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.3",

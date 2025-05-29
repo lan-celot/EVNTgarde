@@ -36,6 +36,9 @@ import Reviews from "./Major Pages/Reviews/Reviews";
 // Misc Pages
 import OrganizerDetails from "./Major Pages/Dashboards/Registered/Elements/OrganizerDetails";
 
+// Test Page for Create Guest List
+import TestGuestListPage from "./Major Pages/RSVP/TestGuestListPage";
+
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
@@ -50,17 +53,13 @@ const App: React.FC = () => {
 
   const login = async () => {
     const storedUserType = localStorage.getItem("userType");
-    // Set userType first
     setUserType(storedUserType);
-    // Then set authentication
     setIsAuthenticated(true);
-
-    console.log("Login called with userType:", storedUserType); // Debug log
+    console.log("Login called with userType:", storedUserType);
   };
 
-  // Function to determine the correct route based on userType
   const getDashboardRoute = () => {
-    const currentUserType = localStorage.getItem("userType"); // Read directly from localStorage
+    const currentUserType = localStorage.getItem("userType");
 
     switch (currentUserType) {
       case "individual":
@@ -68,14 +67,13 @@ const App: React.FC = () => {
       case "vendor":
         return "/dashboard";
       default:
-        console.log("No userType found, defaulting to /", currentUserType); // Debug log
+        console.log("No userType found, defaulting to /", currentUserType);
         return "/dashboard";
     }
   };
 
   return (
     <Router>
-      {/* Main Content Wrapper */}
       <Routes>
         {/* Public routes */}
         <Route
@@ -88,7 +86,6 @@ const App: React.FC = () => {
             )
           }
         />
-
         <Route
           path="/login"
           element={
@@ -99,15 +96,11 @@ const App: React.FC = () => {
             )
           }
         />
-
-        {/* Consolidated Role Selection Route */}
         <Route path="/role-selection" element={<RoleSelection />} />
         <Route
           path="/role-selection-dark"
           element={<Navigate to="/role-selection" />}
         />
-
-        {/* Registration Routes */}
         <Route
           path="/register/organizer"
           element={<OrganizerRegistration step={1} />}
@@ -120,7 +113,6 @@ const App: React.FC = () => {
           path="/register/organizer/step3"
           element={<OrganizerRegistration step={3} />}
         />
-
         <Route
           path="/register/individual"
           element={<IndividualRegistration step={1} />}
@@ -133,7 +125,6 @@ const App: React.FC = () => {
           path="/register/individual/step3"
           element={<IndividualRegistration step={3} />}
         />
-
         <Route
           path="/register/vendor"
           element={<VendorRegistration step={1} />}
@@ -146,20 +137,21 @@ const App: React.FC = () => {
           path="/register/vendor/step3"
           element={<VendorRegistration step={3} />}
         />
-
         <Route path="/about" element={<AboutLoggedOut />} />
 
+        {/* ✅ Test route for Guest List Modal */}
+        <Route path="/test-guestlist" element={<TestGuestListPage />} />
+
+        {/* Protected Routes */}
         <Route element={<ProtectedLayout />}>
           <Route element={<CombinedLayout isLoggedIn={isAuthenticated} />}>
-            {/* Protected routes for authenticated users */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/rsvp" element={<RSVP />} />
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/user-management" element={<UserManagement />} />
             <Route path="/track" element={<Track />} />
-            <Route path="/profile-settings" element={<ProfileSettings />} />s
-            {/* temp route for organizer viewing */}
+            <Route path="/profile-settings" element={<ProfileSettings />} />
             <Route path="/organizers/:id" element={<OrganizerDetails />} />
           </Route>
         </Route>
