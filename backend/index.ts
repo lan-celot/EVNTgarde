@@ -45,6 +45,7 @@ app.use("/api", authRoutes);
 app.use("/api", eventsRoutes);
 app.use("/api", reviewRoutes);
 app.use("/api", uploadImages);
+console.log("Guest list routes mounted under /api");
 app.use("/api", guestListRoutes); // ✅ updated to be under /api
 
 // Error handler

@@ -9,11 +9,12 @@ type Guest = {
 };
 
 interface Props {
-  eventId: number; 
+  eventId: number;
   onSubmit: (guests: Guest[]) => Promise<void>;
+  onUploadCsv?: (file: File) => Promise<void>;
 }
 
-const CreateGuestListModal: React.FC<Props> = ({ eventId, onSubmit }) => {
+const CreateGuestListModal: React.FC<Props> = ({ eventId, onSubmit, onUploadCsv }) => {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [newGuest, setNewGuest] = useState<Guest>({
     firstName: '',
@@ -24,6 +25,7 @@ const CreateGuestListModal: React.FC<Props> = ({ eventId, onSubmit }) => {
   });
   const [confirmChecked, setConfirmChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setNewGuest({
@@ -46,29 +48,39 @@ const CreateGuestListModal: React.FC<Props> = ({ eventId, onSubmit }) => {
   };
 
   const handleDeleteGuest = (index: number) => {
-    const updated = guests.filter((_, i) => i !== index);
-    setGuests(updated);
+    setGuests(guests.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async () => {
-    if (!confirmChecked) {
-      alert('Please confirm before creating the guest list.');
-      return;
-    }
-
-    if (guests.length === 0) {
-      alert('Please add at least one guest.');
-      return;
-    }
+    if (!confirmChecked) return alert('Please confirm before submitting.');
+    if (guests.length === 0) return alert('Add at least one guest.');
 
     setLoading(true);
     try {
-      await onSubmit(guests); // 🔄 Use the passed-in handler
+      await onSubmit(guests);
       setGuests([]);
       setConfirmChecked(false);
+      alert('Manual guests submitted successfully!');
+    } catch (err: any) {
+      console.error(err);
+      alert('Something went wrong.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCsvUpload = async () => {
+    if (!csvFile) return alert('Please select a CSV file.');
+    if (!onUploadCsv) return alert('Upload handler is missing.');
+
+    setLoading(true);
+    try {
+      await onUploadCsv(csvFile);
+      alert('CSV uploaded successfully!');
+      setCsvFile(null);
     } catch (err) {
       console.error(err);
-      alert('Something went wrong while submitting the guest list.');
+      alert('CSV upload error.');
     } finally {
       setLoading(false);
     }
@@ -96,9 +108,7 @@ const CreateGuestListModal: React.FC<Props> = ({ eventId, onSubmit }) => {
               <td>{guest.gender}</td>
               <td>{guest.email}</td>
               <td>{guest.contactNumber}</td>
-              <td>
-                <button onClick={() => handleDeleteGuest(index)}>🗑️</button>
-              </td>
+              <td><button onClick={() => handleDeleteGuest(index)}>🗑️</button></td>
             </tr>
           ))}
           <tr>
@@ -113,9 +123,7 @@ const CreateGuestListModal: React.FC<Props> = ({ eventId, onSubmit }) => {
             </td>
             <td><input name="email" type="email" value={newGuest.email} onChange={handleInputChange} /></td>
             <td><input name="contactNumber" value={newGuest.contactNumber} onChange={handleInputChange} /></td>
-            <td>
-              <button onClick={handleAddGuest}>➕</button>
-            </td>
+            <td><button onClick={handleAddGuest}>➕</button></td>
           </tr>
         </tbody>
       </table>
@@ -129,9 +137,19 @@ const CreateGuestListModal: React.FC<Props> = ({ eventId, onSubmit }) => {
         I confirm that the encoded guest list is accurate and up to date.
       </label>
 
+      <div style={{ marginTop: '1rem' }}>
+        <label>Upload CSV: </label>
+        <input
+          type="file"
+          accept=".csv"
+          onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
+        />
+        <button onClick={handleCsvUpload} disabled={loading || !csvFile}>Upload CSV</button>
+      </div>
+
       <div className="modal-actions">
         <button onClick={() => console.log('Back clicked')}>Back</button>
-        <button onClick={handleSubmit} disabled={loading}>
+        <button onClick={handleSubmit} disabled={loading || !confirmChecked}>
           {loading ? 'Submitting...' : 'Create Guest List'}
         </button>
       </div>
