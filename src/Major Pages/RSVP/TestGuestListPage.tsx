@@ -2,8 +2,6 @@ import React from 'react';
 import CreateGuestListModal from "../../../components/CreateGuestListModal";
 
 const TestGuestListPage: React.FC = () => {
-  const dummyEventId = 1;
-
   const handleGuestListSubmit = async (guests: any[]) => {
     try {
       const response = await fetch("http://localhost:5000/api/createGuestList", {
@@ -11,7 +9,7 @@ const TestGuestListPage: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ eventId: dummyEventId, guests }),
+        body: JSON.stringify({ guests }), // 👈 removed eventId
       });
 
       const result = await response.json();
@@ -29,8 +27,7 @@ const TestGuestListPage: React.FC = () => {
 
   const handleCsvUpload = async (file: File) => {
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("eventId", String(dummyEventId));
+    formData.append("file", file); // 👈 removed eventId
 
     try {
       const response = await fetch("http://localhost:5000/api/uploadGuestCSV", {
@@ -55,7 +52,7 @@ const TestGuestListPage: React.FC = () => {
     <div style={{ padding: "2rem" }}>
       <h1>Test Guest List Modal</h1>
       <CreateGuestListModal
-        eventId={dummyEventId}
+        eventId={1}
         onSubmit={handleGuestListSubmit}
         onUploadCsv={handleCsvUpload}
       />

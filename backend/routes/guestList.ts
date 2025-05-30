@@ -13,11 +13,13 @@ interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
 
+// ---------------------------
 // Manual Guest Entry
+// ---------------------------
 router.post('/createGuestList', async (req: Request, res: Response): Promise<void> => {
-  const { eventId, guests } = req.body;
+  const { guests } = req.body;
 
-  if (!eventId || !Array.isArray(guests)) {
+  if (!Array.isArray(guests)) {
     res.status(400).json({ success: false, message: 'Invalid payload' });
     return;
   }
@@ -28,24 +30,21 @@ router.post('/createGuestList', async (req: Request, res: Response): Promise<voi
 
     const query = `
       INSERT INTO event_guests (
-        event_id, registration_id, full_name, email, contact_number, organization, gender, registration_date
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        first_name, last_name, email_address, contact_number, gender,
+        rsvp_status, reference_code, created_at, updated_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `;
 
     for (const g of guests) {
-      const registrationId = `REG-${uuidv4().substring(0, 8).toUpperCase()}`;
-      const registrationDate = new Date().toISOString();
-      const fullName = `${g.firstName} ${g.lastName}`;
-
+      const referenceCode = `REG-${uuidv4().substring(0, 8).toUpperCase()}`;
       await client.query(query, [
-        eventId,
-        registrationId,
-        fullName,
+        g.firstName,
+        g.lastName,
         g.email,
         g.contactNumber || null,
-        g.organization || null,
-        g.gender,
-        registrationDate
+        g.gender || null,
+        'accepted',
+        referenceCode,
       ]);
     }
 
@@ -60,16 +59,18 @@ router.post('/createGuestList', async (req: Request, res: Response): Promise<voi
   }
 });
 
+// ---------------------------
+// CSV Upload Guest Entry
+// ---------------------------
 router.post('/uploadGuestCSV', (req: Request, res: Response, next: NextFunction) => {
   uploadHandler(req as any, res as any, (err: any) => {
     if (err) return next(err);
 
     const typedReq = req as MulterRequest;
-    const eventId = parseInt(typedReq.body.eventId, 10);
     const filePath = typedReq.file?.path;
 
-    if (!eventId || !filePath) {
-      res.status(400).json({ success: false, message: 'Missing eventId or file' });
+    if (!filePath) {
+      res.status(400).json({ success: false, message: 'Missing file' });
       return;
     }
 
@@ -81,26 +82,24 @@ router.post('/uploadGuestCSV', (req: Request, res: Response, next: NextFunction)
         const client = await pool.connect();
         try {
           await client.query('BEGIN');
+
           const query = `
             INSERT INTO event_guests (
-              event_id, registration_id, full_name, email, contact_number, organization, gender, registration_date
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+              first_name, last_name, email_address, contact_number, gender,
+              rsvp_status, reference_code, created_at, updated_at
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
           `;
 
           for (const g of guests) {
-            const registrationId = `REG-${uuidv4().substring(0, 8).toUpperCase()}`;
-            const registrationDate = new Date().toISOString();
-            const fullName = `${g['First Name']} ${g['Last Name']}`;
-
+            const referenceCode = `REG-${uuidv4().substring(0, 8).toUpperCase()}`;
             await client.query(query, [
-              eventId,
-              registrationId,
-              fullName,
+              g['First Name'],
+              g['Last Name'],
               g['Email'],
               g['Contact Number'] || null,
-              g['Organization'] || null,
-              g['Gender'],
-              registrationDate
+              g['Gender'] || null,
+              'accepted',
+              referenceCode,
             ]);
           }
 
