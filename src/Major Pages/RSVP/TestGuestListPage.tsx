@@ -1,5 +1,5 @@
 import React from 'react';
-import CreateGuestListModal from "../../../components/CreateGuestListModal";
+import CreateGuestListModal from "../Bookings/Elements/CreateGuestListModal";
 
 const TestGuestListPage: React.FC = () => {
   const dummyEventId = 1;
