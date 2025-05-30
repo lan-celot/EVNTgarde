@@ -29,8 +29,9 @@ import Track from "./Major Pages/Dashboards/Registered/Track"
 import ProfileSettings from "./Major Pages/Dashboards/Registered/ProfileSettings"
 import Reviews from "./Major Pages/Reviews/Reviews"
 
-// Super Admin Pages
 import SuperAdminDashboard from "./Major Pages/Dashboards/Registered/SuperAdminDashboard"
+import SuperAdminUserManagement from "./Major Pages/SuperAdmin/UserManagment"
+import SuperAdminEventManagement from "./Major Pages/SuperAdmin/ReviewSubmission"
 
 // Misc Pages
 import OrganizerDetails from "./Major Pages/Dashboards/Registered/Elements/OrganizerDetails"
@@ -94,6 +95,28 @@ const App: React.FC = () => {
           element={
             localStorage.getItem("userType") === "super_admin" && localStorage.getItem("isAuthenticated") === "true" ? (
               <SuperAdminDashboard />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* Super Admin User Management Route */}
+        <Route
+          path="/super-admin/user-management"
+          element={
+            localStorage.getItem("userType") === "super_admin" && localStorage.getItem("isAuthenticated") === "true" ? (
+              <SuperAdminUserManagement />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* Super Admin Event Management Route */}
+        <Route
+          path="/super-admin/event-management"
+          element={
+            localStorage.getItem("userType") === "super_admin" && localStorage.getItem("isAuthenticated") === "true" ? (
+              <SuperAdminEventManagement />
             ) : (
               <Navigate to="/login" />
             )
