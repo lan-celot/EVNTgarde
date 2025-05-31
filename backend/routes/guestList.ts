@@ -13,9 +13,7 @@ interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
 
-// ---------------------------
 // Manual Guest Entry
-// ---------------------------
 router.post('/createGuestList', async (req: Request, res: Response): Promise<void> => {
   const { guests } = req.body;
 
@@ -43,7 +41,7 @@ router.post('/createGuestList', async (req: Request, res: Response): Promise<voi
         g.email,
         g.contactNumber || null,
         g.gender || null,
-        'accepted',
+        'pending',
         referenceCode,
       ]);
     }
@@ -59,9 +57,7 @@ router.post('/createGuestList', async (req: Request, res: Response): Promise<voi
   }
 });
 
-// ---------------------------
 // CSV Upload Guest Entry
-// ---------------------------
 router.post('/uploadGuestCSV', (req: Request, res: Response, next: NextFunction) => {
   uploadHandler(req as any, res as any, (err: any) => {
     if (err) return next(err);
@@ -98,7 +94,7 @@ router.post('/uploadGuestCSV', (req: Request, res: Response, next: NextFunction)
               g['Email'],
               g['Contact Number'] || null,
               g['Gender'] || null,
-              'accepted',
+              'pending',
               referenceCode,
             ]);
           }
