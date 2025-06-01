@@ -1,26 +1,25 @@
-import {/* SetStateAction*/ useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
-import ReviewSubmission from "./ReviewSubmission"
 
 // Define interfaces
 interface User {
-  userId: string
-  businessName: string
-  userName: string
-  gender: string
-  sms: string
+  user_id: string
+  name: string
   email: string
-  userType: string
-  status: string
+  user_type: string
+  rating: number | null
+  review_count: number
 }
 
-interface VerificationItem {
-  verificationId: string
-  businessName: string
-  ownerName: string
-  userType: string
-  submittedDate: string
+interface VerificationRequest {
+  verification_id: string
+  user_id: string
+  user_type: string
+  user_name: string
+  user_email: string
   status: string
+  submitted_at: string
+  admin_notes?: string
 }
 
 export default function UserManagement() {
@@ -28,252 +27,142 @@ export default function UserManagement() {
   const [currentPage, setCurrentPage] = useState(1)
   const [showReviewSubmission, setShowReviewSubmission] = useState(false)
   const [selectedVerificationId, setSelectedVerificationId] = useState("")
-  const [selectedBusinessData, setSelectedBusinessData] = useState<VerificationItem | null>(null)
+  const [selectedBusinessData, setSelectedBusinessData] = useState<VerificationRequest | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  
+  // State for backend data
+  const [lowReviewedUsers, setLowReviewedUsers] = useState<User[]>([])
+  const [verificationRequests, setVerificationRequests] = useState<VerificationRequest[]>([])
+  
   const itemsPerPage = 10
 
-  // Sample data for User List
-  const userListData: User[] = [
-    {
-      userId: "#USR01",
-      businessName: "Online Retail Shop Business",
-      userName: "John Doe",
-      gender: "Male",
-      sms: "+639123456789",
-      email: "jd@gmail.com",
-      userType: "Vendor",
-      status: "Active",
-    },
-    {
-      userId: "#USR02",
-      businessName: "Tech Solutions Inc.",
-      userName: "Jane Doe",
-      gender: "Female",
-      sms: "+639123456789",
-      email: "jd@gmail.com",
-      userType: "Organizer",
-      status: "Inactive",
-    },
-    {
-      userId: "#USR03",
-      businessName: "Online Retail Shop Business",
-      userName: "Doe Doe",
-      gender: "Male",
-      sms: "+639123456789",
-      email: "dd@gmail.com",
-      userType: "Vendor",
-      status: "Active",
-    },
-    {
-      userId: "#USR04",
-      businessName: "Tech Solutions Inc.",
-      userName: "John John",
-      gender: "Male",
-      sms: "+639123456789",
-      email: "jj@gmail.com",
-      userType: "Organizer",
-      status: "Active",
-    },
-    {
-      userId: "#USR05",
-      businessName: "-",
-      userName: "Jane Jane",
-      gender: "Female",
-      sms: "+639123456789",
-      email: "jj@gmail.com",
-      userType: "Customer",
-      status: "Inactive",
-    },
-    {
-      userId: "#USR06",
-      businessName: "-",
-      userName: "Jane Jane",
-      gender: "Male",
-      sms: "+639123456789",
-      email: "jd@gmail.com",
-      userType: "Customer",
-      status: "Active",
-    },
-    {
-      userId: "#USR07",
-      businessName: "Digital Marketing Co.",
-      userName: "Jane Jane",
-      gender: "Female",
-      sms: "+639123456789",
-      email: "jd@gmail.com",
-      userType: "Organizer",
-      status: "Inactive",
-    },
-    {
-      userId: "#USR08",
-      businessName: "Digital Marketing Co.",
-      userName: "Jane Jane",
-      gender: "Male",
-      sms: "+639123456789",
-      email: "dd@gmail.com",
-      userType: "Organizer",
-      status: "Active",
-    },
-    {
-      userId: "#USR09",
-      businessName: "Digital Marketing Co.",
-      userName: "Jane Jane",
-      gender: "Female",
-      sms: "+639123456789",
-      email: "jj@gmail.com",
-      userType: "Organizer",
-      status: "Active",
-    },
-    {
-      userId: "#USR10",
-      businessName: "Food Delivery Service",
-      userName: "Jane Jane",
-      gender: "Female",
-      sms: "+639123456789",
-      email: "jj@gmail.com",
-      userType: "Vendor",
-      status: "Inactive",
-    },
-    {
-      userId: "#USR11",
-      businessName: "Software Development Firm",
-      userName: "Alice Smith",
-      gender: "Female",
-      sms: "+639876543210",
-      email: "as@gmail.com",
-      userType: "Vendor",
-      status: "Active",
-    },
-    {
-      userId: "#USR12",
-      businessName: "Consulting Group",
-      userName: "Bob Johnson",
-      gender: "Male",
-      sms: "+639214365879",
-      email: "bj@gmail.com",
-      userType: "Organizer",
-      status: "Inactive",
-    },
-    {
-      userId: "#USR13",
-      businessName: "E-commerce Platform",
-      userName: "Charlie Brown",
-      gender: "Male",
-      sms: "+639321547896",
-      email: "cb@gmail.com",
-      userType: "Customer",
-      status: "Active",
-    },
-    {
-      userId: "#USR14",
-      businessName: "Financial Services Company",
-      userName: "Diana Miller",
-      gender: "Female",
-      sms: "+639432659870",
-      email: "dm@gmail.com",
-      userType: "Vendor",
-      status: "Inactive",
-    },
-  ]
+  // Fetch low-reviewed users
+  const fetchLowReviewedUsers = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await fetch('/api/superadmin/low-reviewed-users?threshold=3.0')
+      if (!response.ok) {
+        throw new Error('Failed to fetch users')
+      }
+      const data = await response.json()
+      if (data.success) {
+        setLowReviewedUsers(data.users)
+      } else {
+        throw new Error(data.message || 'Failed to fetch users')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('Error fetching low-reviewed users:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  // Sample data for User Verification - using state to allow updates
-  const [verificationData, setVerificationData] = useState<VerificationItem[]>([
-    {
-      verificationId: "#VER_ID_01",
-      businessName: "Online Retail Shop Business",
-      ownerName: "John Doe",
-      userType: "Vendor",
-      submittedDate: "January 30, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_02",
-      businessName: "Tech Solutions Inc.",
-      ownerName: "Jane Doe",
-      userType: "Organizer",
-      submittedDate: "February 3, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_03",
-      businessName: "Online Retail Shop Business",
-      ownerName: "Doe Doe",
-      userType: "Vendor",
-      submittedDate: "June 16, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_04",
-      businessName: "Digital Marketing Co.",
-      ownerName: "John John",
-      userType: "Organizer",
-      submittedDate: "July 7, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_05",
-      businessName: "Food Delivery Service",
-      ownerName: "Jane Jane",
-      userType: "Vendor",
-      submittedDate: "July 27, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_06",
-      businessName: "Tech Startup",
-      ownerName: "John Smith",
-      userType: "Vendor",
-      submittedDate: "August 5, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_07",
-      businessName: "Local Restaurant",
-      ownerName: "Mary Johnson",
-      userType: "Vendor",
-      submittedDate: "August 12, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_08",
-      businessName: "Global Corp",
-      ownerName: "David Williams",
-      userType: "Vendor",
-      submittedDate: "September 1, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_09",
-      businessName: "Green Energy Solutions",
-      ownerName: "Emily Davis",
-      userType: "Organizer",
-      submittedDate: "October 10, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_10",
-      businessName: "AI Innovations Ltd.",
-      ownerName: "Chris Wilson",
-      userType: "Vendor",
-      submittedDate: "November 15, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_11",
-      businessName: "Sustainable Farms",
-      ownerName: "Linda Rodriguez",
-      userType: "Vendor",
-      submittedDate: "December 20, 2025",
-      status: "Pending",
-    },
-    {
-      verificationId: "#VER_ID_12",
-      businessName: "Creative Design Agency",
-      ownerName: "Kevin Martinez",
-      userType: "Organizer",
-      submittedDate: "January 1, 2026",
-      status: "Pending",
-    },
-  ])
+  // Fetch verification requests
+  const fetchVerificationRequests = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await fetch('/api/superadmin/verification-requests')
+      if (!response.ok) {
+        throw new Error('Failed to fetch verification requests')
+      }
+      const data = await response.json()
+      if (data.success) {
+        setVerificationRequests(data.requests)
+      } else {
+        throw new Error(data.message || 'Failed to fetch verification requests')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('Error fetching verification requests:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Update verification request status
+  const updateVerificationStatus = async (verificationId: string, status: string, adminNotes: string = '') => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/superadmin/verification-requests/${verificationId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: status.toLowerCase(),
+          admin_notes: adminNotes,
+          admin_id: 1 // You should get this from your auth context
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update verification request')
+      }
+
+      const data = await response.json()
+      if (data.success) {
+        // Refresh the verification requests
+        await fetchVerificationRequests()
+        handleBackToUserManagement()
+      } else {
+        throw new Error(data.message || 'Failed to update verification request')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('Error updating verification status:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Suspend/unsuspend user
+  const updateUserStatus = async (userId: string, userType: string, action: 'suspend' | 'unsuspend', reason: string = '') => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/superadmin/users/${userId}/suspend`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_type: userType,
+          action,
+          admin_id: 1, // You should get this from your auth context
+          reason
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update user status')
+      }
+
+      const data = await response.json()
+      if (data.success) {
+        // Refresh the users list
+        await fetchLowReviewedUsers()
+      } else {
+        throw new Error(data.message || 'Failed to update user status')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('Error updating user status:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Load data when component mounts or tab changes
+  useEffect(() => {
+    if (activeTab === "userList") {
+      fetchLowReviewedUsers()
+    } else if (activeTab === "userVerification") {
+      fetchVerificationRequests()
+    }
+  }, [activeTab])
 
   // Pagination logic
   const getCurrentData = <T,>(data: T[], page: number, itemsPerPage: number): T[] => {
@@ -281,11 +170,11 @@ export default function UserManagement() {
     return data.slice(startIndex, startIndex + itemsPerPage)
   }
 
-  const totalUserPages = Math.ceil(userListData.length / itemsPerPage)
-  const totalVerificationPages = Math.ceil(verificationData.length / itemsPerPage)
+  const totalUserPages = Math.ceil(lowReviewedUsers.length / itemsPerPage)
+  const totalVerificationPages = Math.ceil(verificationRequests.length / itemsPerPage)
 
-  const currentUserData = getCurrentData(userListData, currentPage, itemsPerPage)
-  const currentVerificationData = getCurrentData(verificationData, currentPage, itemsPerPage)
+  const currentUserData = getCurrentData(lowReviewedUsers, currentPage, itemsPerPage)
+  const currentVerificationData = getCurrentData(verificationRequests, currentPage, itemsPerPage)
 
   const handlePreviousPage = (): void => {
     setCurrentPage((prev) => Math.max(prev - 1, 1))
@@ -303,8 +192,7 @@ export default function UserManagement() {
   }
 
   const handleReviewSubmission = (verificationId: string): void => {
-    // Find the verification item to get the business data
-    const verificationItem = verificationData.find((item) => item.verificationId === verificationId)
+    const verificationItem = verificationRequests.find((item) => item.verification_id === verificationId)
     setSelectedVerificationId(verificationId)
     setSelectedBusinessData(verificationItem || null)
     setShowReviewSubmission(true)
@@ -313,19 +201,9 @@ export default function UserManagement() {
   const handleBackToUserManagement = (): void => {
     setShowReviewSubmission(false)
     setSelectedVerificationId("")
+    setSelectedBusinessData(null)
   }
 
-  // Function to update verification status
-  const updateVerificationStatus = (verificationId: string, newStatus: string): void => {
-    // Map the status to the correct terminology
-    const mappedStatus = newStatus === "Approved" ? "Verified" : newStatus === "Rejected" ? "Not Verified" : newStatus
-    setVerificationData((prevData) =>
-      prevData.map((item) => (item.verificationId === verificationId ? { ...item, status: mappedStatus } : item)),
-    )
-    handleBackToUserManagement()
-  }
-
-  // Generate page numbers for pagination
   const getPageNumbers = (totalPages: number): (number | string)[] => {
     if (totalPages <= 7) {
       return Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -342,22 +220,13 @@ export default function UserManagement() {
     return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages]
   }
 
-  const StatusBadge = ({ status }: { status: string }) => {
-    const isActive = status === "Active"
-    return (
-      <div className="flex items-center">
-        <span className={`w-2 h-2 rounded-full mr-1.5 ${isActive ? "bg-green-500" : "bg-gray-400"}`}></span>
-        <span className={`text-sm ${isActive ? "text-green-600" : "text-gray-500"}`}>{status}</span>
-      </div>
-    )
-  }
 
   const VerificationStatusBadge = ({ status }: { status: string }) => {
     const getStatusColor = (status: string) => {
-      switch (status) {
-        case "Verified":
+      switch (status.toLowerCase()) {
+        case "approved":
           return "bg-green-500 text-green-600"
-        case "Not Verified":
+        case "rejected":
           return "bg-red-500 text-red-600"
         default:
           return "bg-yellow-500 text-yellow-600"
@@ -367,28 +236,89 @@ export default function UserManagement() {
     return (
       <div className="flex items-center">
         <span className={`w-2 h-2 rounded-full mr-1.5 ${getStatusColor(status).split(" ")[0]}`}></span>
-        <span className={`text-sm ${getStatusColor(status).split(" ")[1]}`}>{status}</span>
+        <span className={`text-sm ${getStatusColor(status).split(" ")[1]}`}>
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </span>
       </div>
     )
   }
 
-  // Show review submission if selected
   if (showReviewSubmission) {
     return (
-      <ReviewSubmission
-        verificationId={selectedVerificationId}
-        businessData={selectedBusinessData}
-        onBack={handleBackToUserManagement}
-        onUpdateStatus={updateVerificationStatus}
-      />
+      <div className="p-6">
+        <div className="mb-4">
+          <button
+            onClick={handleBackToUserManagement}
+            className="flex items-center text-blue-600 hover:text-blue-800"
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Back to User Management
+          </button>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-xl font-bold mb-4">Review Submission</h2>
+          <p className="text-gray-600">Verification ID: {selectedVerificationId}</p>
+          {selectedBusinessData && (
+            <div className="mt-4 space-y-2">
+              <p><strong>User:</strong> {selectedBusinessData.user_name}</p>
+              <p><strong>Email:</strong> {selectedBusinessData.user_email}</p>
+              <p><strong>Type:</strong> {selectedBusinessData.user_type}</p>
+              <p><strong>Submitted:</strong> {new Date(selectedBusinessData.submitted_at).toLocaleDateString()}</p>
+              <p><strong>Status:</strong> {selectedBusinessData.status}</p>
+              {selectedBusinessData.admin_notes && (
+                <p><strong>Admin Notes:</strong> {selectedBusinessData.admin_notes}</p>
+              )}
+            </div>
+          )}
+          <div className="mt-6">
+            <textarea
+              placeholder="Add notes (required for rejection)..."
+              className="w-full p-3 border rounded-md mb-4"
+              rows={3}
+              id="adminNotes"
+            />
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  const notes = (document.getElementById('adminNotes') as HTMLTextAreaElement)?.value || ''
+                  updateVerificationStatus(selectedVerificationId, "approved", notes)
+                }}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Approve'}
+              </button>
+              <button
+                onClick={() => {
+                  const notes = (document.getElementById('adminNotes') as HTMLTextAreaElement)?.value || ''
+                  if (!notes.trim()) {
+                    alert('Please provide a reason for rejection')
+                    return
+                  }
+                  updateVerificationStatus(selectedVerificationId, "rejected", notes)
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Reject'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 
   return (
-    <div className="ml-64">
+    <div className="p-6 max-w-full">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+        {error && (
+          <div className="mt-2 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
       </div>
 
       {/* Tab Navigation */}
@@ -401,7 +331,7 @@ export default function UserManagement() {
             }}
             className={`px-6 py-3 text-sm font-medium ${activeTab === "userList" ? "bg-gray-200" : "bg-transparent"}`}
           >
-            User List
+            Low-Reviewed Users
           </button>
           <button
             onClick={() => {
@@ -417,52 +347,65 @@ export default function UserManagement() {
         </div>
       </div>
 
-      {/* Table */}
-      {activeTab === "userList" && (
-        <div className="bg-white rounded-md shadow-sm">
-          <table className="w-full">
+      {loading && (
+        <div className="text-center py-4">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      )}
+
+      {/* User List Table */}
+      {activeTab === "userList" && !loading && (
+        <div className="bg-white rounded-md shadow-sm overflow-hidden">
+          <table className="w-full table-fixed">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                <th className="w-20 px-3 py-3 text-left text-sm font-medium text-gray-500">
                   <div className="flex items-center">
                     <span>User ID</span>
                     <ChevronDown className="h-4 w-4 ml-1" />
                   </div>
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Business Name</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">User Name</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Gender</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">SMS</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Email</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">User Type</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
-                  <div className="flex items-center">
-                    <span>Status</span>
-                    <ChevronDown className="h-4 w-4 ml-1" />
-                  </div>
-                </th>
+                <th className="w-40 px-3 py-3 text-left text-sm font-medium text-gray-500">Name</th>
+                <th className="w-32 px-3 py-3 text-left text-sm font-medium text-gray-500">Email</th>
+                <th className="w-20 px-3 py-3 text-left text-sm font-medium text-gray-500">User Type</th>
+                <th className="w-20 px-3 py-3 text-left text-sm font-medium text-gray-500">Rating</th>
+                <th className="w-20 px-3 py-3 text-left text-sm font-medium text-gray-500">Reviews</th>
+                <th className="w-24 px-3 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody>
               {currentUserData.map((user: User, index: number) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{user.userId}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{user.businessName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{user.userName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{user.gender}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{user.sms}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{user.email}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{user.userType}</td>
-                  <td className="px-6 py-4">
-                    <StatusBadge status={user.status} />
+                <tr key={index} className="hover:bg-gray-50 border-b border-gray-100">
+                  <td className="px-3 py-3 text-sm font-medium text-gray-900 truncate">{user.user_id}</td>
+                  <td className="px-3 py-3 text-sm text-gray-500 truncate" title={user.name}>{user.name}</td>
+                  <td className="px-3 py-3 text-sm text-gray-500 truncate" title={user.email}>{user.email}</td>
+                  <td className="px-3 py-3 text-sm text-gray-500">{user.user_type}</td>
+                  <td className="px-3 py-3 text-sm text-gray-500">
+                    {user.rating ? user.rating.toFixed(1) : 'N/A'}
+                  </td>
+                  <td className="px-3 py-3 text-sm text-gray-500">{user.review_count}</td>
+                  <td className="px-3 py-3">
+                    <button
+                      onClick={() => {
+                        const reason = prompt('Enter reason for suspension:')
+                        if (reason) {
+                          updateUserStatus(user.user_id, user.user_type, 'suspend', reason)
+                        }
+                      }}
+                      className="px-2 py-1 text-xs border rounded text-red-700 hover:bg-red-50 disabled:opacity-50"
+                      disabled={loading}
+                    >
+                      Suspend
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          {/* Pagination */}
-          <div className="px-6 py-4 flex items-center justify-between">
+          {/* Pagination for Users */}
+          <div className="px-4 py-3 flex items-center justify-between border-t">
             <button
               className={`flex items-center px-3 py-1 text-sm text-gray-500 border rounded ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"}`}
               onClick={handlePreviousPage}
@@ -498,47 +441,50 @@ export default function UserManagement() {
         </div>
       )}
 
-      {activeTab === "userVerification" && (
-        <div className="bg-white rounded-md shadow-sm">
-          <table className="w-full">
+      {/* Verification Requests Table */}
+      {activeTab === "userVerification" && !loading && (
+        <div className="bg-white rounded-md shadow-sm overflow-hidden">
+          <table className="w-full table-fixed">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                <th className="w-24 px-3 py-3 text-left text-sm font-medium text-gray-500">
                   <div className="flex items-center">
                     <span>Verification ID</span>
                     <ChevronDown className="h-4 w-4 ml-1" />
                   </div>
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Business Name</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Owner Name</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">User Type</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Submitted Date</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">
+                <th className="w-32 px-3 py-3 text-left text-sm font-medium text-gray-500">User Name</th>
+                <th className="w-32 px-3 py-3 text-left text-sm font-medium text-gray-500">Email</th>
+                <th className="w-20 px-3 py-3 text-left text-sm font-medium text-gray-500">User Type</th>
+                <th className="w-28 px-3 py-3 text-left text-sm font-medium text-gray-500">Submitted Date</th>
+                <th className="w-20 px-3 py-3 text-left text-sm font-medium text-gray-500">
                   <div className="flex items-center">
                     <span>Status</span>
                     <ChevronDown className="h-4 w-4 ml-1" />
                   </div>
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Action</th>
+                <th className="w-24 px-3 py-3 text-left text-sm font-medium text-gray-500">Action</th>
               </tr>
             </thead>
             <tbody>
-              {currentVerificationData.map((item: VerificationItem, index: number) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.verificationId}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{item.businessName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{item.ownerName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{item.userType}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{item.submittedDate}</td>
-                  <td className="px-6 py-4">
+              {currentVerificationData.map((item: VerificationRequest, index: number) => (
+                <tr key={index} className="hover:bg-gray-50 border-b border-gray-100">
+                  <td className="px-3 py-3 text-sm font-medium text-gray-900 truncate">{item.verification_id}</td>
+                  <td className="px-3 py-3 text-sm text-gray-500 truncate" title={item.user_name}>{item.user_name}</td>
+                  <td className="px-3 py-3 text-sm text-gray-500 truncate" title={item.user_email}>{item.user_email}</td>
+                  <td className="px-3 py-3 text-sm text-gray-500">{item.user_type}</td>
+                  <td className="px-3 py-3 text-sm text-gray-500">
+                    {new Date(item.submitted_at).toLocaleDateString()}
+                  </td>
+                  <td className="px-3 py-3">
                     <VerificationStatusBadge status={item.status} />
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-3">
                     <button
-                      onClick={() => handleReviewSubmission(item.verificationId)}
-                      className="px-3 py-1 text-sm border rounded text-gray-700 hover:bg-gray-50"
+                      onClick={() => handleReviewSubmission(item.verification_id)}
+                      className="px-2 py-1 text-xs border rounded text-gray-700 hover:bg-gray-50"
                     >
-                      Review Submission
+                      Review
                     </button>
                   </td>
                 </tr>
@@ -546,8 +492,8 @@ export default function UserManagement() {
             </tbody>
           </table>
 
-          {/* Pagination */}
-          <div className="px-6 py-4 flex items-center justify-between">
+          {/* Pagination for Verification Requests */}
+          <div className="px-4 py-3 flex items-center justify-between border-t">
             <button
               className={`flex items-center px-3 py-1 text-sm text-gray-500 border rounded ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"}`}
               onClick={handlePreviousPage}
@@ -580,6 +526,16 @@ export default function UserManagement() {
               <ChevronRight className="h-4 w-4 ml-1" />
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && ((activeTab === "userList" && lowReviewedUsers.length === 0) || 
+       (activeTab === "userVerification" && verificationRequests.length === 0)) && (
+        <div className="bg-white rounded-md shadow-sm p-8 text-center">
+          <p className="text-gray-500">
+            {activeTab === "userList" ? "No low-reviewed users found." : "No verification requests found."}
+          </p>
         </div>
       )}
     </div>

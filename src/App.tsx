@@ -11,6 +11,7 @@ import SuperAdminQuickLogin from "./Major Pages/Login Page/SuperAdminQuickLogin"
 // Wrappers
 import ProtectedLayout from "./functions/ProtectedRoute"
 import CombinedLayout from "./Layout/combined-layout"
+import MainLayout from "./Major Pages/SuperAdmin/Elements/MainLayout"
 
 // consolidated role selection
 import RoleSelection from "./Major Pages/Login Page/RoleSelection"
@@ -88,7 +89,7 @@ const App: React.FC = () => {
             )
           }
         />
-
+        <Route element={<MainLayout isLoggedIn={isAuthenticated} />}>
         {/* Super Admin Dashboard Route - STANDALONE (not wrapped in layout) */}
         <Route
           path="/super-admin/dashboard"
@@ -122,6 +123,7 @@ const App: React.FC = () => {
             )
           }
         />
+        </Route>
 
         {/* Consolidated Role Selection Route */}
         <Route path="/role-selection" element={<RoleSelection />} />
